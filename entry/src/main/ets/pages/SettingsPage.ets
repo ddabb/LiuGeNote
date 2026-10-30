@@ -3,7 +3,7 @@
  * - 选择即时生效（AppStorage 驱动全部页面刷新）并自动持久化（preferences）
  * - 字体选项：系统默认 / 思源黑体 / 霞鹜文楷（内置 rawfile 字体，详见 FontRegistry）
  * - 阅读背景四套：纸白 / 羊皮纸 / 护眼 / 暗夜；字号 14-22fp，行距 1.3-2.0 倍
- * - 底部实时预览按当前全部阅读偏好渲染样例文字
+ * - 底部固定实时预览条：不随内容滚动，调整任意偏好效果即时可见
  */
 import { AppTheme, ReadingBg, ThemePalette } from '../common/AppTheme';
 import { FontEntry, FontRegistry } from '../common/FontRegistry';
@@ -175,7 +175,7 @@ struct SettingsPage {
             .width('100%')
             .alignItems(HorizontalAlign.Start)
 
-            // ---------- 字号 / 行距 + 实时预览 ----------
+            // ---------- 字号 / 行距 ----------
             Column({ space: 16 }) {
               Text('排版')
                 .fontSize(15)
@@ -233,28 +233,6 @@ struct SettingsPage {
                 .onChange((value: number) => {
                   AppTheme.setLineSpacing(value);
                 })
-
-              // 实时预览：按当前字体/字号/行距/阅读背景渲染
-              Column({ space: 6 }) {
-                Text('实时预览')
-                  .fontSize(12)
-                  .fontColor(this.palette().meta)
-                Text('鹤鸣于九皋，声闻于野。\n离线笔记 Aa 123，纯本地渲染。')
-                  .fontSize(Math.round(this.textSize))
-                  .lineHeight(Math.round(this.textSize * this.lineSpacing))
-                  .fontFamily(this.familyOfPreview(this.fontId))
-                  .fontColor(this.readingBg().bodyText)
-                  .width('100%')
-              }
-              .alignItems(HorizontalAlign.Start)
-              .width('100%')
-              .padding(14)
-              .borderRadius(10)
-              .backgroundColor(this.readingBg().contentBg)
-              .border({
-                width: 1,
-                color: this.readingBg().dark ? '#3A3F45' : '#E3E7EA'
-              })
             }
             .padding(16)
             .borderRadius(12)
@@ -275,6 +253,9 @@ struct SettingsPage {
         .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')
+
+        // 底部固定实时预览：不随内容滚动，拖动滑条/切换偏好效果即时可见
+        this.livePreviewBar()
       }
       .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       .width('100%')
@@ -283,5 +264,40 @@ struct SettingsPage {
     .backgroundColor(this.palette().pageBg)
     .height('100%')
     .width('100%')
+  }
+
+  /** 底部固定实时预览条：按当前字体/字号/行距/阅读背景渲染样例 */
+  @Builder
+  livePreviewBar() {
+    Column({ space: 8 }) {
+      Row() {
+        Text('实时预览')
+          .fontSize(11)
+          .fontColor(this.palette().meta)
+        Text(`${Math.round(this.textSize)} fp · ×${this.lineSpacing.toFixed(2)}`)
+          .fontSize(11)
+          .fontColor(this.palette().meta)
+      }
+      .width('100%')
+      .justifyContent(FlexAlign.SpaceBetween)
+
+      Text('鹤鸣于九皋，声闻于野。\n离线笔记 Aa 123，纯本地渲染。')
+        .fontSize(Math.round(this.textSize))
+        .lineHeight(Math.round(this.textSize * this.lineSpacing))
+        .fontFamily(this.familyOfPreview(this.fontId))
+        .fontColor(this.readingBg().bodyText)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+    }
+    .alignItems(HorizontalAlign.Start)
+    .width('100%')
+    .padding({ left: 14, right: 14, top: 12, bottom: 12 })
+    .margin({ left: 16, right: 16, bottom: 12 })
+    .borderRadius(12)
+    .backgroundColor(this.readingBg().contentBg)
+    .border({
+      width: 1,
+      color: this.readingBg().dark ? '#3A3F45' : '#E3E7EA'
+    })
   }
 }
