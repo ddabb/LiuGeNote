@@ -1,0 +1,86 @@
+
+# 列表页通用化：文章卡片组件复用与页面结构收敛
+
+应用里有四个"文章列表"形态的页面：首页（全部）、标签详情（按标签）、分类详情（按分类）、以及文章详情页内的"相关推荐"雏形。最初每个页面复制粘贴卡片布局，三天后样式已经开始漂移 —— 同一张卡片，四个页面四种圆角。
+
+## 问题：复制粘贴的隐性成本
+
+### 漂移现场
+
+| 页面 | 圆角 | 标签字号 | 点击效果 |
+|---|---|---|---|
+| 首页 | 12vp | 12fp | 有 |
+| 标签详情 | 12vp | 14fp | 无 |
+| 分类详情 | 16vp | 12fp | 有 |
+| …第五次改版时已没人记得基准 | | | |
+
+每新增一种"列表"，就要重新对齐一遍样式；改一个全局视觉，要改 N 处。
+
+## 方案：卡片组件化 + 页面骨架收敛
+
+### 1. 抽出 ArticleCard 组件
+
+```typescript
+@Component
+export struct ArticleCard {
+  @Prop article: ArticleMeta;
+  @BuilderParam onTap: () => void = () => {};
+
+  build() {
+    Column({ space: 8 }) {
+      Text(this.article.title)
+        .fontSize(18).fontWeight(FontWeight.Bold).maxLines(2)
+      Text(this.article.description)
+        .fontSize(14).fontColor('#666666').maxLines(2)
+      Row({ space: 6 }) {
+        Text(this.article.category)
+          .fontSize(11).fontColor('#0D47A1')
+          .padding({ left: 8, right: 8, top: 3, bottom: 3 })
+          .borderRadius(10).backgroundColor('#E3F2FD')
+        ForEach(this.article.tags.slice(0, 3), (t: string) => {
+          Text(t).fontSize(11).fontColor('#616161')
+            .padding({ left: 8, right: 8, top: 3, bottom: 3 })
+            .borderRadius(10).backgroundColor('#F5F5F5')
+        }, (t: string) => t)
+      }
+      Text(`${this.article.wordCount} 字 · ${this.article.updateTime}`)
+        .fontSize(11).fontColor('#9E9E9E')
+    }
+    .alignItems(HorizontalAlign.Start)
+    .padding(16).borderRadius(12)
+    .backgroundColor(Color.White)
+    .onClick(() => this.onTap())
+  }
+}
+```
+
+要点：
+
+- 数据入口只有 `article: ArticleMeta` —— **组件只认模型，不认页面**；
+- `@Prop` 保证父子解耦；
+- 点击行为用回调注入，卡片不关心跳转目标。
+
+### 2. 页面骨架统一为三段式
+
+```
+标题区（页面名 + 计数）
+  └ 列表区（Scroll > Column > ForEach > ArticleCard）
+空态区（无数据时的占位文案）
+```
+
+### 3. 收益清单
+
+| 指标 | 收敛前 | 收敛后 |
+|---|---|---|
+| 卡片样式定义处 | 4 处 | 1 处 |
+| 新增列表页成本 | 全套复制 | 复用卡片 + 写查询 |
+| 视觉走查 | 4 页对齐 | 1 处确认 |
+
+## 组件边界经验
+
+1. **一个组件只依赖 model 层类型**，不 import 页面、不依赖路由 —— 保证可搬运；
+2. 展示组件不写死 `router.pushUrl`，跳转一律 `@BuilderParam`/回调注入；
+3. `ForEach` 的键生成器必须给稳定 key（slug），否则列表刷新时状态错位；
+4. 卡片内标签超过 3 个截断展示，避免长标签列表把卡片高度撑爆。
+
+组件化不是抽象练习，是给"第五次改版"提前还债。

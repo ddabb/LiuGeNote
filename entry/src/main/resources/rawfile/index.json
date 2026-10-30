@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "generatedAt": "2026-10-30T04:47:10.394Z",
+    "totalFiles": 12,
+    "generator": "lgnote publish.js"
+  },
+  "files": [
+    {
+      "slug": "工程版本对齐与首次构建报错实录",
+      "fileId": "4d885876",
+      "title": "工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单",
+      "description": "记录本脚手架首次构建时的真实报错与修复：hvigor modelVersion 26.0.0 与本机 DevEco 支持上限 6.1.1 的迁移对齐、targetSdkVersion 的字符串格式要求，以及 ArkTS 编译期的 getRawFileContentSync、Alignment、BorderOptions 三类 API 使用纠错。",
+      "category": "环境与工程配置",
+      "tags": [
+        "hvigor",
+        "SDK版本",
+        "构建错误",
+        "版本对齐"
+      ],
+      "wordCount": 2110,
+      "createTime": "2026-10-30T04:47:05.161Z",
+      "updateTime": "2026-10-30T04:47:05.161Z",
+      "order": 1
+    },
+    {
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "fileId": "ace821db",
+      "title": "rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践",
+      "description": "记录离线应用读取 rawfile 数据的完整踩坑过程：getRawFileContent 返回 Uint8Array 的解码、TextDecoder 指定 UTF-8 避免 BOM 乱码、大文件按需加载与内存缓存策略。",
+      "category": "数据与渲染",
+      "tags": [
+        "rawfile",
+        "资源管理",
+        "编码",
+        "UTF-8",
+        "缓存"
+      ],
+      "wordCount": 1905,
+      "createTime": "2026-10-30T04:15:44.506Z",
+      "updateTime": "2026-10-30T04:37:25.231Z",
+      "order": 2
+    },
+    {
+      "slug": "列表页通用化与文章卡片组件复用",
+      "fileId": "dbf87dc7",
+      "title": "列表页通用化：文章卡片组件复用与页面结构收敛",
+      "description": "记录四个列表页（首页、标签详情、分类详情等）如何收敛为统一的文章卡片组件与页面骨架，避免复制粘贴式开发导致的样式漂移与维护成本。",
+      "category": "页面与导航",
+      "tags": [
+        "组件复用",
+        "列表页",
+        "@Builder",
+        "UI架构"
+      ],
+      "wordCount": 1645,
+      "createTime": "2026-10-30T04:23:14.479Z",
+      "updateTime": "2026-10-30T04:23:14.479Z",
+      "order": 3
+    },
+    {
+      "slug": "离线应用权限最小化与包体积控制",
+      "fileId": "5ac75bcb",
+      "title": "离线应用的权限最小化与包体积控制",
+      "description": "记录离线内容应用在权限声明与包体积上的实践：module.json5 零权限声明、rawfile 数据与 HAP 体积的关系、演示内容组织策略，以及与 Web 静态站打包体积的对比。",
+      "category": "环境与工程配置",
+      "tags": [
+        "离线应用",
+        "权限",
+        "包体积",
+        "性能"
+      ],
+      "wordCount": 1139,
+      "createTime": "2026-10-30T04:22:29.817Z",
+      "updateTime": "2026-10-30T04:22:29.818Z",
+      "order": 4
+    },
+    {
+      "slug": "front-matter解析与发布期数据校验",
+      "fileId": "68f69eed",
+      "title": "front-matter 解析、字数统计与无描述文章的发布期校验",
+      "description": "记录 publish.js 对标 vercel-ci 的三个数据整形细节：front-matter 的 YAML 子集解析容错、与参考项目口径一致的字数统计、以及无描述文章的发布警告机制。",
+      "category": "发布链路",
+      "tags": [
+        "front-matter",
+        "publish",
+        "校验",
+        "字数统计"
+      ],
+      "wordCount": 1133,
+      "createTime": "2026-10-30T04:21:59.212Z",
+      "updateTime": "2026-10-30T04:21:59.212Z",
+      "order": 5
+    },
+    {
+      "slug": "Windows文件名非法字符与slug清洗方案",
+      "fileId": "dedd29ae",
+      "title": "Windows 文件名非法字符与文章 slug 清洗方案",
+      "description": "记录在 Windows 环境下生成文章 slug 时遇到的非法字符问题：冒号、引号等字符在文件系统层面就不合法，publish.js 的 sanitizeFileName 对标 vercel-ci 的清洗规则与 slug 稳定性设计。",
+      "category": "数据与渲染",
+      "tags": [
+        "slug",
+        "文件名",
+        "清洗",
+        "跨平台"
+      ],
+      "wordCount": 1198,
+      "createTime": "2026-10-30T04:21:31.420Z",
+      "updateTime": "2026-10-30T04:21:31.420Z",
+      "order": 6
+    },
+    {
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "fileId": "ee8cd0ae",
+      "title": "Markdown 离线渲染选型：Web 组件还是原生解析",
+      "description": "记录文章详情页 Markdown 渲染方案的选型对比：Web 组件加载预渲染 HTML 与 ArkUI 原生解析渲染的优劣权衡，最终实现轻量解析器 + Builder 渲染的分层设计。",
+      "category": "数据与渲染",
+      "tags": [
+        "Markdown",
+        "渲染",
+        "性能",
+        "选型"
+      ],
+      "wordCount": 1260,
+      "createTime": "2026-10-30T04:21:03.171Z",
+      "updateTime": "2026-10-30T04:21:03.171Z",
+      "order": 7
+    },
+    {
+      "slug": "中文参数路由跳转与回退链设计",
+      "fileId": "0feb380f",
+      "title": "中文参数路由跳转：router 传参编码与页面回退链设计",
+      "description": "记录标签/分类中文名作为路由参数传递时遇到的编码与容错问题：encodeURIComponent 防御性编码、getParams 的空值兜底、返回链路的层级设计，保证六个页面间跳转稳定可靠。",
+      "category": "页面与导航",
+      "tags": [
+        "router",
+        "传参",
+        "编码",
+        "导航"
+      ],
+      "wordCount": 1416,
+      "createTime": "2026-10-30T04:18:04.662Z",
+      "updateTime": "2026-10-30T04:18:04.662Z",
+      "order": 8
+    },
+    {
+      "slug": "结构类型到显式接口的数据模型改造",
+      "fileId": "7437217a",
+      "title": "从 TypeScript 结构类型到 ArkTS 显式继承的改造实录",
+      "description": "记录把基于 TypeScript 结构类型的页面参数模型改造为 ArkTS 显式继承/接口模型的过程，涵盖 class 声明、必选字段、数据模型分层与 DataRepository 的接口化设计。",
+      "category": "ArkTS语言与规范",
+      "tags": [
+        "ArkTS",
+        "类型系统",
+        "结构类型",
+        "重构"
+      ],
+      "wordCount": 1526,
+      "createTime": "2026-10-30T04:14:40.059Z",
+      "updateTime": "2026-10-30T04:14:40.059Z",
+      "order": 9
+    },
+    {
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "fileId": "7c818906",
+      "title": "ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言",
+      "description": "整理本脚手架开发中被 ArkTS 严格模式拦截的高频问题：arkts-no-any、arkts-no-obj-literals-as-types、as 类型断言禁用、动态属性访问禁用，并给出每一类的合规改写方案。",
+      "category": "ArkTS语言与规范",
+      "tags": [
+        "ArkTS",
+        "严格模式",
+        "类型系统",
+        "arkts-no-any"
+      ],
+      "wordCount": 1511,
+      "createTime": "2026-10-30T04:13:16.550Z",
+      "updateTime": "2026-10-30T04:13:16.550Z",
+      "order": 10
+    },
+    {
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "fileId": "7120acda",
+      "title": "ohpm 依赖安装失败与离线内容脚手架的零依赖设计",
+      "description": "记录脚手架构建脚本在 ohpm/npm 依赖安装失败背景下的零依赖改造过程：用 Node 内置模块替代 js-yaml、ejs 等第三方库，实现任何环境可运行的 publish.js。",
+      "category": "环境与工程配置",
+      "tags": [
+        "ohpm",
+        "依赖管理",
+        "离线应用",
+        "Node"
+      ],
+      "wordCount": 1335,
+      "createTime": "2026-10-30T04:12:45.140Z",
+      "updateTime": "2026-10-30T04:12:45.140Z",
+      "order": 11
+    },
+    {
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "fileId": "68eaa075",
+      "title": "DevEco Studio 工程创建与 hvigor 构建缓存问题排查",
+      "description": "记录本脚手架初始化阶段遇到的 hvigor 构建缓存污染、增量构建失败等问题的排查过程与解决方案，涵盖 .hvigor 目录清理时机与 clean 构建的正确用法。",
+      "category": "环境与工程配置",
+      "tags": [
+        "DevEco",
+        "hvigor",
+        "构建缓存"
+      ],
+      "wordCount": 1144,
+      "createTime": "2026-10-30T04:11:31.849Z",
+      "updateTime": "2026-10-30T04:11:31.849Z",
+      "order": 12
+    }
+  ]
+}

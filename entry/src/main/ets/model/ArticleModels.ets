@@ -1,0 +1,78 @@
+/**
+ * 数据模型：与 scripts/publish.js 产出的 rawfile JSON 结构一一对应。
+ * 共享类型统一在本文件声明，导出后供各页面/组件导入（声明唯一原则）。
+ */
+
+/** index.json -> meta */
+export interface IndexMeta {
+  generatedAt: string;
+  totalFiles: number;
+  generator: string;
+}
+
+/** index.json -> files[] 单篇文章元数据 */
+export interface ArticleMeta {
+  /** 中文稳定 ID：路由与展示用 */
+  slug: string;
+  /** 正文文件存储 ID（slug 的 FNV-1a 哈希，8 位十六进制） */
+  fileId: string;
+  title: string;
+  description: string;
+  category: string;
+  tags: string[];
+  wordCount: number;
+  createTime: string;
+  updateTime: string;
+  order: number;
+}
+
+/** index.json 整体 */
+export interface ArticleIndex {
+  meta: IndexMeta;
+  files: ArticleMeta[];
+}
+
+/** taxonomy.json -> tags[]/categories[] 单项 */
+export interface TaxonomyItem {
+  name: string;
+  count: number;
+}
+
+/** taxonomy.json 整体 */
+export interface Taxonomy {
+  generatedAt: string;
+  tags: TaxonomyItem[];
+  categories: TaxonomyItem[];
+}
+
+/** 路由参数：文章详情页（声明唯一，各页面共用） */
+export interface ArticleDetailParams {
+  slug: string;
+}
+
+/** 路由参数：标签详情页 */
+export interface TagDetailParams {
+  tag: string;
+}
+
+/** 路由参数：分类详情页 */
+export interface CategoryDetailParams {
+  category: string;
+}
+
+/** 创建空的文章元数据（供 @Prop 默认值等场景） */
+export function createEmptyArticleMeta(): ArticleMeta {
+  const m: ArticleMeta = {
+    slug: '',
+    fileId: '',
+    title: '',
+    description: '',
+    category: '',
+    tags: [],
+    wordCount: 0,
+    createTime: '',
+    updateTime: '',
+    order: 0
+  };
+  return m;
+}

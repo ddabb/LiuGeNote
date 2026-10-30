@@ -1,0 +1,69 @@
+{
+  "app": {
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "D:/keystore/debug.p12",
+          "storePassword": "00000018E4870BD5CAE2252C504D5B9B017CEC6FB251E4C4F535BF0B36F3A3817275DCCB7B04D12B",
+          "keyAlias": "debug",
+          "keyPassword": "000000188525344EDB231FCA64770265263C66FAB9A4A19B5778E40F11A3AA48734841F1CA725697",
+          "signAlg": "SHA256withECDSA",
+          "profile": "D:/keystore/六哥笔记调试Debug.p7b",
+          "certpath": "D:/keystore/调试证书.cer"
+        }
+      },
+      {
+        "name": "release",
+        "type": "HarmonyOS",
+        "material": {
+          "storeFile": "D:/keystore/toolbox.p12",
+          "storePassword": "000000180C1C945A45524880E12D6A84D34E3E6ACDA1FB2952E08E91D082A4253D7AD4B5D76DA76F",
+          "keyAlias": "toolbox",
+          "keyPassword": "0000001818D31C0F216E3CA0290EF4AEECF18CE1A08CA767323737A53BF1F0F390A80ECB60B90AC1",
+          "signAlg": "SHA256withECDSA",
+          "profile": "D:/keystore/六哥笔记发布Release.p7b",
+          "certpath": "D:/keystore/发布证书.cer"
+        }
+      }
+    ],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "targetSdkVersion": "6.0.0(20)",
+        "compatibleSdkVersion": "6.0.0(20)",
+        "runtimeOS": "HarmonyOS",
+        "buildOption": {
+          "strictMode": {
+            "caseSensitiveCheck": true,
+            "useNormalizedOHMUrl": true
+          }
+        }
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}
