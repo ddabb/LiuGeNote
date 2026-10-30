@@ -60,6 +60,15 @@ export interface CategoryDetailParams {
   category: string;
 }
 
+/** 全文搜索结果：文章元数据 + 命中摘要 + 得分 */
+export class SearchResult {
+  article: ArticleMeta = createEmptyArticleMeta();
+  /** 首个命中位置附近的正文片段 */
+  snippet: string = '';
+  /** 相关度得分（标题/标签/正文加权累计，降序排序用） */
+  score: number = 0;
+}
+
 /** 创建空的文章元数据（供 @Prop 默认值等场景） */
 export function createEmptyArticleMeta(): ArticleMeta {
   const m: ArticleMeta = {

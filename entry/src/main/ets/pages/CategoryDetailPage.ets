@@ -1,20 +1,25 @@
 /**
  * 分类详情页：展示某分类下的全部文章。
  * 路由参数：{ category: encodeURIComponent 后的分类名 }。
+ * 主题色经 @StorageProp 订阅 AppStorage，设置页切换即时刷新。
  */
 import { ArticleCard } from '../common/ArticleCard';
 import { PageHeader } from '../common/PageHeader';
+import { AppTheme, ThemePalette } from '../common/AppTheme';
 import { DataRepository } from '../data/DataRepository';
 import { ArticleDetailParams, ArticleMeta, CategoryDetailParams, TagDetailParams } from '../model/ArticleModels';
-
-const PAGE_BG = '#F4F6F8';
 
 @Entry
 @Component
 struct CategoryDetailPage {
+  @StorageProp(AppTheme.STORAGE_THEME) themeId: number = 0;
   @State category: string = '';
   @State articles: ArticleMeta[] = [];
   @State loadError: string = '';
+
+  private palette(): ThemePalette {
+    return AppTheme.paletteOf(this.themeId);
+  }
 
   aboutToAppear(): void {
     const params = this.getUIContext().getRouter().getParams() as CategoryDetailParams;
@@ -32,56 +37,61 @@ struct CategoryDetailPage {
 
   build() {
     Column() {
-      PageHeader({
-        title: this.category !== '' ? this.category : '分类详情',
-        subtitle: this.loadError === '' ? `共 ${this.articles.length} 篇文章` : '',
-        showBack: true
-      })
+      Column() {
+        PageHeader({
+          title: this.category !== '' ? this.category : '分类详情',
+          subtitle: this.loadError === '' ? `共 ${this.articles.length} 篇文章` : '',
+          showBack: true
+        })
 
-      if (this.loadError !== '') {
-        Column() {
-          Text(this.loadError)
-            .fontSize(14)
-            .fontColor('#C62828')
-            .padding(24)
-        }
-        .width('100%')
-      } else if (this.articles.length === 0) {
-        Column() {
-          Text('该分类下暂无文章')
-            .fontSize(14)
-            .fontColor('#9E9E9E')
-            .padding(24)
-        }
-        .width('100%')
-      } else {
-        Scroll() {
-          Column({ space: 10 }) {
-            ForEach(this.articles, (article: ArticleMeta) => {
-              ArticleCard({
-                article: article,
-                onTap: () => {
-                  this.gotoArticleDetail(article.slug);
-                },
-                onTagTap: (tag: string) => {
-                  this.gotoTagDetail(tag);
-                },
-                onCategoryTap: (category: string) => {
-                  this.gotoCategoryDetail(category);
-                }
-              })
-            }, (article: ArticleMeta) => article.slug)
+        if (this.loadError !== '') {
+          Column() {
+            Text(this.loadError)
+              .fontSize(14)
+              .fontColor(this.palette().error)
+              .padding(24)
           }
           .width('100%')
-          .padding({ left: 16, right: 16, top: 8, bottom: 24 })
+        } else if (this.articles.length === 0) {
+          Column() {
+            Text('该分类下暂无文章')
+              .fontSize(14)
+              .fontColor(this.palette().empty)
+              .padding(24)
+          }
+          .width('100%')
+        } else {
+          Scroll() {
+            Column({ space: 10 }) {
+              ForEach(this.articles, (article: ArticleMeta) => {
+                ArticleCard({
+                  article: article,
+                  onTap: () => {
+                    this.gotoArticleDetail(article.slug);
+                  },
+                  onTagTap: (tag: string) => {
+                    this.gotoTagDetail(tag);
+                  },
+                  onCategoryTap: (category: string) => {
+                    this.gotoCategoryDetail(category);
+                  }
+                })
+              }, (article: ArticleMeta) => article.slug)
+            }
+            .width('100%')
+            .padding({ left: 16, right: 16, top: 8, bottom: 24 })
+          }
+          .scrollBar(BarState.Off)
+          .edgeEffect(EdgeEffect.Spring)
+          .layoutWeight(1)
+          .width('100%')
         }
-        .scrollBar(BarState.Off)
-        .edgeEffect(EdgeEffect.Spring)
-        .layoutWeight(1)
-        .width('100%')
       }
+      .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+      .width('100%')
+      .height('100%')
     }
-    .backgroundColor(PAGE_BG)
+    .backgroundColor(this.palette().pageBg)
     .height('100%')
     .width('100%')
   }

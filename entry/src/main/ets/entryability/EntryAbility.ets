@@ -2,6 +2,7 @@ import { AbilityConstant, ConfigurationConstant, UIAbility, Want } from '@kit.Ab
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { DataRepository } from '../data/DataRepository';
+import { AppTheme } from '../common/AppTheme';
 
 const DOMAIN = 0x0000;
 
@@ -10,6 +11,8 @@ export default class EntryAbility extends UIAbility {
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onCreate');
     // 注入上下文，供 DataRepository 离线读取 rawfile 数据
     DataRepository.getInstance().init(this.context);
+    // 加载主题/字体偏好并播种 AppStorage（页面 @StorageProp 依赖）
+    AppTheme.init(this.context);
   }
 
   onDestroy(): void {

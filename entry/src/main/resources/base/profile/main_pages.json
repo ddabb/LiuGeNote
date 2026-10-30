@@ -5,6 +5,8 @@
     "pages/TagDetailPage",
     "pages/CategoryListPage",
     "pages/CategoryDetailPage",
-    "pages/ArticleDetailPage"
+    "pages/ArticleDetailPage",
+    "pages/SettingsPage",
+    "pages/SearchPage"
   ]
 }

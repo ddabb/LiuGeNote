@@ -9,8 +9,10 @@
 | 文档 | 说明 |
 |---|---|
 | [requirements.md](requirements.md) | 需求说明：背景、功能范围、页面清单、验收标准 |
-| [design.md](design.md) | 设计说明：目录结构、rawfile 数据格式、页面导航关系 |
+| [design.md](design.md) | 设计说明：目录结构、rawfile 数据格式、页面导航、关键决策 |
 | [publish-workflow.md](publish-workflow.md) | 发布流程：publish.js 的能力、用法、扩展指南 |
+| [markdown-rendering.md](markdown-rendering.md) | Markdown 渲染选型：lv-markdown-in 接入与配置 |
+| [元宝建议.md](元宝建议.md) | 产品差异化建议与逐项可行性评估、路线图 |
 
 ## 一句话架构
 
@@ -19,7 +21,7 @@ content/mdfiles/*.md --(node scripts/publish.js)--> entry/src/main/resources/raw
                                                         |
                                                         v
                                             HarmonyOS 应用（离线读取 rawfile）
-                          首页(文章列表) / 标签列表 / 标签详情 / 分类列表 / 分类详情 / 文章详情
+      首页(文章列表+自述说明) / 全文搜索 / 标签与分类列表详情 / 文章详情(阅读画布+导出分享) / 设置(主题·字体·阅读偏好)
 ```
 
 ## 快速开始
