@@ -14,7 +14,11 @@ lgnote2/                                # HarmonyOS 工程根（bundleName: com.
 ├── content/
 │   └── mdfiles/                        # ★ 内容源：Markdown 文档（带 front-matter，12 篇构建手记）
 ├── scripts/
-│   └── publish.js                      # ★ 发布脚本：md → rawfile（纯 Node 内置模块，零依赖）
+│   ├── publish.js                      # ★ 发布脚本：md → rawfile（纯 Node 内置模块，零依赖）
+│   ├── code_stats.py                   # 行数护栏：体量度量 + pre-commit 门禁（纯标准库）
+│   └── size_whitelist.json             # 行数白名单：超标存量登记，只减不增
+├── .githooks/
+│   └── pre-commit                      # 提交门禁：行数护栏（git config core.hooksPath 指向）
 ├── entry/src/main/
 │   ├── ets/
 │   │   ├── entryability/EntryAbility.ets   # 应用入口：注入 context、初始化主题偏好
@@ -167,6 +171,7 @@ front-matter 剥离后的纯 Markdown 正文，应用内交 `@luvi/lv-markdown-i
 | 平板适配 | 内容 maxWidth 720 居中 | 行长可控、PocketToolbox 同款方案；双栏待内容量增长 |
 | 路由 | `@ohos.router` 多页面 | 每页独立注册（main_pages.json），中文参数编码传递 |
 | 构建脚本 | 纯 Node 内置模块 | 零安装成本，任何环境可发布 |
+| 单文件体量 | pre-commit 行数护栏 | 新增/修改 ≤900 物理行；白名单只减不增（对齐 PocketToolbox，见 §8） |
 
 ## 7. 阅读闭环设计（v1.5 优化：借鉴 Kindle / 微信读书 / Apple Books）
 
@@ -206,3 +211,14 @@ front-matter 剥离后的纯 Markdown 正文，应用内交 `@luvi/lv-markdown-i
 - `ArticleCard` 创建时自读 `ReadingTracker.getProgress`，展示「✓ 已读 / 已读 N%」。
 - 列表页 `onPageShow` 自增 `refreshTick` 并拼进 `ForEach` key（`slug_tick`），
   从详情页返回时强制重建卡片，已读状态即时回显（子组件内部状态不随父重渲染刷新的规避方案）。
+
+## 8. 工程护栏（git hooks）
+
+行数护栏约束单文件体量（对齐 autoagc 兄弟项目 PocketToolbox / MathSheet 的 pre-commit 门禁）：
+
+- **启用**：`git config core.hooksPath .githooks`（本机一次性配置；hooks 目录入库随仓库分发）。
+- **规则**：新增/修改 .ets ≤ 900 物理行（含空行与注释，与 IDE 行号一致）；
+  存量超标文件登记 `scripts/size_whitelist.json`，**白名单只减不增**
+  （单向棘轮：可维持、可拆小，不许再长；拆到 ≤900 后移除条目，`--check` 会提示）。
+- **命令**：`py -3 scripts/code_stats.py --check / --top 20 / --init-whitelist`。
+- pre-commit 仅挂行数护栏（本项目单语言单 string.json，无多语资源一致性校验需求）。
