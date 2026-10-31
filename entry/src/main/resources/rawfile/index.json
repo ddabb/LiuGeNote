@@ -1,10 +1,44 @@
 {
   "meta": {
-    "generatedAt": "2026-10-30T04:47:10.394Z",
-    "totalFiles": 12,
+    "generatedAt": "2026-10-31T11:58:23.074Z",
+    "totalFiles": 14,
     "generator": "lgnote publish.js"
   },
   "files": [
+    {
+      "slug": "git钩子行数护栏与提交前门禁",
+      "fileId": "6ff35735",
+      "title": "git hooks 行数护栏：把\"别写太长\"变成提交门禁",
+      "description": "口头约定\"单文件别太长\"总会失守。记录引入 pre-commit 行数护栏的方案：core.hooksPath 让 hooks 随仓库分发、900 物理行的口径选择、白名单只减不增的收敛设计，把代码体量控制从自觉变成门禁。",
+      "category": "环境与工程配置",
+      "tags": [
+        "git",
+        "pre-commit",
+        "代码质量",
+        "工程化"
+      ],
+      "wordCount": 1340,
+      "createTime": "2026-10-31T11:53:07.240Z",
+      "updateTime": "2026-10-31T11:53:07.240Z",
+      "order": 1
+    },
+    {
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "fileId": "51dd3d5b",
+      "title": "Kindle 式阅读闭环：进度记忆、会话统计与读后引导",
+      "description": "给离线笔记应用补上\"接着读\"的能力：进度只进不退的存储模型、渲染完成后恢复滚动位置的时机坑、跨天会话统计与连续天数、以及下一篇/相关阅读的推荐计分，全部零网络零权限落地。",
+      "category": "页面与导航",
+      "tags": [
+        "阅读进度",
+        "滚动恢复",
+        "preferences",
+        "用户体验"
+      ],
+      "wordCount": 2118,
+      "createTime": "2026-10-31T11:51:59.701Z",
+      "updateTime": "2026-10-31T11:51:59.702Z",
+      "order": 2
+    },
     {
       "slug": "工程版本对齐与首次构建报错实录",
       "fileId": "4d885876",
@@ -20,7 +54,7 @@
       "wordCount": 2110,
       "createTime": "2026-10-30T04:47:05.161Z",
       "updateTime": "2026-10-30T04:47:05.161Z",
-      "order": 1
+      "order": 3
     },
     {
       "slug": "rawfile读取与Uint8Array解码缓存实践",
@@ -38,7 +72,7 @@
       "wordCount": 1905,
       "createTime": "2026-10-30T04:15:44.506Z",
       "updateTime": "2026-10-30T04:37:25.231Z",
-      "order": 2
+      "order": 4
     },
     {
       "slug": "列表页通用化与文章卡片组件复用",
@@ -55,7 +89,7 @@
       "wordCount": 1645,
       "createTime": "2026-10-30T04:23:14.479Z",
       "updateTime": "2026-10-30T04:23:14.479Z",
-      "order": 3
+      "order": 5
     },
     {
       "slug": "离线应用权限最小化与包体积控制",
@@ -72,7 +106,7 @@
       "wordCount": 1139,
       "createTime": "2026-10-30T04:22:29.817Z",
       "updateTime": "2026-10-30T04:22:29.818Z",
-      "order": 4
+      "order": 6
     },
     {
       "slug": "front-matter解析与发布期数据校验",
@@ -89,7 +123,7 @@
       "wordCount": 1133,
       "createTime": "2026-10-30T04:21:59.212Z",
       "updateTime": "2026-10-30T04:21:59.212Z",
-      "order": 5
+      "order": 7
     },
     {
       "slug": "Windows文件名非法字符与slug清洗方案",
@@ -106,7 +140,7 @@
       "wordCount": 1198,
       "createTime": "2026-10-30T04:21:31.420Z",
       "updateTime": "2026-10-30T04:21:31.420Z",
-      "order": 6
+      "order": 8
     },
     {
       "slug": "Markdown离线渲染选型与轻量解析器实现",
@@ -123,7 +157,7 @@
       "wordCount": 1260,
       "createTime": "2026-10-30T04:21:03.171Z",
       "updateTime": "2026-10-30T04:21:03.171Z",
-      "order": 7
+      "order": 9
     },
     {
       "slug": "中文参数路由跳转与回退链设计",
@@ -140,7 +174,7 @@
       "wordCount": 1416,
       "createTime": "2026-10-30T04:18:04.662Z",
       "updateTime": "2026-10-30T04:18:04.662Z",
-      "order": 8
+      "order": 10
     },
     {
       "slug": "结构类型到显式接口的数据模型改造",
@@ -157,7 +191,7 @@
       "wordCount": 1526,
       "createTime": "2026-10-30T04:14:40.059Z",
       "updateTime": "2026-10-30T04:14:40.059Z",
-      "order": 9
+      "order": 11
     },
     {
       "slug": "ArkTS严格模式高频报错与合规改写",
@@ -174,7 +208,7 @@
       "wordCount": 1511,
       "createTime": "2026-10-30T04:13:16.550Z",
       "updateTime": "2026-10-30T04:13:16.550Z",
-      "order": 10
+      "order": 12
     },
     {
       "slug": "ohpm依赖失败与构建脚本零依赖改造",
@@ -191,7 +225,7 @@
       "wordCount": 1335,
       "createTime": "2026-10-30T04:12:45.140Z",
       "updateTime": "2026-10-30T04:12:45.140Z",
-      "order": 11
+      "order": 13
     },
     {
       "slug": "DevEco工程初始化与hvigor构建缓存问题",
@@ -207,7 +241,7 @@
       "wordCount": 1144,
       "createTime": "2026-10-30T04:11:31.849Z",
       "updateTime": "2026-10-30T04:11:31.849Z",
-      "order": 12
+      "order": 14
     }
   ]
 }

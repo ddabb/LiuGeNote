@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-30T04:47:10.394Z",
+  "generatedAt": "2026-10-31T11:58:23.074Z",
   "tags": [
     {
       "name": "编码",
@@ -42,7 +42,15 @@
       "count": 1
     },
     {
+      "name": "代码质量",
+      "count": 1
+    },
+    {
       "name": "导航",
+      "count": 1
+    },
+    {
+      "name": "工程化",
       "count": 1
     },
     {
@@ -51,6 +59,10 @@
     },
     {
       "name": "构建缓存",
+      "count": 1
+    },
+    {
+      "name": "滚动恢复",
       "count": 1
     },
     {
@@ -102,6 +114,14 @@
       "count": 1
     },
     {
+      "name": "用户体验",
+      "count": 1
+    },
+    {
+      "name": "阅读进度",
+      "count": 1
+    },
+    {
       "name": "重构",
       "count": 1
     },
@@ -130,6 +150,10 @@
       "count": 1
     },
     {
+      "name": "git",
+      "count": 1
+    },
+    {
       "name": "Markdown",
       "count": 1
     },
@@ -139,6 +163,14 @@
     },
     {
       "name": "ohpm",
+      "count": 1
+    },
+    {
+      "name": "pre-commit",
+      "count": 1
+    },
+    {
+      "name": "preferences",
       "count": 1
     },
     {
@@ -177,7 +209,7 @@
     },
     {
       "name": "环境与工程配置",
-      "count": 4
+      "count": 5
     },
     {
       "name": "数据与渲染",
@@ -185,7 +217,7 @@
     },
     {
       "name": "页面与导航",
-      "count": 2
+      "count": 3
     },
     {
       "name": "ArkTS语言与规范",
