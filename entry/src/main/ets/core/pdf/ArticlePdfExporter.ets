@@ -52,6 +52,23 @@ export class PdfExportResult {
 }
 
 export class ArticlePdfExporter {
+  /** PDFKit 可用性缓存（首次探测后固化） */
+  private static pdfKitReady: boolean | null = null;
+
+  /** 探测 PDFKit 原生组件是否可用（模拟器镜像缺失 @hms:officeservice.pdfservice，真机正常） */
+  static isPdfKitAvailable(): boolean {
+    if (ArticlePdfExporter.pdfKitReady === null) {
+      try {
+        const probe: pdfService.FontInfo = new pdfService.FontInfo();
+        ArticlePdfExporter.pdfKitReady = true;
+      } catch (e) {
+        ArticlePdfExporter.pdfKitReady = false;
+        console.error(`[ArticlePdf] pdfkit unavailable: ${(e as Error).message}`);
+      }
+    }
+    return ArticlePdfExporter.pdfKitReady;
+  }
+
   /** 行工厂（避免类字面量缺字段问题） */
   private static line(text: string, size: number, bold: boolean, color: number,
     indentPt: number, spaceBefore: number): PdfLine {
@@ -271,6 +288,10 @@ export class ArticlePdfExporter {
   static exportToSandbox(context: common.Context, article: ArticleMeta, body: string,
     fontId: number, themeDeepHex: string): PdfExportResult {
     const result: PdfExportResult = new PdfExportResult();
+    if (!ArticlePdfExporter.isPdfKitAvailable()) {
+      result.errMsg = '当前设备不支持 PDF 生成';
+      return result;
+    }
     let fontPath: string = FontRegistry.sandboxFontPath(context, fontId);
     if (fontPath === '') {
       fontPath = FontRegistry.sandboxFontPath(context, 1);

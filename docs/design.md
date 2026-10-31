@@ -169,7 +169,7 @@ front-matter 剥离后的纯 Markdown 正文，应用内交 `@luvi/lv-markdown-i
 | Markdown 渲染 | `@luvi/lv-markdown-in`（ohpm 注册表依赖） | 70+ 样式 API、代码高亮/LaTeX/Mermaid、worker 解析；替代自研解析器（见 markdown-rendering.md） |
 | 主题与阅读偏好 | AppStorage + preferences 持久化 | 页面 @StorageProp 即时刷新；重启经 preferences 恢复 |
 | 内置字体 | rawfile TTF + 双通道注册 | FontCollection.loadFontSync（正文）+ Font.registerFont（预览）；沙箱拷贝供 PDF FontInfo |
-| PDF 导出 | @kit.PDFKit 从零构建 | 免模板；A4 595×842pt 分页；createDocument→insertBlankPage→deletePage 链路 |
+| PDF 导出 | @kit.PDFKit 从零构建 + 能力探测 | 免模板；A4 595×842pt 分页；createDocument→insertBlankPage→deletePage 链路。模拟器镜像缺失 `@hms:officeservice.pdfservice`（pdfService 为 undefined，真机正常）：`isPdfKitAvailable()` 首次 `new FontInfo()` 探测并缓存，失败走"当前设备不支持 PDF 生成"降级，不暴露空指针 |
 | 全文搜索 | 内存语料 + 加权计分 | 12~600 篇毫秒级；零服务零索引文件；FTS5 属过度设计 |
 | 阅读闭环 | 独立 preferences + 派生统计 | 见下节 §7；零网络零权限，Kindle/微信读书式体验全离线落地 |
 | 平板适配 | 内容 maxWidth 720 居中 | 行长可控、PocketToolbox 同款方案；双栏待内容量增长 |

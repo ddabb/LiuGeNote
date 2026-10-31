@@ -533,6 +533,7 @@ struct ArticleDetailPage {
       const result = ArticlePdfExporter.exportToSandbox(
         ctx, this.article, this.bodyText, this.fontId, this.palette().primaryDeep);
       if (!result.ok) {
+        console.error(`[ArticleDetail] pdf gen failed: ${result.errMsg}`);
         ToastUtil.show(this.getUIContext(), `导出失败：${result.errMsg}`, 2000);
         return;
       }
@@ -540,6 +541,7 @@ struct ArticleDetailPage {
         ctx, result.path, `${this.article.slug}.pdf`);
       ToastUtil.show(this.getUIContext(), saved ? 'PDF 已保存' : '已取消保存', 1500);
     } catch (e) {
+      console.error(`[ArticleDetail] pdf export error: ${(e as Error).message}\n${(e as Error).stack}`);
       ToastUtil.show(this.getUIContext(), `导出失败：${(e as Error).message}`, 2000);
     }
     this.exportingPdf = false;
@@ -569,11 +571,13 @@ struct ArticleDetailPage {
       const result = ArticlePdfExporter.exportToSandbox(
         ctx, this.article, this.bodyText, this.fontId, this.palette().primaryDeep);
       if (!result.ok) {
+        console.error(`[ArticleDetail] pdf gen failed: ${result.errMsg}`);
         ToastUtil.show(this.getUIContext(), `生成失败：${result.errMsg}`, 2000);
         return;
       }
       ArticlePdfExporter.sharePdf(ctx, result.path);
     } catch (e) {
+      console.error(`[ArticleDetail] pdf share error: ${(e as Error).message}\n${(e as Error).stack}`);
       ToastUtil.show(this.getUIContext(), `分享失败：${(e as Error).message}`, 2000);
     }
   }
