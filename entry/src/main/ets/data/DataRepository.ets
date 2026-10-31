@@ -4,7 +4,13 @@
  */
 import { util } from '@kit.ArkTS';
 import { common } from '@kit.AbilityKit';
-import { ArticleIndex, ArticleMeta, SearchResult, Taxonomy } from '../model/ArticleModels';
+import { ArticleIndex, ArticleMeta, createEmptyArticleMeta, SearchResult, Taxonomy } from '../model/ArticleModels';
+
+/** 相关阅读计分中间结构（仓库内部用） */
+class RelatedScore {
+  article: ArticleMeta = createEmptyArticleMeta();
+  score: number = 0;
+}
 
 export class DataRepository {
   private static instance: DataRepository | undefined = undefined;
@@ -79,6 +85,48 @@ export class DataRepository {
   /** 按 slug 查文章元数据 */
   getArticleMeta(slug: string): ArticleMeta | undefined {
     return this.getIndex().files.find((a: ArticleMeta) => a.slug === slug);
+  }
+
+  /** 列表顺序中的下一篇（首页列表中位于其下的文章，读后引导用） */
+  getNextArticle(slug: string): ArticleMeta | undefined {
+    const list: ArticleMeta[] = this.getAllArticles();
+    const idx: number = list.findIndex((a: ArticleMeta) => a.slug === slug);
+    if (idx < 0 || idx + 1 >= list.length) {
+      return undefined;
+    }
+    return list[idx + 1];
+  }
+
+  /** 相关阅读：同分类 +3 分、每同标签 +2 分，降序取前 N（排除自身与下一篇避免引导重复） */
+  getRelatedArticles(slug: string, maxCount: number): ArticleMeta[] {
+    const self: ArticleMeta | undefined = this.getArticleMeta(slug);
+    if (self === undefined) {
+      return [];
+    }
+    const next: ArticleMeta | undefined = this.getNextArticle(slug);
+    const related: RelatedScore[] = [];
+    for (const a of this.getAllArticles()) {
+      if (a.slug === slug || (next !== undefined && a.slug === next.slug)) {
+        continue;
+      }
+      let score: number = 0;
+      if (a.category === self.category) {
+        score += 3;
+      }
+      for (const t of self.tags) {
+        if (a.tags.indexOf(t) >= 0) {
+          score += 2;
+        }
+      }
+      if (score > 0) {
+        const rs: RelatedScore = new RelatedScore();
+        rs.article = a;
+        rs.score = score;
+        related.push(rs);
+      }
+    }
+    related.sort((x: RelatedScore, y: RelatedScore) => y.score - x.score);
+    return related.slice(0, maxCount).map((r: RelatedScore) => r.article);
   }
 
   /** 按需加载文章正文（front-matter 已剥离的 Markdown 文本），带容量上限缓存 */

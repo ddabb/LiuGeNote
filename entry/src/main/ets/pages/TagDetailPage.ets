@@ -16,6 +16,8 @@ struct TagDetailPage {
   @State tag: string = '';
   @State articles: ArticleMeta[] = [];
   @State loadError: string = '';
+  /** 页面重新可见的自增标记：拼进 ForEach key 强制重建卡片以刷新已读状态 */
+  @State refreshTick: number = 0;
 
   private palette(): ThemePalette {
     return AppTheme.paletteOf(this.themeId);
@@ -33,6 +35,11 @@ struct TagDetailPage {
     } catch (e) {
       this.loadError = `数据加载失败：${(e as Error).message}`;
     }
+  }
+
+  /** 从详情页返回时刷新卡片已读状态（tick 重建） */
+  onPageShow(): void {
+    this.refreshTick++;
   }
 
   build() {
@@ -76,7 +83,7 @@ struct TagDetailPage {
                     this.gotoCategoryDetail(category);
                   }
                 })
-              }, (article: ArticleMeta) => article.slug)
+              }, (article: ArticleMeta) => `${article.slug}_${this.refreshTick}`)
             }
             .width('100%')
             .padding({ left: 16, right: 16, top: 8, bottom: 24 })

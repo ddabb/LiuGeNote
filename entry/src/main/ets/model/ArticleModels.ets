@@ -85,3 +85,11 @@ export function createEmptyArticleMeta(): ArticleMeta {
   };
   return m;
 }
+
+/** 预计阅读时长（分钟）：中文约 400 字/分钟，至少 1 分钟（Kindle 剩余时长同思路） */
+export function estReadingMinutes(wordCount: number): number {
+  if (!Number.isFinite(wordCount) || wordCount <= 0) {
+    return 1;
+  }
+  return Math.max(1, Math.round(wordCount / 400));
+}

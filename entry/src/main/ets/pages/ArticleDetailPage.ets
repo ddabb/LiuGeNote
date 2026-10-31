@@ -1,7 +1,12 @@
 /**
- * 文章详情页：front-matter 元信息 + Markdown 正文离线渲染 + 导出/分享。
+ * 文章详情页：front-matter 元信息 + Markdown 正文离线渲染 + 导出/分享 + 阅读闭环。
  * - 阅读画布：主题/字体/阅读背景/字号/行距五维偏好驱动（AppStorage + @Watch 即时重配）
  *   导出/分享等低频动作收纳进页头"⋯"菜单，阅读区只保留分类/标签跳转
+ * - 阅读闭环（Kindle/微信读书式）：
+ *   · 进度记忆：滚动比例持久化（ReadingTracker），重开自动恢复到上次位置
+ *   · 时长统计：onPageShow/onPageHide 会话计时，按日累计 + 连续天数
+ *   · 进度反馈：页头下细进度条 + 右下悬浮胶囊（百分比 · 剩余分钟）
+ *   · 读后引导：文末「下一篇」大卡片 + 相关阅读（同分类/标签推荐）
  * - 正文渲染：@luvi/lv-markdown-in 引擎，显式开启 Mermaid / HTML 预览 / 跨文本选择复制
  * - 导出：PDF（@kit.PDFKit 从零构建，内置字体沙箱化）/ Markdown 源文件，
  *   均经系统保存器（DocumentViewPicker）落盘到用户所选目录，免权限
@@ -14,6 +19,7 @@ import { PageHeader } from '../common/PageHeader';
 import { AppTheme, ReadingBg, ThemePalette } from '../common/AppTheme';
 import { FontRegistry } from '../common/FontRegistry';
 import { ToastUtil } from '../common/ToastUtil';
+import { ReadingTracker } from '../core/ReadingTracker';
 import { ArticlePdfExporter } from '../core/pdf/ArticlePdfExporter';
 import { DataRepository } from '../data/DataRepository';
 import {
@@ -21,6 +27,7 @@ import {
   ArticleMeta,
   CategoryDetailParams,
   createEmptyArticleMeta,
+  estReadingMinutes,
   TagDetailParams
 } from '../model/ArticleModels';
 
@@ -38,9 +45,29 @@ struct ArticleDetailPage {
   @State isLoaded: boolean = false;
   @State exportingPdf: boolean = false;
   @State exportingMd: boolean = false;
+  /** 阅读进度（0-100），驱动进度条/悬浮胶囊/持久化 */
+  @State readPct: number = 0;
+  /** 剩余阅读分钟数（按进度折算） */
+  @State remainMinutes: number = 0;
+  /** 下一篇（读后引导） */
+  @State nextArticle: ArticleMeta | undefined = undefined;
+  /** 相关阅读（同分类/标签推荐） */
+  @State relatedArticles: ArticleMeta[] = [];
 
   private controller: MarkdownController = new MarkdownController();
   private menuItems: MenuElement[] = [];
+  private scroller: Scroller = new Scroller();
+  /** 阅读区视口高度（vp，Scroll 自身测得） */
+  private viewportH: number = 0;
+  /** 阅读内容总高度（vp，内容根节点测得） */
+  private contentH: number = 0;
+  /** 待恢复的上次阅读位置（渲染完成后 scrollTo） */
+  private restorePending: boolean = false;
+  private restoreRatio: number = 0;
+  /** 本页阅读会话起点（ms），onPageShow/onPageHide 间累计 */
+  private sessionStart: number = 0;
+  /** 上次进度持久化时间（节流） */
+  private lastSaveAt: number = 0;
 
   private palette(): ThemePalette {
     return AppTheme.paletteOf(this.themeId);
@@ -70,8 +97,109 @@ struct ArticleDetailPage {
       this.bodyText = repo.getArticleBody(meta);
       this.isLoaded = true;
       this.applyMarkdownStyles();
+      // 阅读闭环：登记本次打开 + 恢复上次进度 + 预取读后引导
+      ReadingTracker.markOpen(slug);
+      this.readPct = ReadingTracker.getProgress(slug);
+      this.remainMinutes = Math.max(1, Math.round(estReadingMinutes(meta.wordCount) * (100 - this.readPct) / 100));
+      this.restoreRatio = this.readPct / 100;
+      this.restorePending = this.readPct > 0;
+      this.nextArticle = repo.getNextArticle(slug);
+      this.relatedArticles = repo.getRelatedArticles(slug, 3);
+      this.sessionStart = Date.now();
     } catch (e) {
       this.loadError = `文章加载失败：${(e as Error).message}`;
+    }
+  }
+
+  onPageShow(): void {
+    // 页面重新可见（含路由返回/回前台）：续起会话计时
+    this.sessionStart = Date.now();
+  }
+
+  onPageHide(): void {
+    // 页面不可见（跳其他页/回后台）：结算本次阅读会话
+    this.saveSession();
+  }
+
+  aboutToDisappear(): void {
+    this.saveSession();
+  }
+
+  /** 结算阅读会话：累计时长（封顶防异常）并持久化进度 */
+  private saveSession(): void {
+    if (!this.isLoaded || this.sessionStart === 0) {
+      return;
+    }
+    const elapsed: number = Math.round((Date.now() - this.sessionStart) / 1000);
+    this.sessionStart = Date.now();
+    if (elapsed > 0) {
+      ReadingTracker.addSeconds(elapsed);
+    }
+    this.persistProgress();
+  }
+
+  /** 进度持久化（ReadingTracker 内部只进不退） */
+  private persistProgress(): void {
+    if (!this.isLoaded) {
+      return;
+    }
+    ReadingTracker.setProgress(this.article.slug, this.readPct);
+    this.lastSaveAt = Date.now();
+  }
+
+  /** 滚动回调：更新进度展示 + 节流持久化（5s） */
+  private onScrollChange(): void {
+    this.updateProgress();
+    if (Date.now() - this.lastSaveAt > 5000) {
+      this.persistProgress();
+    }
+  }
+
+  /** 依据滚动位置换算阅读百分比 */
+  private updateProgress(): void {
+    const maxExtent: number = this.contentH - this.viewportH;
+    if (maxExtent <= 0) {
+      // 内容不超一屏：整篇可视即读完
+      this.setPct(100);
+      return;
+    }
+    const y: number = this.scroller.currentOffset().yOffset;
+    const ratio: number = Math.max(0, Math.min(1, y / maxExtent));
+    this.setPct(Math.round(ratio * 100));
+  }
+
+  /** 更新进度与剩余分钟（值变化才刷新状态） */
+  private setPct(pct: number): void {
+    const v: number = Math.max(0, Math.min(100, pct));
+    if (v === this.readPct) {
+      return;
+    }
+    this.readPct = v;
+    const totalMin: number = estReadingMinutes(this.article.wordCount);
+    this.remainMinutes = Math.max(0, Math.round(totalMin * (100 - v) / 100));
+  }
+
+  /** 正文渲染完成：延迟取最终布局后恢复上次阅读位置（或整篇可视直接判读完） */
+  private onRenderComplete(): void {
+    setTimeout(() => {
+      this.attemptRestore();
+      if (!this.restorePending && this.contentH > 0 && this.contentH - this.viewportH <= 0) {
+        this.setPct(100);
+        this.persistProgress();
+      }
+    }, 300);
+  }
+
+  /** 尝试恢复滚动位置（布局高度就绪后一次性执行） */
+  private attemptRestore(): void {
+    if (!this.restorePending || this.contentH <= 0 || this.viewportH <= 0) {
+      return;
+    }
+    this.restorePending = false;
+    const maxExtent: number = this.contentH - this.viewportH;
+    if (maxExtent > 0 && this.restoreRatio > 0) {
+      this.scroller.scrollTo({ xOffset: 0, yOffset: this.restoreRatio * maxExtent });
+      this.updateProgress();
     }
   }
 
@@ -171,12 +299,20 @@ struct ArticleDetailPage {
       PageHeader({
         title: this.isLoaded ? this.article.title : '文章详情',
         subtitle: this.isLoaded
-          ? `${this.article.category} · ${this.article.wordCount} 字 · ${this.datePart(this.article.updateTime)}`
+          ? `${this.article.category} · ${this.article.wordCount} 字 · 约 ${estReadingMinutes(this.article.wordCount)} 分钟 · ${this.datePart(this.article.updateTime)}`
           : '',
         showBack: true,
         onDark: this.readingBg().dark,
         menuItems: this.menuItems
       })
+
+      // 细进度条：阅读进度即时反馈（0 时不可见，100 时满格）
+      Progress({ value: this.readPct, total: 100, type: ProgressType.Linear })
+        .height(2)
+        .width('100%')
+        .color(this.readingBg().dark ? this.palette().primarySoft : this.palette().primary)
+        .backgroundColor('#00000000')
+        .visibility(this.isLoaded ? Visibility.Visible : Visibility.None)
 
       if (this.loadError !== '') {
         Column({ space: 8 }) {
@@ -205,68 +341,117 @@ struct ArticleDetailPage {
         .layoutWeight(1)
         .width('100%')
       } else {
-        Scroll() {
-          // 阅读画布：阅读背景作为画布底色，宽度收窄居中保证行长可读
-          Column({ space: 0 }) {
-            Column({ space: 14 }) {
-              // 元信息行：分类 + 标签（可跳转）
-              Flex({ direction: FlexDirection.Row, wrap: FlexWrap.Wrap, alignItems: ItemAlign.Center }) {
-                Text(this.article.category)
-                  .fontSize(12)
-                  .fontColor(this.readingBg().dark ? this.palette().primarySoft : this.palette().primary)
-                  .padding({ left: 10, right: 10, top: 5, bottom: 5 })
-                  .backgroundColor(this.readingBg().dark ? this.readingBg().chipBg : this.palette().tint)
-                  .borderRadius(11)
-                  .margin({ right: 6, bottom: 6 })
-                  .onClick(() => {
-                    this.gotoCategoryDetail(this.article.category);
-                  })
-                ForEach(this.article.tags, (tag: string) => {
-                  Text(`# ${tag}`)
+        // 悬浮胶囊锚定的 Stack：Scroll 主体 + 右下阅读进度胶囊
+        Stack({ alignContent: Alignment.BottomEnd }) {
+          Scroll(this.scroller) {
+            // 阅读画布：阅读背景作为画布底色，宽度收窄居中保证行长可读
+            Column({ space: 0 }) {
+              Column({ space: 14 }) {
+                // 元信息行：分类 + 标签（可跳转）
+                Flex({ direction: FlexDirection.Row, wrap: FlexWrap.Wrap, alignItems: ItemAlign.Center }) {
+                  Text(this.article.category)
                     .fontSize(12)
-                    .fontColor(this.readingBg().dark ? this.readingBg().bodyText : this.palette().desc)
+                    .fontColor(this.readingBg().dark ? this.palette().primarySoft : this.palette().primary)
                     .padding({ left: 10, right: 10, top: 5, bottom: 5 })
-                    .backgroundColor(this.readingBg().chipBg)
+                    .backgroundColor(this.readingBg().dark ? this.readingBg().chipBg : this.palette().tint)
                     .borderRadius(11)
                     .margin({ right: 6, bottom: 6 })
                     .onClick(() => {
-                      this.gotoTagDetail(tag);
+                      this.gotoCategoryDetail(this.article.category);
                     })
-                }, (tag: string) => tag)
-              }
-              .width('100%')
-
-              // Markdown 正文：lv-markdown-in 引擎渲染（五维阅读偏好经 controller 配置）
-              Markdown({
-                controller: this.controller,
-                text: this.bodyText,
-                mode: 'text',
-                callback: {
-                  complete: () => {
-                  },
-                  fail: (code: number, message: string) => {
-                    this.loadError = `正文渲染失败（${code}）：${message}`;
-                  }
+                  ForEach(this.article.tags, (tag: string) => {
+                    Text(`# ${tag}`)
+                      .fontSize(12)
+                      .fontColor(this.readingBg().dark ? this.readingBg().bodyText : this.palette().desc)
+                      .padding({ left: 10, right: 10, top: 5, bottom: 5 })
+                      .backgroundColor(this.readingBg().chipBg)
+                      .borderRadius(11)
+                      .margin({ right: 6, bottom: 6 })
+                      .onClick(() => {
+                        this.gotoTagDetail(tag);
+                      })
+                  }, (tag: string) => tag)
                 }
+                .width('100%')
+
+                // Markdown 正文：lv-markdown-in 引擎渲染（五维阅读偏好经 controller 配置）
+                Markdown({
+                  controller: this.controller,
+                  text: this.bodyText,
+                  mode: 'text',
+                  callback: {
+                    complete: () => {
+                      this.onRenderComplete();
+                    },
+                    fail: (code: number, message: string) => {
+                      this.loadError = `正文渲染失败（${code}）：${message}`;
+                    }
+                  }
+                })
+                  .padding({ top: 2, bottom: 16 })
+              }
+              .alignItems(HorizontalAlign.Start)
+              .width('100%')
+              .padding({ left: 20, right: 20, top: 16, bottom: 8 })
+              .borderRadius(16)
+              .backgroundColor(this.readingBg().contentBg)
+              .border({
+                width: 1,
+                color: this.readingBg().dark ? '#00000000' : '#ECEFF3'
               })
-                .padding({ top: 2, bottom: 16 })
+
+              // 读后引导：下一篇 + 相关阅读（读完自然衔接，replaceUrl 保持栈浅）
+              Column({ space: 12 }) {
+                if (this.nextArticle !== undefined) {
+                  this.nextArticleCard(this.nextArticle)
+                }
+                if (this.relatedArticles.length > 0) {
+                  Text('相关阅读')
+                    .fontSize(12)
+                    .fontWeight(FontWeight.Medium)
+                    .fontColor(this.palette().meta)
+                  ForEach(this.relatedArticles, (rel: ArticleMeta) => {
+                    this.relatedRow(rel)
+                  }, (rel: ArticleMeta) => rel.slug)
+                }
+              }
+              .alignItems(HorizontalAlign.Start)
+              .width('100%')
+              .padding({ top: 16, bottom: 8 })
             }
-            .alignItems(HorizontalAlign.Start)
             .width('100%')
-            .padding({ left: 20, right: 20, top: 16, bottom: 8 })
-            .borderRadius(16)
-            .backgroundColor(this.readingBg().contentBg)
-            .border({
-              width: 1,
-              color: this.readingBg().dark ? '#00000000' : '#ECEFF3'
+            .padding({ left: 16, right: 16, top: 8, bottom: 32 })
+            .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+            .onAreaChange((oldArea: Area, newArea: Area) => {
+              this.contentH = newArea.height as number;
+              this.attemptRestore();
             })
           }
+          .scrollBar(BarState.Off)
+          .edgeEffect(EdgeEffect.Spring)
+          .onScroll((xOffset: number, yOffset: number) => {
+            this.onScrollChange();
+          })
+          .onAreaChange((oldArea: Area, newArea: Area) => {
+            this.viewportH = newArea.height as number;
+            this.attemptRestore();
+          })
           .width('100%')
-          .padding({ left: 16, right: 16, top: 8, bottom: 32 })
-          .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+          .height('100%')
+
+          // 阅读进度悬浮胶囊：百分比 + 剩余分钟（0/100 时隐藏）
+          if (this.readPct > 0 && this.readPct < 100) {
+            Text(this.readPct < ReadingTracker.DONE_PCT
+              ? `${this.readPct}% · 剩约 ${Math.max(1, this.remainMinutes)} 分钟`
+              : `${this.readPct}%`)
+              .fontSize(11)
+              .fontColor(this.readingBg().bodyText)
+              .padding({ left: 10, right: 10, top: 5, bottom: 5 })
+              .backgroundColor(`${this.readingBg().chipBg}E6`)
+              .borderRadius(14)
+              .margin(16)
+          }
         }
-        .scrollBar(BarState.Off)
-        .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')
       }
@@ -274,6 +459,61 @@ struct ArticleDetailPage {
     .backgroundColor(this.readingBg().dark ? '#17191C' : this.palette().pageBg)
     .height('100%')
     .width('100%')
+  }
+
+  /** 下一篇大卡片：读完自然衔接（replaceUrl 保持路由栈浅） */
+  @Builder
+  private nextArticleCard(next: ArticleMeta) {
+    Column({ space: 8 }) {
+      Text('下一篇')
+        .fontSize(12)
+        .fontWeight(FontWeight.Medium)
+        .fontColor(this.readingBg().dark ? this.palette().primarySoft : this.palette().primary)
+      Text(next.title)
+        .fontSize(17)
+        .fontWeight(FontWeight.Bold)
+        .fontColor(this.palette().primaryDeep)
+        .maxLines(2)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+        .width('100%')
+      Text(`${next.category} · ${next.wordCount} 字 · 约 ${estReadingMinutes(next.wordCount)} 分钟`)
+        .fontSize(11)
+        .fontColor(this.palette().meta)
+    }
+    .alignItems(HorizontalAlign.Start)
+    .width('100%')
+    .padding(16)
+    .borderRadius(12)
+    .backgroundColor(this.palette().cardBg)
+    .border({
+      width: 1,
+      color: this.readingBg().dark ? '#2C3036' : '#ECEFF3'
+    })
+    .onClick(() => {
+      this.gotoReplace(next.slug);
+    })
+  }
+
+  /** 相关阅读行：标题 + 字数，点击替换当前页 */
+  @Builder
+  private relatedRow(rel: ArticleMeta) {
+    Row({ space: 8 }) {
+      Text(rel.title)
+        .fontSize(14)
+        .fontWeight(FontWeight.Medium)
+        .fontColor(this.readingBg().dark ? '#C6CCD4' : this.palette().desc)
+        .maxLines(1)
+        .textOverflow({ overflow: TextOverflow.Ellipsis })
+        .layoutWeight(1)
+      Text(`${rel.wordCount} 字`)
+        .fontSize(11)
+        .fontColor(this.palette().meta)
+    }
+    .width('100%')
+    .padding({ top: 8, bottom: 8, left: 4, right: 4 })
+    .onClick(() => {
+      this.gotoReplace(rel.slug);
+    })
   }
 
   /** ISO 时间取日期部分 */
@@ -336,6 +576,13 @@ struct ArticleDetailPage {
     } catch (e) {
       ToastUtil.show(this.getUIContext(), `分享失败：${(e as Error).message}`, 2000);
     }
+  }
+
+  /** 跳转：读后引导替换当前页（先结算本篇会话） */
+  private gotoReplace(slug: string): void {
+    this.saveSession();
+    const params: ArticleDetailParams = { slug: encodeURIComponent(slug) };
+    this.getUIContext().getRouter().replaceUrl({ url: 'pages/ArticleDetailPage', params: params });
   }
 
   /** 跳转：标签详情 */

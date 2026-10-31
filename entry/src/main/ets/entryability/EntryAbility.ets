@@ -3,6 +3,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { DataRepository } from '../data/DataRepository';
 import { AppTheme } from '../common/AppTheme';
+import { ReadingTracker } from '../core/ReadingTracker';
 
 const DOMAIN = 0x0000;
 
@@ -13,6 +14,8 @@ export default class EntryAbility extends UIAbility {
     DataRepository.getInstance().init(this.context);
     // 加载主题/字体偏好并播种 AppStorage（页面 @StorageProp 依赖）
     AppTheme.init(this.context);
+    // 阅读闭环：进度记忆/时长统计/连续天数（纯本地 preferences）
+    ReadingTracker.init(this.context);
   }
 
   onDestroy(): void {
