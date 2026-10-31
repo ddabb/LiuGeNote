@@ -124,7 +124,7 @@ struct Index {
     Column() {
       Column() {
         PageHeader({
-          title: 'LgNote 离线笔记',
+          title: '阅微堂',
           subtitle: this.buildSubtitle(),
           actions: this.headerActions
         })
