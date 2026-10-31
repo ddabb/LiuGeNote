@@ -1,6 +1,5 @@
 ---
 title: rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践
-category: 数据与渲染
 tags: [rawfile, 资源管理, 编码, UTF-8, 缓存]
 description: 记录离线应用读取 rawfile 数据的完整踩坑过程：getRawFileContent 返回 Uint8Array 的解码、TextDecoder 指定 UTF-8 避免 BOM 乱码、大文件按需加载与内存缓存策略。
 ---

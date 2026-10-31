@@ -3,13 +3,15 @@
  * LgNote 离线内容发布脚本（对标 F:\SelfJob\vercel-ci\publish.js）
  *
  * 职责：
- *   content/mdfiles/*.md  ──解析 front-matter──▶  entry/src/main/resources/rawfile/
+ *   content/mdfiles/<分类>/*.md  ──解析 front-matter──▶  entry/src/main/resources/rawfile/
  *     ├── index.json       文章元数据索引（对标 jsons/mdfiles.json）
  *     ├── taxonomy.json    标签/分类统计（对标 taxonomy 统计）
  *     └── articles/<slug>.md  正文（front-matter 已剥离，对标 md2html 产物的数据部分）
  *
  * 特性：纯 Node 内置模块（fs/path），零第三方依赖；slug 清洗对标 sanitizeFileName；
  *       slug 撞车直接失败；无描述文章自动摘要兜底并警告。
+ *       目录即分类（对齐 PortableKnowledge source/）：rel 第一级子目录名 = 分类，
+ *       根级平铺文件回退 front-matter.category，再回退"未分类"。
  *
  * 用法：node scripts/publish.js [--content <dir>] [--out <dir>] [--watch]
  */
@@ -216,10 +218,16 @@ function publish() {
 
     const fmTitle = typeof frontMatter.title === 'string' ? frontMatter.title : '';
     const fmDesc = typeof frontMatter.description === 'string' ? frontMatter.description : '';
+
+    // 目录即分类（对齐 PortableKnowledge source/<分类>/…）：
+    // rel 第一级子目录名 = 分类；根级平铺文件回退 front-matter.category；再回退未分类。
+    const dirParts = rel.split(path.sep);
+    const dirCategory = dirParts.length > 1 ? dirParts[0].trim() : '';
     const fmCategory =
       typeof frontMatter.category === 'string' && frontMatter.category.trim()
         ? frontMatter.category.trim()
-        : DEFAULT_CATEGORY;
+        : '';
+    const category = dirCategory || fmCategory || DEFAULT_CATEGORY;
 
     let description = fmDesc.trim();
     if (!description) {
@@ -233,7 +241,7 @@ function publish() {
       name: path.basename(rel),
       title: fmTitle.trim() || slug,
       description,
-      category: fmCategory,
+      category,
       tags: normalizeTags(frontMatter.tags),
       wordCount,
       createTime: stats.birthtime.toISOString(),

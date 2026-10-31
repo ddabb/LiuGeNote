@@ -1,6 +1,5 @@
 ---
 title: Markdown 离线渲染选型：Web 组件还是原生解析
-category: 数据与渲染
 tags: [Markdown, 渲染, 性能, 选型]
 description: 记录文章详情页 Markdown 渲染方案的选型对比：Web 组件加载预渲染 HTML 与 ArkUI 原生解析渲染的优劣权衡，最终实现轻量解析器 + Builder 渲染的分层设计。
 ---

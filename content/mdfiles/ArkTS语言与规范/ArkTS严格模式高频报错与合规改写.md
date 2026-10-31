@@ -1,6 +1,5 @@
 ---
 title: ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言
-category: ArkTS语言与规范
 tags: [ArkTS, 严格模式, 类型系统, arkts-no-any]
 description: 整理本脚手架开发中被 ArkTS 严格模式拦截的高频问题：arkts-no-any、arkts-no-obj-literals-as-types、as 类型断言禁用、动态属性访问禁用，并给出每一类的合规改写方案。
 ---

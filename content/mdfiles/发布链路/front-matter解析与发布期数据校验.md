@@ -1,6 +1,5 @@
 ---
 title: front-matter 解析、字数统计与无描述文章的发布期校验
-category: 发布链路
 tags: [front-matter, publish, 校验, 字数统计]
 description: 记录 publish.js 对标 vercel-ci 的三个数据整形细节：front-matter 的 YAML 子集解析容错、与参考项目口径一致的字数统计、以及无描述文章的发布警告机制。
 ---

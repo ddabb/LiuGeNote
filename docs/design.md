@@ -12,7 +12,7 @@ lgnote2/                                # HarmonyOS 工程根（bundleName: com.
 │   ├── markdown-rendering.md           # Markdown 渲染选型（lv-markdown-in）
 │   └── 元宝建议.md                      # 产品建议与可行性评估
 ├── content/
-│   └── mdfiles/                        # ★ 内容源：Markdown 文档（带 front-matter，12 篇构建手记）
+│   └── mdfiles/                        # ★ 内容源：<分类>/*.md，目录即分类（构建手记）
 ├── scripts/
 │   ├── publish.js                      # ★ 发布脚本：md → rawfile（纯 Node 内置模块，零依赖）
 │   ├── code_stats.py                   # 行数护栏：体量度量 + pre-commit 门禁（纯标准库）
@@ -52,12 +52,15 @@ lgnote2/                                # HarmonyOS 工程根（bundleName: com.
 │       └── font/                       # 内置 TTF 字体（思源黑体/霞鹜文楷）
 ```
 
-## 2. Markdown 文档源约定（content/mdfiles/*.md）
+## 2. Markdown 文档源约定（content/mdfiles/<分类>/*.md）
+
+**目录即分类**（对齐 PortableKnowledge source/）：文件所在第一级子目录名 = 分类；
+根级平铺文件回退 front-matter `category`（兼容），再回退"未分类"。
+新增分类 = 建子目录，杜绝 front-matter 手写拼写漂移导致分类分裂。
 
 ```markdown
 ---
 title: 文章标题（缺省时取文件名去扩展名）
-category: 分类名（缺省 "未分类"）
 tags: [标签1, 标签2]        # 或逗号分隔字符串
 description: 摘要（缺省取正文前 80 字）
 ---
@@ -65,9 +68,10 @@ description: 摘要（缺省取正文前 80 字）
 # 正文（Markdown）...
 ```
 
-- front-matter 解析规则对标 `publish.js`：`---` 围栏、YAML 子集（title/category/tags/description）。
+- front-matter 解析规则对标 `publish.js`：`---` 围栏、YAML 子集（title/tags/description）。
 - 正文字数统计：剥离所有空白字符后计数（与 publish.js 的 wordCount 口径一致）。
-- slug：文件名去 `.md` 并清洗非法字符（`/ \ ? % * : | " < >` → `-`），是文章稳定 ID。
+- slug：文件名去 `.md` 并清洗非法字符（`/ \ ? % * : | " < >` → `-`），是文章稳定 ID ——
+  **与所在目录无关**：文章移动目录不改 slug/fileId（阅读进度等数据不受影响），仅改变分类。
 
 ## 3. rawfile 数据格式（publish.js 输出）
 

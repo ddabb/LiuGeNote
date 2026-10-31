@@ -1,6 +1,5 @@
 ---
 title: Windows 文件名非法字符与文章 slug 清洗方案
-category: 数据与渲染
 tags: [slug, 文件名, 清洗, 跨平台]
 description: 记录在 Windows 环境下生成文章 slug 时遇到的非法字符问题：冒号、引号等字符在文件系统层面就不合法，publish.js 的 sanitizeFileName 对标 vercel-ci 的清洗规则与 slug 稳定性设计。
 ---

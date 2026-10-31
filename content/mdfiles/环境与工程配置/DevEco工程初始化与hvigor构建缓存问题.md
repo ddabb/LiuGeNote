@@ -1,6 +1,5 @@
 ---
 title: DevEco Studio 工程创建与 hvigor 构建缓存问题排查
-category: 环境与工程配置
 tags: [DevEco, hvigor, 构建缓存]
 description: 记录本脚手架初始化阶段遇到的 hvigor 构建缓存污染、增量构建失败等问题的排查过程与解决方案，涵盖 .hvigor 目录清理时机与 clean 构建的正确用法。
 ---

@@ -1,6 +1,5 @@
 ---
 title: ohpm 依赖安装失败与离线内容脚手架的零依赖设计
-category: 环境与工程配置
 tags: [ohpm, 依赖管理, 离线应用, Node]
 description: 记录脚手架构建脚本在 ohpm/npm 依赖安装失败背景下的零依赖改造过程：用 Node 内置模块替代 js-yaml、ejs 等第三方库，实现任何环境可运行的 publish.js。
 ---
