@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * LgNote 离线内容发布脚本（对标 F:\SelfJob\vercel-ci\publish.js）
+ * 行知（LgNote）离线内容发布脚本（对标 F:\SelfJob\vercel-ci\publish.js）
  *
  * 职责：
  *   content/mdfiles/<分类>/*.md  ──解析 front-matter──▶  entry/src/main/resources/rawfile/

@@ -1,10 +1,28 @@
 {
   "meta": {
-    "generatedAt": "2026-10-31T11:58:23.074Z",
-    "totalFiles": 14,
+    "generatedAt": "2026-11-01T02:53:29.808Z",
+    "totalFiles": 15,
     "generator": "lgnote publish.js"
   },
   "files": [
+    {
+      "slug": "应用更名行知与闲章图标设计",
+      "fileId": "48ade57d",
+      "title": "应用更名\"行知\"：命名取舍、闲章图标与商标合规",
+      "description": "从\"LgNote 离线笔记\"到\"行知\"：陶行知两次改名的典故、知行与行知的撞名对比；闲章式图标的设计与 GDI+ 生成——整串渲染丢字、ClearType 彩边两个坑与像素探针验收；以及个人自用与商业化两种场景下的商标检查清单。",
+      "category": "发布链路",
+      "tags": [
+        "命名",
+        "品牌",
+        "图标设计",
+        "商标合规",
+        "GDI+"
+      ],
+      "wordCount": 2152,
+      "createTime": "2026-11-01T02:53:14.781Z",
+      "updateTime": "2026-11-01T02:53:14.782Z",
+      "order": 1
+    },
     {
       "slug": "git钩子行数护栏与提交前门禁",
       "fileId": "6ff35735",
@@ -20,7 +38,7 @@
       "wordCount": 1340,
       "createTime": "2026-10-31T11:53:07.240Z",
       "updateTime": "2026-10-31T11:53:07.240Z",
-      "order": 1
+      "order": 2
     },
     {
       "slug": "Kindle式阅读闭环与进度记忆设计",
@@ -37,7 +55,7 @@
       "wordCount": 2118,
       "createTime": "2026-10-31T11:51:59.701Z",
       "updateTime": "2026-10-31T11:51:59.702Z",
-      "order": 2
+      "order": 3
     },
     {
       "slug": "工程版本对齐与首次构建报错实录",
@@ -54,7 +72,7 @@
       "wordCount": 2110,
       "createTime": "2026-10-30T04:47:05.161Z",
       "updateTime": "2026-10-30T04:47:05.161Z",
-      "order": 3
+      "order": 4
     },
     {
       "slug": "rawfile读取与Uint8Array解码缓存实践",
@@ -72,7 +90,7 @@
       "wordCount": 1905,
       "createTime": "2026-10-30T04:15:44.506Z",
       "updateTime": "2026-10-30T04:37:25.231Z",
-      "order": 4
+      "order": 5
     },
     {
       "slug": "列表页通用化与文章卡片组件复用",
@@ -89,7 +107,7 @@
       "wordCount": 1645,
       "createTime": "2026-10-30T04:23:14.479Z",
       "updateTime": "2026-10-30T04:23:14.479Z",
-      "order": 5
+      "order": 6
     },
     {
       "slug": "离线应用权限最小化与包体积控制",
@@ -106,7 +124,7 @@
       "wordCount": 1139,
       "createTime": "2026-10-30T04:22:29.817Z",
       "updateTime": "2026-10-30T04:22:29.818Z",
-      "order": 6
+      "order": 7
     },
     {
       "slug": "front-matter解析与发布期数据校验",
@@ -123,7 +141,7 @@
       "wordCount": 1133,
       "createTime": "2026-10-30T04:21:59.212Z",
       "updateTime": "2026-10-30T04:21:59.212Z",
-      "order": 7
+      "order": 8
     },
     {
       "slug": "Windows文件名非法字符与slug清洗方案",
@@ -140,7 +158,7 @@
       "wordCount": 1198,
       "createTime": "2026-10-30T04:21:31.420Z",
       "updateTime": "2026-10-30T04:21:31.420Z",
-      "order": 8
+      "order": 9
     },
     {
       "slug": "Markdown离线渲染选型与轻量解析器实现",
@@ -157,7 +175,7 @@
       "wordCount": 1260,
       "createTime": "2026-10-30T04:21:03.171Z",
       "updateTime": "2026-10-30T04:21:03.171Z",
-      "order": 9
+      "order": 10
     },
     {
       "slug": "中文参数路由跳转与回退链设计",
@@ -174,7 +192,7 @@
       "wordCount": 1416,
       "createTime": "2026-10-30T04:18:04.662Z",
       "updateTime": "2026-10-30T04:18:04.662Z",
-      "order": 10
+      "order": 11
     },
     {
       "slug": "结构类型到显式接口的数据模型改造",
@@ -191,7 +209,7 @@
       "wordCount": 1526,
       "createTime": "2026-10-30T04:14:40.059Z",
       "updateTime": "2026-10-30T04:14:40.059Z",
-      "order": 11
+      "order": 12
     },
     {
       "slug": "ArkTS严格模式高频报错与合规改写",
@@ -208,7 +226,7 @@
       "wordCount": 1511,
       "createTime": "2026-10-30T04:13:16.550Z",
       "updateTime": "2026-10-30T04:13:16.550Z",
-      "order": 12
+      "order": 13
     },
     {
       "slug": "ohpm依赖失败与构建脚本零依赖改造",
@@ -225,7 +243,7 @@
       "wordCount": 1335,
       "createTime": "2026-10-30T04:12:45.140Z",
       "updateTime": "2026-10-30T04:12:45.140Z",
-      "order": 13
+      "order": 14
     },
     {
       "slug": "DevEco工程初始化与hvigor构建缓存问题",
@@ -241,7 +259,7 @@
       "wordCount": 1144,
       "createTime": "2026-10-30T04:11:31.849Z",
       "updateTime": "2026-10-30T04:11:31.849Z",
-      "order": 14
+      "order": 15
     }
   ]
 }

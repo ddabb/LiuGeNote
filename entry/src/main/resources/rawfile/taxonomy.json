@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T11:58:23.074Z",
+  "generatedAt": "2026-11-01T02:53:29.808Z",
   "tags": [
     {
       "name": "编码",
@@ -82,11 +82,27 @@
       "count": 1
     },
     {
+      "name": "命名",
+      "count": 1
+    },
+    {
+      "name": "品牌",
+      "count": 1
+    },
+    {
       "name": "清洗",
       "count": 1
     },
     {
       "name": "权限",
+      "count": 1
+    },
+    {
+      "name": "商标合规",
+      "count": 1
+    },
+    {
+      "name": "图标设计",
       "count": 1
     },
     {
@@ -150,6 +166,10 @@
       "count": 1
     },
     {
+      "name": "GDI+",
+      "count": 1
+    },
+    {
       "name": "git",
       "count": 1
     },
@@ -205,7 +225,7 @@
   "categories": [
     {
       "name": "发布链路",
-      "count": 1
+      "count": 2
     },
     {
       "name": "环境与工程配置",
