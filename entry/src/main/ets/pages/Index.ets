@@ -95,7 +95,7 @@ struct Index {
 
   /** 动态副标题：总篇数 + 已读数 + 连续天数（有阅读记录才追加） */
   private buildSubtitle(): string {
-    let subtitle: string = `共 ${this.totalCount} 篇 · 纯离线内容`;
+    let subtitle: string = `共 ${this.totalCount} 篇`;
     if (this.stats.doneCount > 0) {
       subtitle += ` · 已读 ${this.stats.doneCount}`;
     }

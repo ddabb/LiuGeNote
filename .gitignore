@@ -1,4 +1,4 @@
-/node_modules
+﻿/node_modules
 /oh_modules
 /local.properties
 /.idea
@@ -11,3 +11,4 @@
 /.clang-tidy
 **/.test
 /.appanalyzer
+/.uislot

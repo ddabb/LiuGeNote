@@ -281,7 +281,7 @@ struct SettingsPage {
       .width('100%')
       .justifyContent(FlexAlign.SpaceBetween)
 
-      Text('知是行之始，行是知之成。\n行知 Aa 123，纯本地渲染。')
+      Text('知是行之始，行是知之成。\n行知 Aa 123')
         .fontSize(Math.round(this.textSize))
         .lineHeight(Math.round(this.textSize * this.lineSpacing))
         .fontFamily(this.familyOfPreview(this.fontId))

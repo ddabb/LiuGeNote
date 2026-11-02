@@ -62,7 +62,7 @@ struct SearchPage {
           Column({ space: 10 }) {
             if (this.query.trim() === '') {
               Column({ space: 8 }) {
-                Text('离线全文搜索')
+                Text('全文搜索')
                   .fontSize(15)
                   .fontWeight(FontWeight.Bold)
                   .fontColor(this.palette().desc)
