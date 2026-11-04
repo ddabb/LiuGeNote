@@ -14,9 +14,9 @@ Error: ENOENT: no such file or directory, open '...articles\rawfile: Uint8Array 
 
 Windows 文件名禁止 `\ / : * ? " < > |` 九个字符，其中 `:` 和 `?` 在技术文档标题里出现频率极高。
 
-## 解决：对标参考项目的 sanitizeFileName
+## 解决：sanitizeFileName 清洗
 
-`vercel-ci/publish.js` 早有预案：
+解法是在生成文件名前统一清洗非法字符：
 
 ```javascript
 function sanitizeFileName(name) {
@@ -51,8 +51,7 @@ function sanitizeFileName(name) {
 | Linux | 仅 `/` 非法，但换行符等控制字符易引发脚本事故 |
 | HarmonyOS rawfile | 经 ZIP 打包，规则趋同 Windows |
 
-清洗规则取三者交集最安全 —— 参考项目的正则正是这个思路（`%` 也一并清洗，
-因为 `%` 在 URL 编码场景有歧义）。
+清洗规则取三者交集最安全，`%` 也一并清洗——它在 URL 编码场景有歧义，顺手消除。
 
 ## 一个隐蔽 bug：同名清洗冲突
 

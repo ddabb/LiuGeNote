@@ -70,7 +70,7 @@ function isArticle(v: object): v is ArticleMeta {
 
 ## 踩坑四：arkts-no-property-props —— 禁用动态属性访问
 
-参考项目 `publish.js` 里大量出现 `item[field]` 动态取值：
+通用构建脚本里常见 `item[field]` 动态取值，比如按字段名统计分类与标签：
 
 ```javascript
 const taxonomy = generateTaxonomy(mdFiles, 'category');  // item[field] 动态访问

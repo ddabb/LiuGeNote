@@ -1,7 +1,7 @@
 ---
 title: Windows 文件名非法字符与文章 slug 清洗方案
 tags: [slug, 文件名, 清洗, 跨平台]
-description: 记录在 Windows 环境下生成文章 slug 时遇到的非法字符问题：冒号、引号等字符在文件系统层面就不合法，publish.js 的 sanitizeFileName 对标 vercel-ci 的清洗规则与 slug 稳定性设计。
+description: 记录在 Windows 环境下生成文章 slug 时遇到的非法字符问题：冒号、引号等字符在文件系统层面就不合法，以及 sanitizeFileName 清洗规则与 slug 稳定性设计。
 ---
 
 # Windows 文件名非法字符与文章 slug 清洗方案
@@ -19,9 +19,9 @@ Error: ENOENT: no such file or directory, open '...articles\rawfile: Uint8Array 
 
 Windows 文件名禁止 `\ / : * ? " < > |` 九个字符，其中 `:` 和 `?` 在技术文档标题里出现频率极高。
 
-## 解决：对标参考项目的 sanitizeFileName
+## 解决：sanitizeFileName 清洗
 
-`vercel-ci/publish.js` 早有预案：
+解法是在生成文件名前统一清洗非法字符：
 
 ```javascript
 function sanitizeFileName(name) {
@@ -56,8 +56,7 @@ function sanitizeFileName(name) {
 | Linux | 仅 `/` 非法，但换行符等控制字符易引发脚本事故 |
 | HarmonyOS rawfile | 经 ZIP 打包，规则趋同 Windows |
 
-清洗规则取三者交集最安全 —— 参考项目的正则正是这个思路（`%` 也一并清洗，
-因为 `%` 在 URL 编码场景有歧义）。
+清洗规则取三者交集最安全，`%` 也一并清洗——它在 URL 编码场景有歧义，顺手消除。
 
 ## 一个隐蔽 bug：同名清洗冲突
 

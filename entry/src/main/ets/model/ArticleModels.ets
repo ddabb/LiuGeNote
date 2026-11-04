@@ -93,3 +93,31 @@ export function estReadingMinutes(wordCount: number): number {
   }
   return Math.max(1, Math.round(wordCount / 400));
 }
+
+/** quiz.json -> questions[] 单题（publish.js 从正文二级小节自动生成） */
+export interface QuizQuestion {
+  id: string;
+  /** 来源文章 slug（查看原文入口用） */
+  slug: string;
+  category: string;
+  question: string;
+  options: string[];
+  /** 正确选项下标 */
+  answer: number;
+  explanation: string;
+}
+
+/** quiz.json 整体 */
+export interface QuizBank {
+  generatedAt: string;
+  total: number;
+  questions: QuizQuestion[];
+}
+
+/** 路由参数：答题页（mode 取 QuizManager.MODE_* 常量） */
+export interface QuizPageParams {
+  mode: string;
+}
+
+/** AppStorage 键：桌面卡片拉起待打开的文章 slug（EntryAbility 暂存，首页 onPageShow 消费后清空） */
+export const KEY_PENDING_ARTICLE: string = 'pendingArticleSlug';

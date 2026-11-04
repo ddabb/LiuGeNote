@@ -7,6 +7,8 @@
     "pages/CategoryDetailPage",
     "pages/ArticleDetailPage",
     "pages/SettingsPage",
-    "pages/SearchPage"
+    "pages/SearchPage",
+    "pages/QuizPage",
+    "pages/WrongBookPage"
   ]
 }

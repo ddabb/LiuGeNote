@@ -6,7 +6,7 @@ description: 记录文章详情页 Markdown 渲染方案的选型对比：Web �
 
 # Markdown 离线渲染选型：Web 组件还是原生解析
 
-文章详情页要渲染 Markdown 正文。参考项目 `vercel-ci` 的做法是构建期 `md2html.js` 把 md 转成 HTML 页面。在鸿蒙侧我们对比了两条路线。
+文章详情页要渲染 Markdown 正文。Web 领域的成熟做法是构建期把 md 转成 HTML 页面；到了鸿蒙侧，还可以在应用内原生解析渲染。我们对比了两条路线。
 
 ## 方案对比
 

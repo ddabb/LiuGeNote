@@ -1,0 +1,25 @@
+{
+  "forms": [
+    {
+      "name": "dailyTip",
+      "displayName": "每日知识点",
+      "description": "$string:daily_tip_desc",
+      "src": "./ets/widget/pages/DailyTipCard.ets",
+      "uiSyntax": "arkts",
+      "isDefault": true,
+      "window": {
+        "designWidth": 720,
+        "autoDesignWidth": true
+      },
+      "colorMode": "auto",
+      "supportDimensions": [
+        "2*2"
+      ],
+      "defaultDimension": "2*2",
+      "isDynamic": true,
+      "updateEnabled": true,
+      "scheduledUpdateTime": "08:30",
+      "updateDuration": 48
+    }
+  ]
+}

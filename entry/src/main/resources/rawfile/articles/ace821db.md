@@ -36,7 +36,7 @@ Windows 下用 Node 写文件时，若内容以 `\uFEFF` 开头，`JSON.parse` �
 1. 读取端：`TextDecoder` 的 `ignoreBOM: false` 会**自动剥离** BOM；
 2. 写入端：`publish.js` 统一用 `fs.writeFile(path, str, 'utf8')`，绝不手拼 BOM。
 
-参考项目 `publish.js` 的 front-matter 正则里也有 `(\uFEFF)?` 这样的容错，说明这是跨平台内容处理的通病。
+BOM 问题是跨平台内容处理的通病——解析端正则里预留 `(\uFEFF)?` 匹配也是常见的防御手段。
 
 ## 坑三：重复读取带来的性能抖动
 

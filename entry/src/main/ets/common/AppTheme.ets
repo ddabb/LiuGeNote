@@ -180,6 +180,19 @@ export class AppTheme {
     return AppTheme.PALETTES[id];
   }
 
+  /** 从持久化偏好直读主题色 id（桌面卡片等无法访问 AppStorage 的场景），读取失败回退默认色板 */
+  static paletteFromPrefs(context: common.Context): ThemePalette {
+    let id: number = 0;
+    try {
+      const opt: preferences.Options = { name: AppTheme.PREF_NAME };
+      const store: preferences.Preferences = preferences.getPreferencesSync(context, opt);
+      id = store.getSync(AppTheme.KEY_THEME, 0) as number;
+    } catch (e) {
+      console.error('[AppTheme] paletteFromPrefs failed: ' + (e as Error).message);
+    }
+    return AppTheme.paletteOf(id);
+  }
+
   /** 切换主题色：更新 AppStorage（页面即时刷新）并持久化 */
   static setThemeId(id: number): void {
     if (id < 0 || id >= AppTheme.PALETTES.length) {

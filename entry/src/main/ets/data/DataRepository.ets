@@ -4,7 +4,7 @@
  */
 import { util } from '@kit.ArkTS';
 import { common } from '@kit.AbilityKit';
-import { ArticleIndex, ArticleMeta, createEmptyArticleMeta, SearchResult, Taxonomy } from '../model/ArticleModels';
+import { ArticleIndex, ArticleMeta, createEmptyArticleMeta, QuizBank, SearchResult, Taxonomy } from '../model/ArticleModels';
 
 /** 相关阅读计分中间结构（仓库内部用） */
 class RelatedScore {
@@ -23,6 +23,7 @@ export class DataRepository {
   private context: common.Context | undefined = undefined;
   private indexCache: ArticleIndex | undefined = undefined;
   private taxonomyCache: Taxonomy | undefined = undefined;
+  private quizCache: QuizBank | undefined = undefined;
   private bodyCache: Map<string, string> = new Map();
   /** 全文检索语料：slug -> 小写正文（首词触发时一次性构建） */
   private searchCorpus: Map<string, string> = new Map();
@@ -65,6 +66,21 @@ export class DataRepository {
       this.taxonomyCache = JSON.parse(text) as Taxonomy;
     }
     return this.taxonomyCache;
+  }
+
+  /** 知识问答题库（缓存；quiz.json 缺失时返回空题库，不阻塞阅读主流程） */
+  getQuiz(): QuizBank {
+    if (this.quizCache === undefined) {
+      try {
+        const text: string = this.readRawText('quiz.json');
+        this.quizCache = JSON.parse(text) as QuizBank;
+      } catch (e) {
+        console.error('[DataRepository] load quiz.json failed: ' + (e as Error).message);
+        const empty: QuizBank = { generatedAt: '', total: 0, questions: [] };
+        this.quizCache = empty;
+      }
+    }
+    return this.quizCache;
   }
 
   /** 全部文章（按 updateTime 降序，与发布顺序一致） */

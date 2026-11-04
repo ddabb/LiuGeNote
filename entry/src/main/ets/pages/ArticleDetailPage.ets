@@ -7,7 +7,8 @@
  *   · 时长统计：onPageShow/onPageHide 会话计时，按日累计 + 连续天数
  *   · 进度反馈：页头下细进度条 + 右下悬浮胶囊（百分比 · 剩余分钟）
  *   · 读后引导：文末「下一篇」大卡片 + 相关阅读（同分类/标签推荐）
- * - 正文渲染：@luvi/lv-markdown-in 引擎，显式开启 Mermaid / HTML 预览 / 跨文本选择复制
+ * - 正文渲染：@luvi/lv-markdown-in 引擎，显式开启 Mermaid / HTML 预览 / 跨文本选择复制；
+ *   代码块/跨文本复制按库隐私要求由宿主注册监听并写系统剪贴板（pasteboard）
  * - 导出：PDF（@kit.PDFKit 从零构建，内置字体沙箱化）/ Markdown 源文件，
  *   均经系统保存器（DocumentViewPicker）落盘到用户所选目录，免权限
  * - 分享：系统分享面板（@kit.ShareKit）分享沙箱 PDF
@@ -15,6 +16,7 @@
  */
 import { Markdown, MarkdownController } from '@luvi/lv-markdown-in';
 import { common } from '@kit.AbilityKit';
+import { BusinessError, pasteboard } from '@kit.BasicServicesKit';
 import { PageHeader } from '../common/PageHeader';
 import { AppTheme, ReadingBg, ThemePalette } from '../common/AppTheme';
 import { FontRegistry } from '../common/FontRegistry';
@@ -254,7 +256,14 @@ struct ArticleDetailPage {
       // 内容能力：Mermaid / HTML 预览开满，正文支持跨文本选择复制
       .setMermaidEnable(true)
       .setHtmlPreviewEnable(true)
-      .setTextSelectionEnable(true);
+      .setTextSelectionEnable(true)
+      // 库隐私策略：复制动作由宿主注册监听并自行写剪贴板（未注册时点击只弹"复制失败"提示）
+      .setCodeCopyListener((text: string) => {
+        this.copyToClipboard(text);
+      })
+      .setTextSelectionCopyListener((text: string) => {
+        this.copyToClipboard(text);
+      });
     if (bg.dark) {
       // 暗夜阅读下的代码/表格配色补偿（浅色方案沿用引擎默认）
       this.controller.setInlineCodeColor('#E6EDF3')
@@ -292,6 +301,23 @@ struct ArticleDetailPage {
   /** 沙箱上下文（导出/保存/分享用） */
   private abilityContext(): common.UIAbilityContext {
     return this.getUIContext().getHostContext() as common.UIAbilityContext;
+  }
+
+  /** 复制到系统剪贴板并轻提示（代码块复制 / 跨文本选择复制共用） */
+  private copyToClipboard(text: string): void {
+    try {
+      const data: pasteboard.PasteData = pasteboard.createData(pasteboard.MIMETYPE_TEXT_PLAIN, text);
+      const board: pasteboard.SystemPasteboard = pasteboard.getSystemPasteboard();
+      board.setData(data).then(() => {
+        ToastUtil.show(this.getUIContext(), '已复制到剪贴板', 1400);
+      }).catch((err: BusinessError) => {
+        console.error(`[ArticleDetail] copy to pasteboard failed: ${err.code} ${err.message}`);
+        ToastUtil.show(this.getUIContext(), '复制失败，请重试', 1400);
+      });
+    } catch (e) {
+      console.error(`[ArticleDetail] copy to pasteboard error: ${(e as Error).message}`);
+      ToastUtil.show(this.getUIContext(), '复制失败，请重试', 1400);
+    }
   }
 
   build() {

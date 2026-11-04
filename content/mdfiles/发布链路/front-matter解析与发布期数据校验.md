@@ -1,23 +1,22 @@
 ---
 title: front-matter 解析、字数统计与无描述文章的发布期校验
 tags: [front-matter, publish, 校验, 字数统计]
-description: 记录 publish.js 对标 vercel-ci 的三个数据整形细节：front-matter 的 YAML 子集解析容错、与参考项目口径一致的字数统计、以及无描述文章的发布警告机制。
+description: 记录构建脚本 publish.js 的三个数据整形细节：front-matter 的 YAML 子集解析容错、对中文友好的字数统计口径、以及无描述文章的发布警告机制。
 ---
 
 # front-matter 解析、字数统计与无描述文章的发布期校验
 
-把 `vercel-ci/publish.js` 的数据整形能力搬进鸿蒙脚手架时，三个细节决定了 `index.json` 的质量。
+构建脚本 `publish.js` 负责把 md 源文件整形为 `index.json`。三个细节决定了这份数据的质量。
 
 ## 细节一：front-matter 解析的容错边界
 
-参考项目用 `js-yaml` 解析 front-matter，失败时仅 `console.warn` 不中断。零依赖改造后，
-自写的 YAML 子集解析器保持同样的容错哲学，但边界更明确：
+解析失败不中断发布，只 `console.warn` 提示。自写的 YAML 子集解析器沿用这一容错哲学，但把边界写得更明确：
 
 ### 必须容错
 
 - 行尾多余空白、`\r\n` 与 `\n` 混用；
 - value 两端可选引号（`title: "标题"` 与 `title: 标题` 等价）；
-- tags 写成数组 `[a, b]` 或逗号字符串 `a, b` 都接受（参考项目同款兼容）。
+- tags 写成数组 `[a, b]` 或逗号字符串 `a, b` 都接受，降低书写门槛。
 
 ### 必须失败
 
@@ -29,27 +28,27 @@ description: 记录 publish.js 对标 vercel-ci 的三个数据整形细节：fr
 | 字段 | 缺省值 | 说明 |
 |---|---|---|
 | title | 文件名去扩展名 | 兜底但建议显式写 |
-| category | `未分类` | 对标参考项目 |
+| category | `未分类` | 兜底值，建议显式写 |
 | tags | `[]` | |
-| description | 正文前 80 字符 | 参考项目留空，我们改进为自动摘要，列表页不再出现空白描述 |
+| description | 正文前 80 字符 | 自动摘要兜底，列表页不再出现空白描述 |
 
 ## 细节二：字数统计口径
 
-参考项目的口径：
+统计口径定为：
 
 ```javascript
 const wordCount = bodyText.replace(/\s+/g, '').length;
 ```
 
 即**剥离所有空白后按字符计数**。这个口径对中文友好（一字一数），对英文偏高（单词被拆成字母）。
-本项目**原样沿用**，理由：与参考项目数据可比、实现简单、且字数仅用于展示排序参考，不追求语言学精确。
+选它的理由：实现只需一行、中文场景够准，且字数仅用于展示与排序参考，不追求语言学精确。
 
 注意统计基线是**正文**（front-matter 剥离后），否则每篇文章会被自己的元数据污染几十字。
 
 ## 细节三：无描述文章清单
 
-参考项目专门产出 `NoDescriptionLists.json` 记录无 description 的文章，用于运营补稿。
-离线应用没有运营，但**列表页摘要缺失会直接伤害浏览体验**，因此保留为发布警告：
+无 description 的文章值得被单独点名。离线应用没有运营补稿环节，
+但**列表页摘要缺失会直接伤害浏览体验**，因此设计为发布警告：
 
 ```
 ⚠ 无描述文章（已用正文前 80 字兜底）：
@@ -61,6 +60,5 @@ const wordCount = bodyText.replace(/\s+/g, '').length;
 
 ## 发布期校验的意义
 
-Web 项目的校验产物（`check.json`、Excel）服务于**人工复核**；离线应用的发布校验则直接决定
-**运行期数据质量**。能在 `node scripts/publish.js` 的一秒钟里发现的问题，
+发布校验直接决定**运行期数据质量**：能在 `node scripts/publish.js` 的一秒钟里发现的问题，
 就不要留到真机上白屏时排查。

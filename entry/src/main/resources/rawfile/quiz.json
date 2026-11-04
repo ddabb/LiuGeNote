@@ -1,0 +1,832 @@
+{
+  "generatedAt": "2026-11-04T02:16:47.401Z",
+  "total": 59,
+  "questions": [
+    {
+      "id": "q1",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「一、需求与总体方案」一节，以下说法正确的是？",
+      "options": [
+        "首版 2in1 截图被否：应用呈现的元素太少了。",
+        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。",
+        "无 description 的文章值得被单独点名。",
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…"
+      ],
+      "answer": 3,
+      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「一、需求与总体方案」小节。"
+    },
+    {
+      "id": "q2",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「二、Bug 一：2in1\"元素太少\"——密度被 userdata 持久化」一节，以下说法正确的是？",
+      "options": [
+        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
+        "首版 2in1 截图被否：应用呈现的元素太少了。",
+        "无 description 的文章值得被单独点名。",
+        "解析失败不中断发布，只 console.warn 提示。"
+      ],
+      "answer": 1,
+      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「二、Bug 一：2in1\"元素太少\"——密度被 userdata 持久化」小节。"
+    },
+    {
+      "id": "q3",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「三、Bug 二：render_service 卡死，截出故障帧」一节，以下说法正确的是？",
+      "options": [
+        "统计口径定为：即剥离所有空白后按字符计数。",
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
+        "无 description 的文章值得被单独点名。",
+        "重截进行到第 2 张（分类列表）后，应用突然从布局树里消失，进程也没了。"
+      ],
+      "answer": 3,
+      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「三、Bug 二：render_service 卡死，截出故障帧」小节。"
+    },
+    {
+      "id": "q4",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「四、坐标不能跨页面复用」一节，以下说法正确的是？",
+      "options": [
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
+        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。",
+        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。",
+        "统计口径定为：即剥离所有空白后按字符计数。"
+      ],
+      "answer": 1,
+      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「四、坐标不能跨页面复用」小节。"
+    },
+    {
+      "id": "q5",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑一：arkts-no-any —— 禁用 any/unknown」一节，以下说法正确的是？",
+      "options": [
+        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
+        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
+        "一律抽成 interface 或 class：",
+        "为返回值声明明确的接口，反序列化后逐字段校验："
+      ],
+      "answer": 3,
+      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑一：arkts-no-any —— 禁用 any/unknown」小节。"
+    },
+    {
+      "id": "q6",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑二：arkts-no-obj-literals-as-types —— 禁用对象字面量类型」一节，以下说法正确的是？",
+      "options": [
+        "动态性留在 Node 构建脚本里（Node 侧是普通 JS，不受 ArkTS 约束），应用侧只消费静态形状的数据 —— 这也是…",
+        "一律抽成 interface 或 class：",
+        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
+        "为返回值声明明确的接口，反序列化后逐字段校验："
+      ],
+      "answer": 1,
+      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑二：arkts-no-obj-literals-as-types —— 禁用对象字面量类型」小节。"
+    },
+    {
+      "id": "q7",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑三：as 类型断言的边界」一节，以下说法正确的是？",
+      "options": [
+        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
+        "为返回值声明明确的接口，反序列化后逐字段校验：",
+        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
+        "一律抽成 interface 或 class："
+      ],
+      "answer": 2,
+      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑三：as 类型断言的边界」小节。"
+    },
+    {
+      "id": "q8",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑四：arkts-no-property-props —— 禁用动态属性访问」一节，以下说法正确的是？",
+      "options": [
+        "为返回值声明明确的接口，反序列化后逐字段校验：",
+        "动态性留在 Node 构建脚本里（Node 侧是普通 JS，不受 ArkTS 约束），应用侧只消费静态形状的数据 —— 这也是…",
+        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
+        "一律抽成 interface 或 class："
+      ],
+      "answer": 1,
+      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑四：arkts-no-property-props —— 禁用动态属性访问」小节。"
+    },
+    {
+      "id": "q9",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑一：getRawFileContent 返回的不是字符串」一节，以下说法正确的是？",
+      "options": [
+        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。",
+        "getRawFileContent 返回 Uint8Array，必须显式解码。",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
+        "结论：离线内容应用选 B。"
+      ],
+      "answer": 1,
+      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑一：getRawFileContent 返回的不是字符串」小节。"
+    },
+    {
+      "id": "q10",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑二：UTF-8 BOM 导致 JSON.parse 失败」一节，以下说法正确的是？",
+      "options": [
+        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
+        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
+        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…"
+      ],
+      "answer": 0,
+      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑二：UTF-8 BOM 导致 JSON.parse 失败」小节。"
+    },
+    {
+      "id": "q11",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑三：重复读取带来的性能抖动」一节，以下说法正确的是？",
+      "options": [
+        "首页、标签页、分类页都会读 index.json。",
+        "结论：离线内容应用选 B。",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
+        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+      ],
+      "answer": 0,
+      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑三：重复读取带来的性能抖动」小节。"
+    },
+    {
+      "id": "q12",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「读取路径速查」一节，以下说法正确的是？",
+      "options": [
+        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
+        "构建脚本让 slug 稳定 ⇒ fileId 稳定，路由继续传中文 slug，存储层只见 ASCII，两头都安全。",
+        "结论：离线内容应用选 B。",
+        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；"
+      ],
+      "answer": 1,
+      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「读取路径速查」小节。"
+    },
+    {
+      "id": "q13",
+      "slug": "结构类型到显式接口的数据模型改造",
+      "category": "ArkTS语言与规范",
+      "question": "《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》中「第一轮：字面量满天飞」一节，以下说法正确的是？",
+      "options": [
+        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
+        "一律抽成 interface 或 class：",
+        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
+        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。"
+      ],
+      "answer": 3,
+      "explanation": "出自《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》的「第一轮：字面量满天飞」小节。"
+    },
+    {
+      "id": "q14",
+      "slug": "结构类型到显式接口的数据模型改造",
+      "category": "ArkTS语言与规范",
+      "question": "《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》中「收益」一节，以下说法正确的是？",
+      "options": [
+        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
+        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
+        "一律抽成 interface 或 class：",
+        "为返回值声明明确的接口，反序列化后逐字段校验："
+      ],
+      "answer": 1,
+      "explanation": "出自《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》的「收益」小节。"
+    },
+    {
+      "id": "q15",
+      "slug": "离线应用权限最小化与包体积控制",
+      "category": "环境与工程配置",
+      "question": "《离线应用的权限最小化与包体积控制》中「权限最小化」一节，以下说法正确的是？",
+      "options": [
+        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。",
+        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…",
+        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
+        "用户安装时无敏感权限弹窗，转化率友好；"
+      ],
+      "answer": 3,
+      "explanation": "出自《离线应用的权限最小化与包体积控制》的「权限最小化」小节。"
+    },
+    {
+      "id": "q16",
+      "slug": "离线应用权限最小化与包体积控制",
+      "category": "环境与工程配置",
+      "question": "《离线应用的权限最小化与包体积控制》中「包体积控制」一节，以下说法正确的是？",
+      "options": [
+        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
+        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
+        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…"
+      ],
+      "answer": 0,
+      "explanation": "出自《离线应用的权限最小化与包体积控制》的「包体积控制」小节。"
+    },
+    {
+      "id": "q17",
+      "slug": "离线应用权限最小化与包体积控制",
+      "category": "环境与工程配置",
+      "question": "《离线应用的权限最小化与包体积控制》中「离线的边界：什么情况不该用本方案」一节，以下说法正确的是？",
+      "options": [
+        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
+        "诚实记录适用边界：- 内容超大（数百 MB 音视频）→ 应改用分布式文件或按需下载，不适合全量 rawfile；",
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…"
+      ],
+      "answer": 1,
+      "explanation": "出自《离线应用的权限最小化与包体积控制》的「离线的边界：什么情况不该用本方案」小节。"
+    },
+    {
+      "id": "q18",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「方案对比」一节，以下说法正确的是？",
+      "options": [
+        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
+        "结论：离线内容应用选 B。",
+        "两个标题 问题: A 与 问题? A 清洗后都变成 问题- A，slug 撞车后一篇会覆盖另一篇。",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+      ],
+      "answer": 1,
+      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「方案对比」小节。"
+    },
+    {
+      "id": "q19",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「轻量解析器设计（MarkdownParser）」一节，以下说法正确的是？",
+      "options": [
+        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
+        "结论：离线内容应用选 B。",
+        "首页、标签页、分类页都会读 index.json。",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+      ],
+      "answer": 0,
+      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「轻量解析器设计（MarkdownParser）」小节。"
+    },
+    {
+      "id": "q20",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「渲染层（MarkdownRenderer）」一节，以下说法正确的是？",
+      "options": [
+        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
+        "结论：离线内容应用选 B。",
+        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
+        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+      ],
+      "answer": 0,
+      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「渲染层（MarkdownRenderer）」小节。"
+    },
+    {
+      "id": "q21",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「性能实测结论」一节，以下说法正确的是？",
+      "options": [
+        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
+        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
+        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+      ],
+      "answer": 0,
+      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「性能实测结论」小节。"
+    },
+    {
+      "id": "q22",
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "category": "环境与工程配置",
+      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「问题一：内网环境 ohpm/npm 安装超时」一节，以下说法正确的是？",
+      "options": [
+        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
+        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
+        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；",
+        "构建链路的稳定性是脚手架的地基。"
+      ],
+      "answer": 0,
+      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「问题一：内网环境 ohpm/npm 安装超时」小节。"
+    },
+    {
+      "id": "q23",
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "category": "环境与工程配置",
+      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「零依赖 front-matter 解析器设计」一节，以下说法正确的是？",
+      "options": [
+        "\"先把依赖装上再说\"是惯性思维。",
+        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…",
+        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
+        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…"
+      ],
+      "answer": 3,
+      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「零依赖 front-matter 解析器设计」小节。"
+    },
+    {
+      "id": "q24",
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "category": "环境与工程配置",
+      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「零依赖带来的收益」一节，以下说法正确的是？",
+      "options": [
+        "\"先把依赖装上再说\"是惯性思维。",
+        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
+        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。",
+        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；"
+      ],
+      "answer": 3,
+      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「零依赖带来的收益」小节。"
+    },
+    {
+      "id": "q25",
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "category": "环境与工程配置",
+      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「反思」一节，以下说法正确的是？",
+      "options": [
+        "构建链路的稳定性是脚手架的地基。",
+        "\"先把依赖装上再说\"是惯性思维。",
+        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…",
+        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。"
+      ],
+      "answer": 1,
+      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「反思」小节。"
+    },
+    {
+      "id": "q26",
+      "slug": "Windows文件名非法字符与slug清洗方案",
+      "category": "数据与渲染",
+      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「解决：sanitizeFileName 清洗」一节，以下说法正确的是？",
+      "options": [
+        "结论：离线内容应用选 B。",
+        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
+        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。"
+      ],
+      "answer": 2,
+      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「解决：sanitizeFileName 清洗」小节。"
+    },
+    {
+      "id": "q27",
+      "slug": "Windows文件名非法字符与slug清洗方案",
+      "category": "数据与渲染",
+      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「跨平台差异提醒」一节，以下说法正确的是？",
+      "options": [
+        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
+        "首页、标签页、分类页都会读 index.json。",
+        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。",
+        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+      ],
+      "answer": 2,
+      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「跨平台差异提醒」小节。"
+    },
+    {
+      "id": "q28",
+      "slug": "Windows文件名非法字符与slug清洗方案",
+      "category": "数据与渲染",
+      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「一个隐蔽 bug：同名清洗冲突」一节，以下说法正确的是？",
+      "options": [
+        "两个标题 问题: A 与 问题? A 清洗后都变成 问题- A，slug 撞车后一篇会覆盖另一篇。",
+        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
+        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
+        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。"
+      ],
+      "answer": 0,
+      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「一个隐蔽 bug：同名清洗冲突」小节。"
+    },
+    {
+      "id": "q29",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节一：front-matter 解析的容错边界」一节，以下说法正确的是？",
+      "options": [
+        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
+        "解析失败不中断发布，只 console.warn 提示。",
+        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
+        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；"
+      ],
+      "answer": 1,
+      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节一：front-matter 解析的容错边界」小节。"
+    },
+    {
+      "id": "q30",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节二：字数统计口径」一节，以下说法正确的是？",
+      "options": [
+        "统计口径定为：即剥离所有空白后按字符计数。",
+        "首版 2in1 截图被否：应用呈现的元素太少了。",
+        "无 description 的文章值得被单独点名。",
+        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。"
+      ],
+      "answer": 0,
+      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节二：字数统计口径」小节。"
+    },
+    {
+      "id": "q31",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节三：无描述文章清单」一节，以下说法正确的是？",
+      "options": [
+        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
+        "统计口径定为：即剥离所有空白后按字符计数。",
+        "无 description 的文章值得被单独点名。"
+      ],
+      "answer": 3,
+      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节三：无描述文章清单」小节。"
+    },
+    {
+      "id": "q32",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「发布期校验的意义」一节，以下说法正确的是？",
+      "options": [
+        "重截进行到第 2 张（分类列表）后，应用突然从布局树里消失，进程也没了。",
+        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
+        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。",
+        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。"
+      ],
+      "answer": 1,
+      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「发布期校验的意义」小节。"
+    },
+    {
+      "id": "q33",
+      "slug": "应用更名行知与闲章图标设计",
+      "category": "发布链路",
+      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「一、为什么要换名字」一节，以下说法正确的是？",
+      "options": [
+        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
+        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
+        "首版 2in1 截图被否：应用呈现的元素太少了。"
+      ],
+      "answer": 2,
+      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「一、为什么要换名字」小节。"
+    },
+    {
+      "id": "q34",
+      "slug": "应用更名行知与闲章图标设计",
+      "category": "发布链路",
+      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「二、备选名单」一节，以下说法正确的是？",
+      "options": [
+        "首版 2in1 截图被否：应用呈现的元素太少了。",
+        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
+        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
+        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。"
+      ],
+      "answer": 3,
+      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「二、备选名单」小节。"
+    },
+    {
+      "id": "q35",
+      "slug": "应用更名行知与闲章图标设计",
+      "category": "发布链路",
+      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「三、为什么是行知」一节，以下说法正确的是？",
+      "options": [
+        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
+        "解析失败不中断发布，只 console.warn 提示。",
+        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
+        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…"
+      ],
+      "answer": 2,
+      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「三、为什么是行知」小节。"
+    },
+    {
+      "id": "q36",
+      "slug": "应用更名行知与闲章图标设计",
+      "category": "发布链路",
+      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「四、闲章图标」一节，以下说法正确的是？",
+      "options": [
+        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
+        "解析失败不中断发布，只 console.warn 提示。",
+        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
+        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。"
+      ],
+      "answer": 3,
+      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「四、闲章图标」小节。"
+    },
+    {
+      "id": "q37",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「一、痛点：文件是怎么胖起来的」一节，以下说法正确的是？",
+      "options": [
+        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
+        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。"
+      ],
+      "answer": 3,
+      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「一、痛点：文件是怎么胖起来的」小节。"
+    },
+    {
+      "id": "q38",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「二、hooks 随仓库走：core.hooksPath」一节，以下说法正确的是？",
+      "options": [
+        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。",
+        "\"先把依赖装上再说\"是惯性思维。",
+        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …"
+      ],
+      "answer": 0,
+      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「二、hooks 随仓库走：core.hooksPath」小节。"
+    },
+    {
+      "id": "q39",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「三、护栏规则：三条」一节，以下说法正确的是？",
+      "options": [
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
+        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…",
+        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
+        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；"
+      ],
+      "answer": 3,
+      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「三、护栏规则：三条」小节。"
+    },
+    {
+      "id": "q40",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「四、为什么\"只减不增\"是灵魂」一节，以下说法正确的是？",
+      "options": [
+        "如果攒到最后全量构建再排，定位成本翻倍。",
+        "诚实记录适用边界：- 内容超大（数百 MB 音视频）→ 应改用分布式文件或按需下载，不适合全量 rawfile；",
+        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
+        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。"
+      ],
+      "answer": 2,
+      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「四、为什么\"只减不增\"是灵魂」小节。"
+    },
+    {
+      "id": "q41",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「一、进度模型：只进不退」一节，以下说法正确的是？",
+      "options": [
+        "每篇文章一个整型键 pslug（0-100），存本地 preferences。",
+        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
+        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…",
+        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+      ],
+      "answer": 0,
+      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「一、进度模型：只进不退」小节。"
+    },
+    {
+      "id": "q42",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「二、恢复时机的坑：布局未成，滚动无效」一节，以下说法正确的是？",
+      "options": [
+        "第一版把恢复写在 aboutToAppear 里直接 scroller.scrollTo(...)，纹丝不动。",
+        "每篇文章一个整型键 pslug（0-100），存本地 preferences。",
+        "每新增一种\"列表\"，就要重新对齐一遍样式；",
+        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；"
+      ],
+      "answer": 0,
+      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「二、恢复时机的坑：布局未成，滚动无效」小节。"
+    },
+    {
+      "id": "q43",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「三、会话统计：跨天、防虚计」一节，以下说法正确的是？",
+      "options": [
+        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
+        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
+        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
+        "每篇文章一个整型键 pslug（0-100），存本地 preferences。"
+      ],
+      "answer": 0,
+      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「三、会话统计：跨天、防虚计」小节。"
+    },
+    {
+      "id": "q44",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「四、剩余分钟：一个诚实的估算」一节，以下说法正确的是？",
+      "options": [
+        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；",
+        "每新增一种\"列表\"，就要重新对齐一遍样式；",
+        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
+        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+      ],
+      "answer": 3,
+      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「四、剩余分钟：一个诚实的估算」小节。"
+    },
+    {
+      "id": "q45",
+      "slug": "工程版本对齐与首次构建报错实录",
+      "category": "环境与工程配置",
+      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错一：Unsupported modelVersion of Hvigor 26.0.0」一节，以下说法正确的是？",
+      "options": [
+        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；",
+        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…"
+      ],
+      "answer": 2,
+      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错一：Unsupported modelVersion of Hvigor 26.0.0」小节。"
+    },
+    {
+      "id": "q46",
+      "slug": "工程版本对齐与首次构建报错实录",
+      "category": "环境与工程配置",
+      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错二：两处 modelVersion 不一致」一节，以下说法正确的是？",
+      "options": [
+        "如果攒到最后全量构建再排，定位成本翻倍。",
+        "\"先把依赖装上再说\"是惯性思维。",
+        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；",
+        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…"
+      ],
+      "answer": 3,
+      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错二：两处 modelVersion 不一致」小节。"
+    },
+    {
+      "id": "q47",
+      "slug": "工程版本对齐与首次构建报错实录",
+      "category": "环境与工程配置",
+      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错三：targetSdkVersion 格式要求」一节，以下说法正确的是？",
+      "options": [
+        "如果攒到最后全量构建再排，定位成本翻倍。",
+        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
+        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
+        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…"
+      ],
+      "answer": 1,
+      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错三：targetSdkVersion 格式要求」小节。"
+    },
+    {
+      "id": "q48",
+      "slug": "工程版本对齐与首次构建报错实录",
+      "category": "环境与工程配置",
+      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错四：ArkTS 编译期 API 纠错清单」一节，以下说法正确的是？",
+      "options": [
+        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。",
+        "\"先把依赖装上再说\"是惯性思维。",
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "如果攒到最后全量构建再排，定位成本翻倍。"
+      ],
+      "answer": 3,
+      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错四：ArkTS 编译期 API 纠错清单」小节。"
+    },
+    {
+      "id": "q49",
+      "slug": "列表页通用化与文章卡片组件复用",
+      "category": "页面与导航",
+      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「问题：复制粘贴的隐性成本」一节，以下说法正确的是？",
+      "options": [
+        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
+        "每新增一种\"列表\"，就要重新对齐一遍样式；",
+        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
+        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。"
+      ],
+      "answer": 1,
+      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「问题：复制粘贴的隐性成本」小节。"
+    },
+    {
+      "id": "q50",
+      "slug": "列表页通用化与文章卡片组件复用",
+      "category": "页面与导航",
+      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「方案：卡片组件化 + 页面骨架收敛」一节，以下说法正确的是？",
+      "options": [
+        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；",
+        "第一版把恢复写在 aboutToAppear 里直接 scroller.scrollTo(...)，纹丝不动。",
+        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
+        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…"
+      ],
+      "answer": 0,
+      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「方案：卡片组件化 + 页面骨架收敛」小节。"
+    },
+    {
+      "id": "q51",
+      "slug": "列表页通用化与文章卡片组件复用",
+      "category": "页面与导航",
+      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「组件边界经验」一节，以下说法正确的是？",
+      "options": [
+        "每新增一种\"列表\"，就要重新对齐一遍样式；",
+        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
+        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；",
+        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+      ],
+      "answer": 2,
+      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「组件边界经验」小节。"
+    },
+    {
+      "id": "q52",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑一：中文参数的防御性编码」一节，以下说法正确的是？",
+      "options": [
+        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
+        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…",
+        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
+        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；"
+      ],
+      "answer": 1,
+      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑一：中文参数的防御性编码」小节。"
+    },
+    {
+      "id": "q53",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑二：getParams 的空值兜底」一节，以下说法正确的是？",
+      "options": [
+        "每新增一种\"列表\"，就要重新对齐一遍样式；",
+        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
+        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
+        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；"
+      ],
+      "answer": 1,
+      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑二：getParams 的空值兜底」小节。"
+    },
+    {
+      "id": "q54",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑三：回退链失控」一节，以下说法正确的是？",
+      "options": [
+        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
+        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
+        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；",
+        "每新增一种\"列表\"，就要重新对齐一遍样式；"
+      ],
+      "answer": 1,
+      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑三：回退链失控」小节。"
+    },
+    {
+      "id": "q55",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑四：页面未注册导致的静默失败」一节，以下说法正确的是？",
+      "options": [
+        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
+        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
+        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；",
+        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。"
+      ],
+      "answer": 3,
+      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑四：页面未注册导致的静默失败」小节。"
+    },
+    {
+      "id": "q56",
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "category": "环境与工程配置",
+      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题一：增量构建莫名失败」一节，以下说法正确的是？",
+      "options": [
+        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…",
+        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
+        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。"
+      ],
+      "answer": 0,
+      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题一：增量构建莫名失败」小节。"
+    },
+    {
+      "id": "q57",
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "category": "环境与工程配置",
+      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题二：构建产物占用与 .gitignore」一节，以下说法正确的是？",
+      "options": [
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
+        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
+        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…"
+      ],
+      "answer": 1,
+      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题二：构建产物占用与 .gitignore」小节。"
+    },
+    {
+      "id": "q58",
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "category": "环境与工程配置",
+      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题三：多工程间 SDK 版本不一致」一节，以下说法正确的是？",
+      "options": [
+        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
+        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；",
+        "用户安装时无敏感权限弹窗，转化率友好；",
+        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…"
+      ],
+      "answer": 3,
+      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题三：多工程间 SDK 版本不一致」小节。"
+    },
+    {
+      "id": "q59",
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "category": "环境与工程配置",
+      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「总结」一节，以下说法正确的是？",
+      "options": [
+        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
+        "\"先把依赖装上再说\"是惯性思维。",
+        "构建链路的稳定性是脚手架的地基。",
+        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…"
+      ],
+      "answer": 2,
+      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「总结」小节。"
+    }
+  ]
+}

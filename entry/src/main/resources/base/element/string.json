@@ -11,6 +11,18 @@
     {
       "name": "EntryAbility_label",
       "value": "行知"
+    },
+    {
+      "name": "EntryFormAbility_label",
+      "value": "每日知识点"
+    },
+    {
+      "name": "EntryFormAbility_desc",
+      "value": "行知桌面卡片服务"
+    },
+    {
+      "name": "daily_tip_desc",
+      "value": "展示每日精选 ArkTS 知识点，点击直达文章详情"
     }
   ]
 }
