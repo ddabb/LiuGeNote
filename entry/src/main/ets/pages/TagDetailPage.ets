@@ -4,6 +4,7 @@
  * 主题色经 @StorageProp 订阅 AppStorage，设置页切换即时刷新。
  */
 import { ArticleCard } from '../common/ArticleCard';
+import { ArticleDataSource } from '../common/ArticleDataSource';
 import { PageHeader } from '../common/PageHeader';
 import { AppTheme, ThemePalette } from '../common/AppTheme';
 import { DataRepository } from '../data/DataRepository';
@@ -16,8 +17,8 @@ struct TagDetailPage {
   @State tag: string = '';
   @State articles: ArticleMeta[] = [];
   @State loadError: string = '';
-  /** 页面重新可见的自增标记：拼进 ForEach key 强制重建卡片以刷新已读状态 */
-  @State refreshTick: number = 0;
+  /** 懒加载数据源：与页面同生命周期，禁止重新赋值（LazyForEach 约束） */
+  private dataSource: ArticleDataSource = new ArticleDataSource();
 
   private palette(): ThemePalette {
     return AppTheme.paletteOf(this.themeId);
@@ -32,14 +33,15 @@ struct TagDetailPage {
     }
     try {
       this.articles = DataRepository.getInstance().getArticlesByTag(this.tag);
+      this.dataSource.reload(this.articles);
     } catch (e) {
       this.loadError = `数据加载失败：${(e as Error).message}`;
     }
   }
 
-  /** 从详情页返回时刷新卡片已读状态（tick 重建） */
+  /** 从详情页返回时刷新可见卡片的已读状态（数据不变，仅重建可见项） */
   onPageShow(): void {
-    this.refreshTick++;
+    this.dataSource.notifyReload();
   }
 
   build() {
@@ -68,9 +70,9 @@ struct TagDetailPage {
           }
           .width('100%')
         } else {
-          Scroll() {
-            Column({ space: 10 }) {
-              ForEach(this.articles, (article: ArticleMeta) => {
+          List({ space: 10 }) {
+            LazyForEach(this.dataSource, (article: ArticleMeta) => {
+              ListItem() {
                 ArticleCard({
                   article: article,
                   onTap: () => {
@@ -83,15 +85,14 @@ struct TagDetailPage {
                     this.gotoCategoryDetail(category);
                   }
                 })
-              }, (article: ArticleMeta) => `${article.slug}_${this.refreshTick}`)
-            }
-            .width('100%')
-            .padding({ left: 16, right: 16, top: 8, bottom: 24 })
+              }
+            }, (article: ArticleMeta) => article.slug)
           }
           .scrollBar(BarState.Off)
           .edgeEffect(EdgeEffect.Spring)
           .layoutWeight(1)
           .width('100%')
+          .padding({ left: 16, right: 16, top: 8, bottom: 24 })
         }
       }
       .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })

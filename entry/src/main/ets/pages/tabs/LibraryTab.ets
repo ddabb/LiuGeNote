@@ -4,6 +4,7 @@
  * 数据刷新：Index.onPageShow 自增 refreshTick，经 @Prop @Watch 触发重载。
  */
 import { ArticleCard } from '../../common/ArticleCard';
+import { ArticleDataSource } from '../../common/ArticleDataSource';
 import { PageHeader } from '../../common/PageHeader';
 import { AppTheme, ThemePalette } from '../../common/AppTheme';
 import { DataRepository } from '../../data/DataRepository';
@@ -23,6 +24,8 @@ export struct LibraryTab {
   @State articles: ArticleMeta[] = [];
   @State categories: TaxonomyItem[] = [];
   @State tags: TaxonomyItem[] = [];
+  /** 懒加载数据源：与页面同生命周期，禁止重新赋值（LazyForEach 约束） */
+  private dataSource: ArticleDataSource = new ArticleDataSource();
 
   private palette(): ThemePalette {
     return AppTheme.paletteOf(this.themeId);
@@ -34,6 +37,8 @@ export struct LibraryTab {
 
   private onTickChange(): void {
     this.reload();
+    // 从文章详情返回：数据不变，仅重建可见卡片刷新已读状态
+    this.dataSource.notifyReload();
   }
 
   private reload(): void {
@@ -42,6 +47,7 @@ export struct LibraryTab {
       this.articles = repo.getAllArticles();
       this.categories = repo.getTaxonomy().categories;
       this.tags = repo.getTaxonomy().tags;
+      this.dataSource.reload(this.articles);
     } catch (e) {
       this.loadError = `数据加载失败：${(e as Error).message}`;
     }
@@ -72,12 +78,19 @@ export struct LibraryTab {
         .width('100%')
         .padding(24)
       } else {
-        Scroll() {
-          Column({ space: 12 }) {
-            ForEach(this.categories, (c: TaxonomyItem) => {
-              this.categoryRow(c)
-            }, (c: TaxonomyItem) => `${c.name}_${this.refreshTick}`)
+        List({ space: 12 }) {
+          // 分类区块：35 行分类卡片
+          ListItem() {
+            Column({ space: 12 }) {
+              ForEach(this.categories, (c: TaxonomyItem) => {
+                this.categoryRow(c)
+              }, (c: TaxonomyItem) => `${c.name}_${this.refreshTick}`)
+            }
+            .width('100%')
+          }
 
+          // 标签云
+          ListItem() {
             Column({ space: 8 }) {
               Text('标签')
                 .fontSize(13)
@@ -101,14 +114,19 @@ export struct LibraryTab {
               .width('100%')
             }
             .width('100%')
+          }
 
+          // 全部文章（928 篇，LazyForEach 懒加载）
+          ListItem() {
             Text('全部文章')
               .fontSize(13)
               .fontWeight(FontWeight.Medium)
               .fontColor(this.palette().meta)
               .width('100%')
+          }
 
-            ForEach(this.articles, (article: ArticleMeta) => {
+          LazyForEach(this.dataSource, (article: ArticleMeta) => {
+            ListItem() {
               ArticleCard({
                 article: article,
                 onTap: () => {
@@ -121,17 +139,16 @@ export struct LibraryTab {
                   this.gotoCategoryDetail(category);
                 }
               })
-            }, (article: ArticleMeta) => `${article.slug}_${this.refreshTick}`)
-          }
-          .width('100%')
-          .padding({ left: 16, right: 16, top: 6, bottom: 24 })
-          .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+            }
+          }, (article: ArticleMeta) => article.slug)
         }
         .scrollBar(BarState.Off)
         .align(Alignment.Top)
         .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')
+        .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+        .padding({ left: 16, right: 16, top: 6, bottom: 24 })
       }
     }
     .width('100%')

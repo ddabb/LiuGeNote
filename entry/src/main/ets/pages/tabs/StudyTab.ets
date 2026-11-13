@@ -3,9 +3,10 @@
  * 自上而下：阅读仪表盘 → 每日推荐 Banner（日期哈希选文）→ 继续阅读（Kindle 式续读）
  * → 每日一题入口 → 分类速览宫格 → 全部文章流。
  * 数据刷新：Index.onPageShow 自增 refreshTick，经 @Prop @Watch 触发重载；
- * 文章卡 key 拼 refreshTick 强制重建以刷新已读状态。
+ * 文章流走 List + LazyForEach(ArticleDataSource) 懒加载，刷新经 dataSource.reload() 通知。
  */
 import { ArticleCard } from '../../common/ArticleCard';
+import { ArticleDataSource } from '../../common/ArticleDataSource';
 import { HeaderAction, PageHeader } from '../../common/PageHeader';
 import { AppTheme, ThemePalette } from '../../common/AppTheme';
 import { StatsDashboard } from '../../common/StatsDashboard';
@@ -44,6 +45,8 @@ export struct StudyTab {
   @State dailyDone: boolean = false;
 
   private headerActions: HeaderAction[] = [];
+  /** 懒加载数据源：与页面同生命周期，禁止重新赋值（LazyForEach 约束） */
+  private dataSource: ArticleDataSource = new ArticleDataSource();
 
   private palette(): ThemePalette {
     return AppTheme.paletteOf(this.themeId);
@@ -70,6 +73,7 @@ export struct StudyTab {
       const dailyIdx: number = DailyPick.pickIndex(this.articles.length, DailyPick.todayKey());
       this.dailyMeta = dailyIdx >= 0 ? this.articles[dailyIdx] : undefined;
       this.loadContinue();
+      this.dataSource.reload(this.articles);
     } catch (e) {
       this.loadError = `数据加载失败：${(e as Error).message}`;
     }
@@ -132,30 +136,40 @@ export struct StudyTab {
       if (this.loadError !== '') {
         this.errorView()
       } else {
-        Scroll() {
-          Column({ space: 12 }) {
+        List({ space: 12 }) {
+          ListItem() {
             StatsDashboard({
               todayMinutes: Math.round(this.stats.todaySeconds / 60),
               streakDays: this.stats.streakDays,
               doneCount: this.stats.doneCount,
               totalCount: this.stats.totalCount
             })
+          }
 
-            if (this.dailyMeta !== undefined) {
+          if (this.dailyMeta !== undefined) {
+            ListItem() {
               this.dailyBanner(this.dailyMeta)
             }
+          }
 
-            if (this.continueMeta !== undefined) {
+          if (this.continueMeta !== undefined) {
+            ListItem() {
               this.continueCard(this.continueMeta, this.continuePct)
             }
+          }
 
+          ListItem() {
             this.dailyQuizEntry()
+          }
 
-            if (this.categories.length > 0) {
+          if (this.categories.length > 0) {
+            ListItem() {
               this.categoryGrid()
             }
+          }
 
-            ForEach(this.articles, (article: ArticleMeta) => {
+          LazyForEach(this.dataSource, (article: ArticleMeta) => {
+            ListItem() {
               ArticleCard({
                 article: article,
                 onTap: () => {
@@ -168,17 +182,16 @@ export struct StudyTab {
                   this.gotoCategoryDetail(category);
                 }
               })
-            }, (article: ArticleMeta) => `${article.slug}_${this.refreshTick}`)
-          }
-          .width('100%')
-          .padding({ left: 16, right: 16, top: 6, bottom: 24 })
-          .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
+            }
+          }, (article: ArticleMeta) => article.slug)
         }
         .scrollBar(BarState.Off)
         .align(Alignment.Top)
         .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')
+        .padding({ left: 16, right: 16, top: 6, bottom: 24 })
+        .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       }
     }
     .width('100%')
