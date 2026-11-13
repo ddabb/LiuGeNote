@@ -1,0 +1,110 @@
+---
+title: Navigation 与 NavPathStack：路由系统的正解
+tags: [ArkUI, Navigation, NavPathStack, 路由, 页面跳转]
+description: 讲解 Navigation 路由体系的核心对象 NavPathStack：系统路由表配置、pushPath 与 replacePath 的差异、参数传递与取参、返回与拦截，以及为何它是 router 的推荐替代。
+---
+
+# Navigation 与 NavPathStack：路由系统的正解
+
+ArkUI 有两套路由：老 `router` 与新 `Navigation`。官方答案明确——**新应用一律 Navigation**：转场统一、栈可控、跨设备适配。
+
+## 骨架与路由表
+
+```typescript
+// 入口页
+Navigation(this.pathStack) {
+  HomeContent()                       // 首页内容（NavBar 区）
+}
+.mode(NavigationMode.Stack)
+.hideTitleBar(false);
+```
+
+```json
+// resources/base/profile/router_map.json
+{
+  "routerMap": [
+    {
+      "name": "articleDetail",
+      "pageSourceFile": "pages/ArticleDetailPage.ets",
+      "buildMethod": "ArticleDetailBuilder"
+    }
+  ]
+}
+```
+
+module.json5 里挂上 `"routerMap": "$profile:router_map"`，目标页导出 Builder：
+
+```typescript
+@Builder
+export function ArticleDetailBuilder() {
+  ArticleDetailPage()
+}
+```
+
+## NavPathStack：路由栈的操作面
+
+```typescript
+private pathStack: NavPathStack = new NavPathStack();
+
+// 压栈（保留当前页，可返回）
+this.pathStack.pushPathByName('articleDetail', slug);
+
+// 替换（当前页出栈，不可返回——登录页跳主页用）
+this.pathStack.replacePathByName('home', '');
+
+// 出栈
+this.pathStack.pop();                          // 返回上一页
+this.pathStack.popToName('home');              // 退到指定页
+this.pathStack.clear();                        // 清栈回首页
+
+// 带结果返回（详情页选完值回传列表页）
+this.pathStack.pop(result);
+```
+
+目标页通过 `onReady` 拿真实栈与参数：
+
+```typescript
+NavDestination() {
+  // 页面内容
+}
+.onReady((ctx: NavDestinationContext) => {
+  this.pathStack = ctx.pathStack;              // 真实栈（初始值只是占位）
+  this.slug = ctx.pathInfo.param as string;    // 取参数
+})
+```
+
+**铁律**：目标页的 `build()` 根节点必须是 `NavDestination`，否则压进去白屏。
+
+## pushPath vs replacePath
+
+| API | 栈变化 | 典型场景 |
+|---|---|---|
+| `pushPathByName` | 压入，旧页保留 | 列表 → 详情（可返回） |
+| `replacePathByName` | 替换，旧页销毁 | 登录 → 主页（禁止返回登录页） |
+| `popToName` | 弹到指定层 | 详情 → 直接回首页 |
+
+## 参数传递的规范
+
+1. **简单参数**（id、slug）：字符串/数字直接传，`ctx.pathInfo.param` 取；
+2. **复杂对象**：传 slug 或 id，目标页**自己查数据仓库**——别把整个对象塞进路由参数（序列化开销 + 跨页共享可变对象的状态失控）；
+3. 取参后校验：`param` 是 `Object` 类型，用之前 `typeof` 或判空兜底。
+
+## 与 router 的对比
+
+| 维度 | router | Navigation |
+|---|---|---|
+| 转场 | 需自行处理 | 系统统一转场 |
+| 栈控制 | 单栈，能力有限 | NavPathStack 全栈操作 |
+| 传参 | 松散 | onReady 上下文，类型明确 |
+| 一多适配 | 弱 | Stack/Split 模式自适应 |
+
+## 踩坑记录
+
+1. 目标页根不是 `NavDestination` → 白屏；
+2. `.navDestination()` 手写 Builder 只能挂**一个**（链两次后写覆盖前写）——多路由一律走路由表；
+3. `hideTitleBar` 是 NavDestination 的属性，Navigation 上是 `hideNavBar`/`hideTitleBar`——用错对象直接报「属性不存在」；
+4. 参数取早了：`aboutToAppear` 时 ctx 还没就绪，参数获取放 `onReady`。
+
+## 一句话总结
+
+**路由表声明页面，NavPathStack 操作栈，NavDestination 承载目标页**——三件套齐了，路由就不会白屏。

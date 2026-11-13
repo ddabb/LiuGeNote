@@ -46,7 +46,7 @@ function move(p: { x: number, y: number }) {}            // ❌ ERROR
 
 ### 合规改写
 
-一律抽成 `interface` 或 `class`：
+对象字面量类型一律抽成 `interface` 或 `class`。
 
 ```typescript
 interface Point {

@@ -1,0 +1,321 @@
+
+# 云原生安全
+
+## 定义
+
+云原生安全是**保护容器化应用、编排平台、微服务通信的全栈安全体系**，覆盖从镜像构建到运行时防护的全生命周期。
+
+**核心挑战**：
+- **攻击面扩大**：容器、镜像、编排平台、微服务API
+- **动态性**：Pod频繁创建销毁，传统安全工具失效
+- **多租户隔离**：共享内核/网络，需强隔离机制
+- **供应链安全**：开源镜像、依赖库漏洞
+
+**核心价值**：
+- 零信任网络（Zero Trust）
+- 最小权限原则
+- 纵深防御体系
+- 自动化安全左移
+
+## 核心概念
+
+### 1. 供应链安全
+- **镜像安全**：基础镜像漏洞扫描、签名验证
+- **依赖安全**：SCA（软件成分分析）、SBOM（软件物料清单）
+- **构建安全**：CI/CD流水线安全、签名验证
+
+### 2. 容器运行时安全
+- **内核安全**：Namespace隔离、Cgroups资源限制、Seccomp/AppArmor/SELinux
+- **容器逃逸防护**：禁止特权容器、限制Capabilities
+- **文件系统安全**：只读根文件系统、tmpfs挂载
+
+### 3. 编排平台安全
+- **Kubernetes安全**：RBAC、Pod Security Standards、NetworkPolicy、Secret加密
+- **etcd安全**：加密存储、TLS通信、访问控制
+- **API Server安全**：认证、授权、准入控制
+
+### 4. 微服务通信安全
+- **mTLS**：服务间双向TLS认证（Istio、Linkerd）
+- **服务网格安全**：认证策略、授权策略
+- **API安全**：OAuth 2.0、JWT、API网关
+
+### 5. 合规与审计
+- **CIS Kubernetes Benchmark**：K8s安全配置基线
+- **GDPR/等保**：数据隐私合规
+- **审计日志**：所有API调用记录、审计策略
+
+## 详细内容
+
+### 供应链安全详解
+
+#### 镜像漏洞扫描
+**工具链**：
+- **Trivy**：开源、快速、支持多种扫描（镜像、文件系统、Git仓库）
+- **Clair**：开源，Quay镜像仓库集成
+- **Docker Scout**：Docker官方，集成到Docker Hub
+- **Snyk**：商业产品，深度依赖分析
+
+**扫描流程**：
+```
+代码提交 → CI流水线触发 → 构建镜像 → 扫描漏洞 → 
+通过 → 推送镜像仓库
+失败 → 阻断流水线 → 通知开发人员
+```
+
+**最佳实践**：
+- 基础镜像使用Alpine（体积小、漏洞少）
+- 多阶段构建减小最终镜像体积
+- 定期重新扫描已有镜像（新漏洞不断出现）
+
+#### 镜像签名验证
+**Docker Content Trust (DCT)**：
+- 镜像推送时使用私钥签名
+- 拉取镜像时验证签名
+- 防止镜像篡改、中间人攻击
+
+**Cosign（Sigstore项目）**：
+- 使用密钥对签名镜像
+- 支持密钥管理（KMS、HSM）
+- 与Kubernetes集成（Policy Controller验证）
+
+#### SBOM（软件物料清单）
+**定义**：记录镜像中所有软件包及版本
+**标准格式**：SPDX、CycloneDX
+**工具**：Syft（生成SBOM）、Grype（基于SBOM扫描漏洞）
+
+### 容器运行时安全详解
+
+#### 内核隔离机制
+**Namespace（命名空间）**：
+- **PID Namespace**：进程隔离
+- **Network Namespace**：网络隔离
+- **Mount Namespace**：文件系统隔离
+- **UTS Namespace**：主机名隔离
+- **IPC Namespace**：进程间通信隔离
+- **User Namespace**：用户/组ID隔离
+
+**Cgroups（控制组）**：
+- **CPU子系统**：限制CPU使用率
+- **Memory子系统**：限制内存使用
+- **Blkio子系统**：限制磁盘I/O
+- **Device子系统**：限制访问设备
+
+#### 安全加固配置
+**Seccomp（安全计算模式）**：
+- 限制容器可调用系统调用
+- 默认配置文件：`default/seccomp.json`
+- 自定义配置：仅允许必要系统调用
+
+**AppArmor/SELinux**：
+- **AppArmor**：基于路径的访问控制（Ubuntu/Debian）
+- **SELinux**：基于标签的强制访问控制（RHEL/CentOS）
+- 配置文件：定义容器可访问的资源
+
+**Capabilities**：
+- 细分root权限（如CAP_NET_ADMIN、CAP_SYS_ADMIN）
+- 容器默认删除部分Capabilities
+- 最小化原则：仅保留必要Capabilities
+
+### Kubernetes安全详解
+
+#### RBAC（基于角色的访问控制）
+**核心对象**：
+- **Role/ClusterRole**：定义权限集合
+- **RoleBinding/ClusterRoleBinding**：绑定用户/组到角色
+
+**最佳实践**：
+- 最小权限原则：仅授予必要权限
+- 命名空间隔离：使用Role而非ClusterRole
+- 定期审计：检查ClusterRoleBinding，避免过度授权
+
+#### Pod Security Standards
+**三个级别**：
+- **Privileged**：无限制（仅用于系统组件）
+- **Baseline**：适度限制（防止已知权限提升）
+- **Restricted**：严格限制（符合Pod加固最佳实践）
+
+**实施方法**：
+- **Pod Security Admission**（K8s 1.23+）：内置准入控制器
+- **Policy Controller**：使用OPA Gatekeeper或Kyverno自定义策略
+
+#### Secret加密
+**静态加密**：
+- 启用API Server的EncryptionConfiguration
+- 加密etcd中的Secret数据
+- 支持KMS集成（AWS KMS、Azure Key Vault、GCP Cloud KMS）
+
+**Secret管理工具**：
+- **HashiCorp Vault**：动态Secret、租约机制、加密存储
+- **Sealed Secrets**：加密Kubernetes Secret，安全存储到Git
+- **External Secrets Operator**：从外部Secret管理工具同步
+
+### 微服务通信安全详解
+
+#### mTLS（双向TLS认证）
+**工作流程**：
+1. 服务A发起请求 → Sidecar（Envoy）
+2. Sidecar使用证书与服务B的Sidecar建立TLS连接
+3. 双方验证证书（由Citadel/Spiffe颁发）
+4. 加密通信
+
+**Istio mTLS配置**：
+```yaml
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+spec:
+  mtls:
+    mode: STRICT  # 强制mTLS
+```
+
+#### API安全
+**OAuth 2.0流程**：
+1. 用户访问服务 → 重定向到认证服务器
+2. 用户授权 → 返回授权码
+3. 服务使用授权码换取访问令牌
+4. 访问令牌调用API
+
+**JWT（JSON Web Token）**：
+- 结构：Header.Payload.Signature
+- 验证：签名验证、过期时间验证
+- 最佳实践：短期令牌、刷新令牌、HTTPS传输
+
+## 示例/应用场景
+
+### 场景1：镜像供应链安全
+**需求**：确保生产环境仅运行经过扫描和签名的镜像
+
+**方案**：
+1. **CI流水线集成Trivy**：镜像构建后自动扫描，高危漏洞阻断构建
+2. **Cosign签名镜像**：构建成功后使用Cosign签名
+3. **Admission Webhook验证**：Kubernetes部署前验证镜像签名和漏洞报告
+4. **镜像仓库策略**：仅允许签名且漏洞评分<7.0的镜像
+
+### 场景2：Kubernetes RBAC配置
+**需求**：开发团队仅能操作dev命名空间，不能操作prod命名空间
+
+**方案**：
+```yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: dev
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods", "services"]
+  verbs: ["get", "list", "create", "update", "delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-developers
+  namespace: dev
+subjects:
+- kind: Group
+  name: developers
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### 场景3：运行时入侵检测
+**需求**：检测容器内异常行为（如反弹Shell、挖矿进程）
+
+**方案**：
+1. **Falco**：开源运行时安全工具，检测异常系统调用
+2. **规则示例**：
+   - 检测Shell在容器内运行
+   - 检测敏感文件读取（/etc/shadow）
+   - 检测异常网络连接
+3. **告警集成**：Falco检测到异常 → 发送到Alertmanager → 企业微信/钉钉告警
+
+## 【对应领域考点】
+
+1. **镜像安全**：漏洞扫描原理、签名验证流程、SBOM标准
+2. **容器隔离机制**：6种Namespace、Cgroups子系统、Seccomp/AppArmor作用
+3. **Kubernetes安全**：RBAC核心对象、Pod Security Standards三个级别、Secret加密配置
+4. **mTLS原理**：证书颁发、双向认证、Istio PeerAuthentication配置
+5. **网络安全策略**：NetworkPolicy、服务网格授权策略
+6. **审计日志**：Kubernetes审计策略配置、日志分析
+7. **合规标准**：CIS Kubernetes Benchmark、GDPR数据保护要求
+8. **入侵检测**：Falco规则、异常行为检测
+
+## 最佳实践
+
+### 1. 供应链安全
+- **最小化基础镜像**：使用Alpine、Distroless
+- **多阶段构建**：分离构建环境和运行环境
+- **签名验证**：Cosign签名 + Admission Webhook验证
+- **定期扫描**：每周重新扫描已有镜像
+
+### 2. 容器配置加固
+- **非root用户运行**：Dockerfile中USER指令
+- **只读文件系统**：`readOnlyRootFilesystem: true`
+- **资源限制**：设置requests和limits
+- **禁止特权容器**：`privileged: false`
+
+### 3. Kubernetes安全配置
+- **启用RBAC**：禁用ABAC，最小权限授权
+- **Pod Security Standards**：强制Restricted级别
+- **NetworkPolicy**：默认拒绝所有流量，显式允许必要通信
+- **Secret加密**：启用EncryptionConfiguration，集成KMS
+
+### 4. 运行时监控
+- **Falco规则**：覆盖常见攻击手法
+- **审计日志分析**：定期审计apiserver审计日志
+- **异常检测**：CPU/内存异常使用、异常网络连接
+
+### 5. 应急响应
+- **容器隔离**：NetworkPolicy隔离被入侵Pod
+- **镜像回滚**：快速回滚到安全版本
+- **取证分析**：保留容器快照、审计日志
+
+## 【常见错误】
+
+### 错误1：使用latest标签
+**表现**：`image: nginx:latest`
+**后果**：无法追溯版本，可能拉取带漏洞版本
+**正确做法**：使用具体版本标签 + 摘要（Digest）
+
+### 错误2：特权容器
+**表现**：`privileged: true`
+**后果**：容器可访问宿主机所有设备，容器逃逸风险极高
+**正确做法**：仅授予必要Capabilities，禁止特权模式
+
+### 错误3：root用户运行容器
+**表现**：Dockerfile中未切换用户
+**后果**：容器逃逸后获得宿主机root权限
+**正确做法**：`USER 1000` 非root用户运行
+
+### 错误4：Secret明文存储
+**表现**：环境变量中存储密码、API Key
+**后果**：`kubectl describe pod` 可查看明文Secret
+**正确做法**：使用Kubernetes Secret或Vault
+
+### 错误5：忽视网络安全策略
+**表现**：未配置NetworkPolicy，所有Pod互通
+**后果**：攻击者突破一个Pod后可横向移动
+**正确做法**：默认拒绝所有流量，显式允许必要通信
+
+## 总结
+
+云原生安全是**全生命周期、纵深防御**的体系，需覆盖供应链、运行时、平台、通信各层面。
+
+**关键要点**：
+1. **安全左移**：供应链安全（镜像扫描、签名）前置到CI/CD
+2. **最小权限**：RBAC、Capabilities、NetworkPolicy均遵循最小权限
+3. **零信任网络**：mTLS、服务网格安全策略
+4. **运行时防护**：Falco入侵检测、审计日志分析
+5. **自动化**：安全策略即代码（Policy as Code）、自动化扫描
+
+**学习路径**：
+1. 掌握容器安全机制（Namespace、Cgroups、Seccomp）
+2. 实践Kubernetes安全（RBAC、Pod Security、NetworkPolicy）
+3. 学习镜像安全（Trivy扫描、Cosign签名）
+4. 配置服务网格安全（mTLS、授权策略）
+5. 建设运行时安全（Falco、审计日志）
+
+云原生安全不是附加功能，而是**基础设施的核心组成部分**。

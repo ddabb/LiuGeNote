@@ -1,0 +1,83 @@
+---
+title: GridRow 与 GridCol：断点响应式布局从手机到平板
+tags: [ArkTS, 响应式布局, GridRow, GridCol, 断点, 平板适配]
+description: 用栅格容器 GridRow/GridCol 实现一次开发多端适配：断点体系 xs/sm/md/lg、列数与栅格间距配置、span/offset 的组合，以及宽屏双栏卡片流的落地示例。
+---
+
+# GridRow 与 GridCol：断点响应式布局从手机到平板
+
+同一份代码，手机单栏、平板双栏、大屏三栏——不用写 `if (deviceType === 'tablet')`，栅格系统 `GridRow`/`GridCol` 就是干这个的。
+
+## 断点体系
+
+| 断点 | 宽度范围 | 典型设备 |
+|---|---|---|
+| xs | [0, 320vp) | 小屏穿戴 |
+| sm | [320, 600vp) | 手机竖屏 |
+| md | [600, 840vp) | 折叠屏展开 / 平板竖屏 |
+| lg | [840vp, +∞) | 平板横屏 / 2in1 |
+
+## 基本用法
+
+```typescript
+GridRow({ columns: { sm: 4, md: 8, lg: 12 } }) {
+  GridCol({ span: { sm: 4, md: 4, lg: 8 } }) {
+    ArticleList()          // 主内容区
+  }
+  GridCol({ span: { sm: 0, md: 4, lg: 4 } }) {
+    SideDashboard()        // 侧栏：sm 隐藏，md/lg 显示
+  }
+}
+```
+
+- `columns` 定义每个断点的总列数；
+- 每个 `GridCol` 用 `span` 声明自己在各断点占几列；
+- `span: 0` 即「此断点不显示」，手机上侧栏自动消失，无需 if。
+
+## 文章卡片的列数自适应
+
+```typescript
+GridRow({
+  columns: { sm: 2, md: 3, lg: 4 },
+  gutter: { x: 12, y: 12 }    // 栅格间距
+}) {
+  ForEach(this.articles, (item: ArticleMeta) => {
+    GridCol({ span: 1 }) {
+      ArticleCard({ meta: item })
+    }
+  }, (item: ArticleMeta) => item.slug)
+}
+```
+
+手机两列、折叠屏三列、横屏四列，卡片流自动重排——列表页宽屏适配的最省事方案。
+
+## offset 与对齐
+
+```typescript
+GridCol({ span: 4, offset: 4 })   // 跳过 4 列再放，用于居中或错位布局
+```
+
+窄内容（登录卡片、结果页）在宽屏上居中：lg 下 span 6 offset 3，两端各留 3 列空白。
+
+## 断点变化的监听
+
+```typescript
+GridRow({
+  onBreakpointChange: (breakpoints: string) => {
+    this.currentBreakpoint = breakpoints;   // 'sm' | 'md' | 'lg'...
+  }
+})
+```
+
+个别场景（比如仪表盘冻结阈值、卡片宽高比）需要按断点调参数，用这个回调同步到状态里，其余交给栅格自动完成。
+
+## 踩坑记录
+
+1. **vp 不是 px**：断点阈值基于 vp（虚拟像素，约等于密度无关像素），别拿物理像素硬算；
+2. **GridCol 必须是 GridRow 直接子组件**，中间包 Row/Column 会导致栅格失效；
+3. **span 超过 columns**：多出的列换行，布局看起来「莫名断行」先查 span 总和；
+4. 平板「左侧列表右侧详情」场景，优先考虑 Navigation 的 Split 模式，栅格做内容区即可，别用栅格硬模拟分栏导航。
+
+## 一句话总结
+
+**布局交给栅格，逻辑留给断点回调**：span 控可见，gutter 控间距，columns 控密度——一次布局，三端通吃。

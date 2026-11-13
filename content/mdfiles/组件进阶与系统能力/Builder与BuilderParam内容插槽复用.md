@@ -1,0 +1,98 @@
+---
+title: @Builder 与 @BuilderParam：自定义组件的内容插槽复用
+tags: [ArkTS, 自定义组件, Builder, BuilderParam, 组件复用]
+description: 讲解 @Builder 修饰的构建函数与 @BuilderParam 插槽参数：按引用传递与按值传递的差异、尾随闭包写法、插槽默认实现，以及抽公共 UI 时的拆分边界。
+---
+
+# @Builder 与 @BuilderParam：自定义组件的内容插槽复用
+
+同一个卡片头、同一套列表项装饰，在每个页面里复制粘贴——`@Builder` 就是用来收敛这些重复 UI 片段的。
+
+## @Builder：抽出可复用的 UI 片段
+
+```typescript
+@Builder
+function SectionTitle(title: string, count: number) {
+  Row() {
+    Text(title).fontSize(18).fontWeight(FontWeight.Bold)
+    Blank()
+    Text(`${count} 篇`).fontColor('#999')
+  }
+  .width('100%')
+  .padding({ left: 16, right: 16 });
+}
+
+// 使用
+build() {
+  Column() {
+    SectionTitle('ArkTS 语言与规范', 6)
+    ArticleList()
+  }
+}
+```
+
+### 按引用传递 vs 按值传递
+
+```typescript
+// 按值：参数是快照，外部状态变了片段不刷新
+@Builder
+function CardA(meta: ArticleMeta) { ... }
+
+// 按引用：传对象整体，属性变化会触发刷新
+@Builder
+function CardB($$: { meta: ArticleMeta }) { ... }
+```
+
+**需要 UI 跟着数据动，就传对象**；纯静态片段随意。
+
+## @BuilderParam：给组件留插槽
+
+```typescript
+@Component
+struct Panel {
+  @BuilderParam contentBuilder: () => void = this.defaultContent;
+  @Builder defaultContent() {
+    Text('默认内容')
+  }
+  build() {
+    Column() {
+      Text('面板标题').fontSize(16)
+      this.contentBuilder()   // 插槽位置
+    }
+    .borderRadius(12)
+    .padding(12);
+  }
+}
+
+// 使用（尾随闭包）
+Panel() {
+  Text('这里是自定义内容')
+}
+```
+
+要点：
+
+- `@BuilderParam` 是「接收 @Builder 的参数」，实现组件的**内容插槽**；
+- 必须给默认实现，防调用方不传时白屏；
+- 尾随闭包写法（组件体直接写内容）要求插槽参数在末位。
+
+## 拆分边界：什么时候抽 Builder，什么时候抽组件
+
+| 特征 | 用 @Builder | 用 @Component |
+|---|---|---|
+| 有无状态 | 无状态片段 | 有 @State/@Prop |
+| 有无逻辑 | 纯展示 | 有事件回调、生命周期 |
+| 复用范围 | 文件内/工具片段 | 跨页面组件库 |
+
+一句话：**Builder 是「模板片段」，Component 是「迷你应用」**。给片段加状态的那一刻，就该升级成组件。
+
+## 踩坑记录
+
+1. `@Builder` 函数体内的 `this`：全局函数没有 `this`，要访问组件状态必须定义为**组件成员方法**（`this.xxxBuilder()`）；
+2. 按值传参在列表场景不刷新——`LazyForEach` 的 item 用 `$$` 对象传参；
+3. 插槽默认值写成 `emptyBuilder` 忘了实现，编译报 `cannot read property of undefined`；
+4. Builder 内不能写局部变量声明、if/switch 以外流程控制受限，复杂逻辑先在外层算好。
+
+## 一句话总结
+
+**无状态片段进 Builder，有状态交互进 Component，预留扩展用 BuilderParam 插槽**——三层复用，UI 不再复制粘贴。

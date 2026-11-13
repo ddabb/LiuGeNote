@@ -1,0 +1,617 @@
+
+# SQL基础查询
+
+## 定义
+
+SQL（Structured Query Language，结构化查询语言）是用于管理关系型数据库的标准编程语言。基础查询主要指使用`SELECT`语句从数据库中检索数据，是SQL最核心、最常用的操作。
+
+对于数据分析师而言，SQL基础查询是日常工作的90%内容——从业务数据库中取出所需数据，是后续分析的前提。
+
+---
+
+## 核心概念
+
+### 1. SELECT语句的基本结构
+
+```sql
+SELECT 列名1, 列名2, ...
+FROM 表名
+[WHERE 条件]
+[ORDER BY 列名 [ASC|DESC]]
+[LIMIT 数量];
+```
+
+**执行顺序**（逻辑上，不是书写顺序）：
+1. `FROM`：确定数据来源表
+2. `WHERE`：过滤行
+3. `SELECT`：选择列
+4. `ORDER BY`：排序
+5. `LIMIT`：限制返回行数
+
+### 2. 基础查询的分类
+
+| 查询类型 | 说明 | 关键字 |
+|---------|------|--------|
+| 简单查询 | 查询所有列或指定列 | `SELECT ... FROM` |
+| 条件查询 | 按条件过滤行 | `WHERE` |
+| 排序查询 | 对结果排序 | `ORDER BY` |
+| 分页查询 | 限制返回行数 | `LIMIT`（MySQL/PostgreSQL）或 `TOP`（SQL Server）或 `ROWNUM`（Oracle） |
+| 去重查询 | 去除重复行 | `DISTINCT` |
+| 计算列 | 对列进行计算或拼接 | `SELECT 列1+列2` |
+| 别名查询 | 给列或表起别名 | `AS`（可省略） |
+
+---
+
+## 详细内容
+
+### 一、简单查询
+
+#### 1.1 查询所有列
+
+```sql
+-- 查询员工表的所有列
+SELECT * FROM employees;
+```
+
+**注意**：生产环境中不建议使用`SELECT *`，原因：
+- 性能问题：返回所有列，浪费I/O和带宽
+- 可读性问题：不知道具体返回哪些列
+- 维护问题：表结构变更后，`SELECT *`会返回新增列，可能导致应用程序出错
+
+**最佳实践**：明确指定需要的列名。
+
+```sql
+-- 好的做法：明确指定列名
+SELECT employee_id, first_name, last_name, email, hire_date
+FROM employees;
+```
+
+#### 1.2 查询指定列
+
+```sql
+-- 只查询员工的姓名和邮箱
+SELECT first_name, last_name, email
+FROM employees;
+```
+
+#### 1.3 使用别名
+
+```sql
+-- 给列起别名（AS可省略）
+SELECT 
+    first_name AS "名",
+    last_name AS "姓",
+    salary * 12 AS "年薪"
+FROM employees;
+
+-- 给表起别名（常用于多表连接）
+SELECT e.first_name, e.salary
+FROM employees AS e;
+```
+
+**注意**：
+- 别名可以用双引号括起来（当别名包含空格或特殊字符时必需）
+- 不同数据库的字符串连接符不同：MySQL用`CONCAT()`，Oracle用`||`，SQL Server用`+`
+
+### 二、条件查询（WHERE）
+
+#### 2.1 比较运算符
+
+| 运算符 | 说明 | 示例 |
+|--------|------|------|
+| `=` | 等于 | `WHERE salary = 10000` |
+| `!=` 或 `<>` | 不等于 | `WHERE department_id != 10` |
+| `>` | 大于 | `WHERE salary > 5000` |
+| `<` | 小于 | `WHERE hire_date < '2020-01-01'` |
+| `>=` | 大于等于 | `WHERE salary >= 5000` |
+| `<=` | 小于等于 | `WHERE salary <= 10000` |
+
+```sql
+-- 查询工资等于10000的员工
+SELECT first_name, salary
+FROM employees
+WHERE salary = 10000;
+
+-- 查询入职日期在2020年之前的员工
+SELECT first_name, hire_date
+FROM employees
+WHERE hire_date < '2020-01-01';
+```
+
+#### 2.2 逻辑运算符
+
+| 运算符 | 说明 | 示例 |
+|--------|------|------|
+| `AND` | 逻辑与 | `WHERE salary > 5000 AND department_id = 10` |
+| `OR` | 逻辑或 | `WHERE department_id = 10 OR department_id = 20` |
+| `NOT` | 逻辑非 | `WHERE NOT (salary > 5000)` |
+
+```sql
+-- 查询10号部门且工资大于5000的员工
+SELECT first_name, department_id, salary
+FROM employees
+WHERE department_id = 10 AND salary > 5000;
+
+-- 查询10号或20号部门的员工
+SELECT first_name, department_id
+FROM employees
+WHERE department_id = 10 OR department_id = 20;
+
+-- 查询不在10号部门的员工
+SELECT first_name, department_id
+FROM employees
+WHERE NOT department_id = 10;
+-- 等价于：WHERE department_id != 10
+```
+
+#### 2.3 范围查询
+
+```sql
+-- 查询工资在5000到10000之间的员工（包含边界）
+SELECT first_name, salary
+FROM employees
+WHERE salary BETWEEN 5000 AND 10000;
+
+-- 等价于
+SELECT first_name, salary
+FROM employees
+WHERE salary >= 5000 AND salary <= 10000;
+```
+
+#### 2.4 集合查询（IN）
+
+```sql
+-- 查询10号、20号、30号部门的员工
+SELECT first_name, department_id
+FROM employees
+WHERE department_id IN (10, 20, 30);
+
+-- 等价于
+SELECT first_name, department_id
+FROM employees
+WHERE department_id = 10 
+   OR department_id = 20 
+   OR department_id = 30;
+```
+
+#### 2.5 模糊查询（LIKE）
+
+| 通配符 | 说明 |
+|--------|------|
+| `%` | 匹配任意长度的字符串（包括0个字符） |
+| `_` | 匹配单个字符 |
+
+```sql
+-- 查询姓以'S'开头的员工
+SELECT first_name
+FROM employees
+WHERE first_name LIKE 'S%';
+
+-- 查询姓包含'a'的员工
+SELECT first_name
+FROM employees
+WHERE first_name LIKE '%a%';
+
+-- 查询姓第二个字母是'a'的员工
+SELECT first_name
+FROM employees
+WHERE first_name LIKE '_a%';
+
+-- 查询姓包含'%'的员工（转义）
+SELECT first_name
+FROM employees
+WHERE first_name LIKE '%\%%' ESCAPE '\';
+```
+
+#### 2.6 空值查询（NULL）
+
+**重要**：`NULL`表示"未知"或"不存在"，不能用`=`或`!=`判断，必须使用`IS NULL`或`IS NOT NULL`。
+
+```sql
+-- 查询没有提成的员工（commission_pct为NULL）
+SELECT first_name, commission_pct
+FROM employees
+WHERE commission_pct IS NULL;
+
+-- 查询有提成的员工
+SELECT first_name, commission_pct
+FROM employees
+WHERE commission_pct IS NOT NULL;
+
+-- 错误示例：以下语句不会返回任何结果
+SELECT first_name
+FROM employees
+WHERE commission_pct = NULL;  -- 错误！应该用 IS NULL
+```
+
+### 三、排序查询（ORDER BY）
+
+#### 3.1 单列排序
+
+```sql
+-- 按工资升序排序（默认升序）
+SELECT first_name, salary
+FROM employees
+ORDER BY salary;  -- 等价于 ORDER BY salary ASC
+
+-- 按工资降序排序
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC;
+
+-- 按入职日期升序排序（越早入职的排在前面）
+SELECT first_name, hire_date
+FROM employees
+ORDER BY hire_date;
+```
+
+#### 3.2 多列排序
+
+```sql
+-- 先按部门ID升序，再按工资降序
+SELECT first_name, department_id, salary
+FROM employees
+ORDER BY department_id ASC, salary DESC;
+```
+
+**说明**：多列排序时，先按第一列排序，当第一列值相同时，再按第二列排序。
+
+#### 3.3 按别名排序
+
+```sql
+-- 按别名排序（大多数数据库支持）
+SELECT first_name, salary * 12 AS annual_salary
+FROM employees
+ORDER BY annual_salary DESC;
+```
+
+#### 3.4 按列位置排序
+
+```sql
+-- 按第二列（salary）排序
+SELECT first_name, salary
+FROM employees
+ORDER BY 2 DESC;  -- 2表示SELECT列表中的第二列
+```
+
+**注意**：按列位置排序的可读性较差，不推荐使用。
+
+### 四、分页查询（LIMIT）
+
+**注意**：不同数据库的分页语法不同。
+
+| 数据库 | 分页语法 |
+|--------|----------|
+| MySQL / PostgreSQL | `LIMIT 数量 OFFSET 起始位置` 或 `LIMIT 起始位置, 数量` |
+| SQL Server | `TOP 数量` 或 `OFFSET ... FETCH`（2012+） |
+| Oracle | `ROWNUM` 或 `FETCH FIRST ... ROWS ONLY`（12c+） |
+
+```sql
+-- MySQL / PostgreSQL：查询工资最高的前10名员工
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 10;
+
+-- MySQL：查询工资第11-20名的员工（分页）
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 10 OFFSET 10;  -- 跳过前10行，返回接下来的10行
+-- 等价于：LIMIT 10, 10
+
+-- SQL Server：查询工资最高的前10名员工
+SELECT TOP 10 first_name, salary
+FROM employees
+ORDER BY salary DESC;
+
+-- Oracle：查询工资最高的前10名员工
+SELECT first_name, salary
+FROM employees
+WHERE ROWNUM <= 10
+ORDER BY salary DESC;
+```
+
+### 五、去重查询（DISTINCT）
+
+```sql
+-- 查询所有不重复的部门ID
+SELECT DISTINCT department_id
+FROM employees;
+
+-- 查询不重复的组合（department_id和job_id的组合）
+SELECT DISTINCT department_id, job_id
+FROM employees;
+```
+
+**注意**：`DISTINCT`是对所有选中列的组合去重，不是只对第一列去重。
+
+### 六、计算列
+
+```sql
+-- 计算年薪（月薪*12）
+SELECT first_name, salary, salary * 12 AS annual_salary
+FROM employees;
+
+-- 拼接字符串（MySQL用CONCAT，Oracle用||）
+-- MySQL
+SELECT CONCAT(first_name, ' ', last_name) AS full_name
+FROM employees;
+
+-- Oracle / PostgreSQL
+SELECT first_name || ' ' || last_name AS full_name
+FROM employees;
+
+-- 条件判断（CASE WHEN）
+SELECT first_name, salary,
+    CASE 
+        WHEN salary < 5000 THEN '低'
+        WHEN salary BETWEEN 5000 AND 10000 THEN '中'
+        ELSE '高'
+    END AS salary_level
+FROM employees;
+```
+
+---
+
+## 示例/应用场景
+
+### 示例1：电商订单分析
+
+**需求**：从订单表中查询2024年1月下单金额超过1000元的用户ID和下单金额，按金额降序排序，只取前100名。
+
+```sql
+SELECT 
+    user_id,
+    SUM(order_amount) AS total_amount
+FROM orders
+WHERE order_date BETWEEN '2024-01-01' AND '2024-01-31'
+GROUP BY user_id
+HAVING SUM(order_amount) > 1000
+ORDER BY total_amount DESC
+LIMIT 100;
+```
+
+### 示例2：员工薪资分析
+
+**需求**：查询10号或20号部门中，工资在5000-10000之间，且有提成（commission_pct不为空）的员工姓名、工资、提成，按工资降序排序。
+
+```sql
+SELECT 
+    first_name || ' ' || last_name AS full_name,
+    salary,
+    commission_pct
+FROM employees
+WHERE department_id IN (10, 20)
+  AND salary BETWEEN 5000 AND 10000
+  AND commission_pct IS NOT NULL
+ORDER BY salary DESC;
+```
+
+### 示例3：用户活跃度分析
+
+**需求**：查询2024年1月登录次数大于等于5次的用户，且用户名包含"张"或"李"。
+
+```sql
+SELECT 
+    user_id,
+    username,
+    login_count
+FROM user_activity
+WHERE login_date BETWEEN '2024-01-01' AND '2024-01-31'
+  AND login_count >= 5
+  AND (username LIKE '%张%' OR username LIKE '%李%')
+ORDER BY login_count DESC;
+```
+
+---
+
+## 数据分析师考点
+
+### SQL基础查询常见考点
+
+1. **SELECT语句执行顺序**：FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT
+2. **WHERE vs HAVING的区别**：WHERE在聚合前过滤行，HAVING在聚合后过滤组
+3. **NULL的处理**：NULL不能用`=`判断，必须用`IS NULL`或`IS NOT NULL`
+4. **BETWEEN的边界**：`BETWEEN a AND b`包含a和b（闭区间）
+5. **LIKE的通配符**：`%`匹配任意长度，`_`匹配单个字符
+6. **DISTINCT的作用范围**：对SELECT所有列的组合去重
+7. **不同数据库的分页语法差异**：MySQL用LIMIT，SQL Server用TOP或OFFSET...FETCH，Oracle用ROWNUM
+8. **别名的使用限制**：WHERE子句中不能使用SELECT中定义的别名（因为执行顺序）
+
+### 实战考点
+
+1. **性能优化**：
+   - 避免使用`SELECT *`
+   - WHERE条件中避免使用函数（会导致索引失效）
+   - LIKE以`%`开头会导致索引失效（全表扫描）
+2. **数据隐式转换**：字符串与数字比较时，数据库会进行隐式转换，可能导致索引失效
+3. **日期处理**：不同数据库的日期函数不同（MySQL用`DATE()`，Oracle用`TRUNC()`）
+4. **字符串拼接**：不同数据库的字符串拼接语法不同（MySQL用`CONCAT()`，Oracle用`||`）
+
+---
+
+## 最佳实践
+
+### 1. 代码可读性
+
+- **明确指定列名**：不用`SELECT *`
+- **使用别名**：给计算列或拼接列起有意义的别名
+- **格式化SQL**：关键字大写，每个子句另起一行
+- **使用注释**：复杂查询添加注释说明业务逻辑
+
+```sql
+-- 好的做法：格式化、有注释
+SELECT 
+    e.first_name || ' ' || e.last_name AS full_name,  -- 员工全名
+    e.salary,                                         -- 月薪
+    e.salary * 12 AS annual_salary                    -- 年薪
+FROM employees e
+WHERE e.department_id = 10                           -- 只查10号部门
+ORDER BY e.salary DESC;                               -- 按工资降序
+```
+
+### 2. 性能优化
+
+- **避免全表扫描**：WHERE条件中使用索引列
+- **避免索引失效**：
+  - 不在WHERE条件中对列使用函数（`WHERE YEAR(hire_date) = 2020` 改为 `WHERE hire_date BETWEEN '2020-01-01' AND '2020-12-31'`）
+  - LIKE不以`%`开头
+  - 避免隐式类型转换
+- **限制返回行数**：使用LIMIT（或等效语法）避免一次性返回大量数据
+- **只查询需要的列**：减少I/O和网络传输
+
+### 3. 逻辑正确性
+
+- **注意NULL的处理**：聚合函数（如SUM、AVG）会忽略NULL，COUNT(*)不会
+- **注意BETWEEN的边界**：确认业务逻辑是否包含边界值
+- **注意浮点数比较**：浮点数比较应使用范围判断（`ABS(a-b) < 0.0001`），而不是直接`=`
+- **注意日期时间的时间部分**：`WHERE date_column = '2024-01-01'`可能匹配不到任何数据（因为时间部分默认为00:00:00）
+
+### 4. 跨数据库兼容性
+
+- **避免数据库特有的语法**：尽量使用标准SQL
+- **注意字符串拼接语法差异**：MySQL用`CONCAT()`，Oracle用`||`
+- **注意分页语法差异**：不同数据库的分页语法完全不同
+- **注意日期函数差异**：不同数据库的日期函数不同
+
+---
+
+## 常见错误
+
+### 1. 混淆WHERE和HAVING
+
+**错误示例**：
+```sql
+-- 错误：WHERE中不能使用聚合函数
+SELECT department_id, AVG(salary)
+FROM employees
+WHERE AVG(salary) > 5000   -- 错误！
+GROUP BY department_id;
+```
+
+**正确做法**：
+```sql
+-- 正确：用HAVING过滤聚合结果
+SELECT department_id, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department_id
+HAVING AVG(salary) > 5000;
+```
+
+### 2. 用=判断NULL
+
+**错误示例**：
+```sql
+-- 错误：不会返回任何结果
+SELECT first_name
+FROM employees
+WHERE commission_pct = NULL;
+```
+
+**正确做法**：
+```sql
+SELECT first_name
+FROM employees
+WHERE commission_pct IS NULL;
+```
+
+### 3. 在WHERE中使用别名
+
+**错误示例**：
+```sql
+-- 错误：WHERE执行顺序早于SELECT，找不到annual_salary别名
+SELECT first_name, salary * 12 AS annual_salary
+FROM employees
+WHERE annual_salary > 50000;
+```
+
+**正确做法**：
+```sql
+-- 方法1：重复表达式
+SELECT first_name, salary * 12 AS annual_salary
+FROM employees
+WHERE salary * 12 > 50000;
+
+-- 方法2：使用子查询或CTE
+SELECT *
+FROM (
+    SELECT first_name, salary * 12 AS annual_salary
+    FROM employees
+) t
+WHERE annual_salary > 50000;
+```
+
+### 4. 忽略字符串大小写
+
+**错误示例**：
+```sql
+-- 可能匹配不到数据（取决于数据库的排序规则）
+SELECT first_name
+FROM employees
+WHERE first_name = 'smith';
+```
+
+**正确做法**：
+```sql
+-- 方法1：使用UPPER或LOWER
+SELECT first_name
+FROM employees
+WHERE UPPER(first_name) = 'SMITH';
+
+-- 方法2：使用ILIKE（PostgreSQL）
+SELECT first_name
+FROM employees
+WHERE first_name ILIKE 'smith';
+
+-- 方法3：配置数据库排序规则为不区分大小写
+```
+
+### 5. 使用SELECT * 在生产环境
+
+**错误做法**：
+```sql
+-- 不推荐：SELECT * 性能差，且可能导致应用程序出错
+SELECT * FROM employees;
+```
+
+**正确做法**：
+```sql
+-- 推荐：明确指定需要的列
+SELECT employee_id, first_name, last_name, email, hire_date, salary
+FROM employees;
+```
+
+### 6. 混淆DISTINCT和GROUP BY
+
+**错误理解**：认为DISTINCT和GROUP BY功能相同
+
+**正确理解**：
+- `DISTINCT`：去重，返回不重复的行
+- `GROUP BY`：分组，配合聚合函数使用，每组返回一行
+
+```sql
+-- DISTINCT：查询不重复的部门ID
+SELECT DISTINCT department_id FROM employees;
+
+-- GROUP BY：查询每个部门的平均工资
+SELECT department_id, AVG(salary)
+FROM employees
+GROUP BY department_id;
+```
+
+---
+
+## 总结
+
+SQL基础查询是数据分析师的必备技能，核心要点包括：
+
+1. **掌握SELECT语句结构**：SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY → LIMIT
+2. **熟练使用WHERE条件**：比较运算符、逻辑运算符、范围查询、集合查询、模糊查询、NULL判断
+3. **掌握排序和分页**：ORDER BY排序，LIMIT（或数据库等效语法）分页
+4. **理解NULL的特殊性**：NULL不能用`=`判断，必须用`IS NULL`或`IS NOT NULL`
+5. **遵循最佳实践**：不用`SELECT *`、注意性能优化、保证逻辑正确性、考虑跨数据库兼容性
+
+SQL基础查询看似简单，但细节很多，需要在实践中不断积累经验。
+
+---

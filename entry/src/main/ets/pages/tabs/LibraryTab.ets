@@ -49,10 +49,14 @@ export struct LibraryTab {
 
   build() {
     Column() {
-      PageHeader({
-        title: '知识库',
-        subtitle: `${this.categories.length} 分类 · ${this.tags.length} 标签 · ${this.articles.length} 篇`
-      })
+      Column() {
+        PageHeader({
+          title: '知识库',
+          subtitle: `${this.categories.length} 分类 · ${this.tags.length} 标签 · ${this.articles.length} 篇`
+        })
+      }
+      .width('100%')
+      .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       if (this.loadError !== '') {
         Column({ space: 8 }) {
           Text('数据加载失败')
@@ -124,6 +128,7 @@ export struct LibraryTab {
           .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
         }
         .scrollBar(BarState.Off)
+        .align(Alignment.Top)
         .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')

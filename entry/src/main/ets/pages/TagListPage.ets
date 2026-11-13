@@ -79,6 +79,7 @@ struct TagListPage {
       .width('100%')
       .height('100%')
     }
+    .alignItems(HorizontalAlign.Center)
     .backgroundColor(this.palette().pageBg)
     .height('100%')
     .width('100%')

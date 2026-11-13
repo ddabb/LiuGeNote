@@ -64,7 +64,7 @@ struct QuizPage {
       if (this.questions.length === 0 && !this.finished) {
         this.loadError = this.mode === QuizManager.MODE_WRONG
           ? '错题本是空的，答错的题目会自动收进来'
-          : '题库为空：请先运行 node scripts/publish.js 生成内容数据';
+          : '题库为空：rawfile/quiz.json 缺失或没有题目';
       }
     } catch (e) {
       this.loadError = `题目加载失败：${(e as Error).message}`;
@@ -225,6 +225,7 @@ struct QuizPage {
       .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
     }
     .scrollBar(BarState.Off)
+    .align(Alignment.Top)
     .edgeEffect(EdgeEffect.Spring)
     .layoutWeight(1)
     .width('100%')
@@ -353,6 +354,7 @@ struct QuizPage {
       .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
     }
     .scrollBar(BarState.Off)
+    .align(Alignment.Top)
     .edgeEffect(EdgeEffect.Spring)
     .layoutWeight(1)
     .width('100%')

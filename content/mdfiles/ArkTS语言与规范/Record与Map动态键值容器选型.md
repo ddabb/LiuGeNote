@@ -1,0 +1,100 @@
+---
+title: Record 与 Map：ArkTS 动态键值容器怎么选
+tags: [ArkTS, Record, Map, 数据结构, 动态键]
+description: 对比 ArkTS 中两种键值容器 Record 与 Map 的适用场景、遍历方式与性能特征，讲清索引签名被禁后如何用 Record 承接动态键，以及 Map 特有的有序遍历优势。
+---
+
+# Record 与 Map：ArkTS 动态键值容器怎么选
+
+ArkTS 禁了索引签名，但「按动态 key 存取」的需求真实存在——分类计数、标签索引、缓存表。官方答案有两个：`Record<K, V>` 和 `Map<K, V>`。
+
+## Record：类型层面的动态键
+
+```typescript
+const categoryCount: Record<string, number> = {
+  'ArkTS语言与规范': 5,
+  '页面与导航': 6
+};
+
+const key: string = '页面与导航';
+categoryCount[key] = 8;                 // ✅ Record 允许动态键访问
+```
+
+特点：
+
+- 本质是「键受限的对象」，**继承对象的所有限制**：键会被转字符串；
+- 适合**结构已知、键集合有限**的场景：配置表、白名单、计数字典；
+- 遍历要借道 `Object.keys()` 后逐个取值，或提前维护键数组。
+
+```typescript
+const keys: string[] = Object.keys(categoryCount);
+for (const k of keys) {
+  const count: number = categoryCount[k];
+}
+```
+
+## Map：真正的字典结构
+
+```typescript
+const bodyCache: Map<string, string> = new Map();
+
+bodyCache.set(slug, markdown);          // 增/改
+const cached: string | undefined = bodyCache.get(slug);   // 查
+bodyCache.delete(slug);                 // 删
+bodyCache.clear();                      // 清空
+bodyCache.size;                         // 大小
+
+for (const entry of bodyCache) {        // 有序遍历（插入序）
+  const k: string = entry[0];
+  const v: string = entry[1];
+}
+```
+
+特点：
+
+- **键可以是任意类型**（数字、对象引用都行，用 SameValueZero 比较）；
+- **保证插入顺序遍历**，Record 做不到；
+- 删除是 O(1)，对象键值对删除要 `delete`（ArkTS 禁用）；
+- 适合**运行时动态增删**的场景：缓存表、索引表、去重集合。
+
+## 选型表
+
+| 需求 | 选择 |
+|---|---|
+| 键是字符串、集合编译期已知 | `Record` |
+| 需要频繁增删、按插入序遍历 | `Map` |
+| 键是非字符串类型 | `Map` |
+| JSON 直接反序列化 | `Record`（对齐对象形状） |
+| 带容量上限的缓存 | `Map`（size 判断 + clear/delete） |
+
+## 实战：文章正文缓存选 Map 的理由
+
+```typescript
+private bodyCache: Map<string, string> = new Map();
+
+getArticleBody(meta: ArticleMeta): string {
+  const cached: string | undefined = this.bodyCache.get(meta.slug);
+  if (cached !== undefined) {
+    return cached;
+  }
+  const text: string = this.readRawText(`articles/${meta.fileId}.md`);
+  if (this.bodyCache.size >= CACHE_CAP) {
+    this.bodyCache.clear();           // 容量满整体清空（LRU 可用 Map 模拟）
+  }
+  this.bodyCache.set(meta.slug, text);
+  return text;
+}
+```
+
+要点：`Map.get` 返回 `undefined` 表示未命中（**不是报错**），必须显式判空再用。
+
+## 踩坑记录
+
+1. `Record` 上的 `obj[key]` 合法，但**普通 interface 对象上的动态访问**依旧报 `arkts-no-props-by-index`——Record 是唯一例外，且类型参数必须显式；
+2. `Map` 不能直接 `JSON.stringify` 出键值对（会变空对象），落盘先转数组；
+3. `Object.keys` 与 `for..in` 是两回事，ArkTS 禁 `for..in`；
+4. 需要去重集合时用 `Set<T>`（Map 的近亲），别用 Record 存 `true` 假装集合。
+
+## 一句话总结
+
+**静态查表用 Record，动态字典用 Map**：前者是类型的延伸，后者是数据结构的本分。

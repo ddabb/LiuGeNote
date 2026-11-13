@@ -1,0 +1,287 @@
+---
+title: Docker容器化
+tags: [云原生, Docker, 容器化, 镜像构建, 容器编排]
+description: Docker容器化 定义 Docker是目前最流行的容器化平台，提供打包、分发、运行容器的完整工具链。容器化是将应用及其依赖打包成标准镜像，实现"一次构建，到处运行"。 核心价值： - 环境一致性：开
+---
+
+# Docker容器化
+
+## 定义
+
+Docker是目前最流行的**容器化平台**，提供打包、分发、运行容器的完整工具链。容器化是将应用及其依赖打包成标准镜像，实现"一次构建，到处运行"。
+
+**核心价值**：
+- **环境一致性**：开发、测试、生产环境完全一致
+- **快速部署**：秒级启动，远超虚拟机
+- **资源高效**：共享宿主机内核，开销极低
+- **易于迁移**：镜像可移植，跨平台运行
+
+## 核心概念
+
+### 1. 镜像（Image）
+- **定义**：只读模板，包含运行容器所需的代码、运行时、库、环境变量、配置文件
+- **分层存储**：镜像由多层（Layer）组成，每层只读
+- **UnionFS**：联合文件系统，多层叠加形成容器根文件系统
+- **镜像仓库**：Docker Hub、Harbor、私有仓库
+
+### 2. 容器（Container）
+- **定义**：镜像的运行实例，具备独立进程空间
+- **读写层**：容器在镜像顶部添加可写层（Copy-on-Write）
+- **生命周期**：created → running → paused → stopped → deleted
+- **隔离机制**：Linux Namespace（PID、NET、MNT、UTS、IPC、USER）
+
+### 3. 镜像构建
+- **Dockerfile**：文本文件，包含构建镜像的指令
+- **构建上下文**：docker build时的当前目录（.）
+- **多阶段构建**：在一个Dockerfile中使用多个FROM，减小镜像体积
+- **.dockerignore**：排除不需要的文件，加速构建
+
+### 4. 容器网络
+- **Bridge模式**：默认网络，容器通过虚拟网桥通信
+- **Host模式**：容器直接使用宿主机网络栈
+- **None模式**：容器无网络配置
+- **Container模式**：共享另一个容器的网络命名空间
+
+### 5. 容器存储
+- **Volume**：独立于容器生命周期的存储，推荐方式
+- **Bind Mount**：挂载宿主机目录到容器
+- **tmpfs Mount**：仅存储在内存中，临时数据
+- **存储驱动**：overlay2、aufs、devicemapper
+
+## 详细内容
+
+### Docker架构
+
+```
+Docker Client (CLI)
+       ↓
+Docker Daemon (dockerd)
+    ↓          ↓
+Containerd  Image Management
+    ↓
+  runc/containerd-shim
+    ↓
+  Container (Namespace + Cgroups)
+```
+
+**组件说明**：
+- **Docker Daemon**：后台守护进程，管理镜像、容器、网络、存储
+- **Containerd**：容器运行时管理，兼容CRI标准
+- **runc**：OCI标准容器运行时，创建容器进程
+- **Docker Client**：用户命令行工具，与Daemon通信
+
+### 镜像构建最佳实践
+
+#### Dockerfile指令详解
+- **FROM**：指定基础镜像（必须以FROM开头，除ARG）
+- **RUN**：执行命令，生成新层（合并多个RUN减少层数）
+- **CMD**：容器启动默认命令（可被docker run覆盖）
+- **ENTRYPOINT**：容器启动入口（不可被覆盖，可追加参数）
+- **COPY/ADD**：复制文件到镜像（ADD自动解压，COPY推荐）
+- **ENV**：设置环境变量
+- **EXPOSE**：声明端口（仅文档作用，需-p实际映射）
+- **WORKDIR**：工作目录（建议使用绝对路径）
+- **USER**：切换用户（安全最佳实践）
+
+#### 多阶段构建示例
+```dockerfile
+# 构建阶段
+FROM golang:1.21 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o myapp
+
+# 运行阶段
+FROM alpine:latest
+COPY --from=builder /app/myapp /usr/local/bin/
+CMD ["myapp"]
+```
+
+**优势**：最终镜像仅包含二进制文件，体积从800MB降至10MB
+
+### 容器网络详解
+
+#### Bridge网络模式
+- **默认网络**：docker0网桥（172.17.0.0/16）
+- **NAT转发**：容器访问外网通过SNAT
+- **端口映射**：-p 8080:80 将容器80端口映射到宿主机8080
+- **DNS解析**：容器内/etc/resolv.conf由Docker管理
+
+#### 自定义网络
+- **用户定义网络**：docker network create my-net
+- **内置DNS**：同一网络内容器可通过容器名解析
+- **网络隔离**：不同网络间容器默认无法通信
+- **网络驱动**：bridge（默认）、overlay（跨主机）、macvlan（直通物理网络）
+
+### 容器存储详解
+
+#### Volume vs Bind Mount
+| 特性 | Volume | Bind Mount |
+|------|--------|------------|
+| 位置 | Docker管理区域（/var/lib/docker/volumes/） | 宿主机任意目录 |
+| 权限 | Docker管理，无需关心具体路径 | 需指定绝对路径 |
+| 移植性 | 高（Docker管理） | 低（依赖宿主机路径） |
+| 适用场景 | 数据库数据、持久化存储 | 配置文件挂载、开发环境代码热加载 |
+
+#### 数据卷容器模式
+- **定义**：专门的数据容器，其他容器通过--volumes-from挂载
+- **优势**：解耦数据存储与计算，易于备份迁移
+- **现代替代**：Kubernetes PV/PVC机制更优
+
+### 容器安全
+
+#### 安全风险
+- **镜像漏洞**：基础镜像包含已知CVE
+- **特权容器**：--privileged赋予所有Capabilities
+- **敏感信息泄露**：环境变量、配置文件硬编码密码
+- **容器逃逸**：内核漏洞导致突破Namespace隔离
+
+#### 安全加固
+- **非root用户运行**：USER指令切换用户
+- **只读文件系统**：--read-only挂载，防止写入
+- **资源限制**：--memory、--cpus限制资源
+- **安全扫描**：docker scan、Trivy、Clair
+- **签名验证**：Docker Content Trust（DCT）签名镜像
+
+## 示例/应用场景
+
+### 场景1：微服务容器化
+**需求**：将Spring Boot应用容器化
+**Dockerfile**：
+```dockerfile
+FROM openjdk:17-slim AS builder
+WORKDIR /app
+COPY target/*.jar app.jar
+RUN java -Djarmode=layertools -jar app.jar extract
+
+FROM openjdk:17-slim
+WORKDIR /app
+COPY --from=builder /app/dependencies/ ./
+COPY --from=builder /app/spring-boot-loader/ ./
+COPY --from=builder /app/application/ ./
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
+```
+
+**优化点**：
+- 分层构建，利用Docker缓存
+- 仅运行时依赖进入最终镜像
+- 使用Spring Boot Layertools优化分层
+
+### 场景2：开发环境热加载
+**需求**：代码修改后容器内实时生效
+**docker-compose.yml**：
+```yaml
+version: '3.8'
+services:
+  web:
+    build: .
+    volumes:
+      - ./src:/app/src  # 代码目录挂载
+      - ./node_modules:/app/node_modules  # 依赖不挂载
+    command: npm run dev  # 热加载模式
+```
+
+**优势**：本地修改代码，容器内自动重启
+
+### 场景3：CI/CD流水线
+**需求**：Git推送后自动构建镜像并部署
+**GitLab CI配置**：
+```yaml
+build:
+  stage: build
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+```
+
+**流程**：代码提交 → 自动构建镜像 → 推送镜像仓库 → 触发Kubernetes部署
+
+## 【对应领域考点】
+
+1. **镜像分层原理**：UnionFS、Copy-on-Write、层共享机制
+2. **容器隔离机制**：6种Namespace（PID、NET、MNT、UTS、IPC、USER）
+3. **资源限制原理**：Cgroups（CPU、内存、IO、网络）
+4. **网络模式对比**：Bridge、Host、None、Container适用场景
+5. **Dockerfile优化**：合并RUN指令、多阶段构建、.dockerignore使用
+6. **存储驱动对比**：overlay2（推荐）、aufs、devicemapper性能差异
+7. **容器编排演进**：Docker Compose（单机）→ Docker Swarm（原生集群）→ Kubernetes（行业标准）
+8. **安全最佳实践**：非root运行、只读文件系统、资源限制、镜像扫描
+
+## 最佳实践
+
+### 1. 镜像构建优化
+- **合并RUN指令**：减少层数，使用\换行
+- **利用构建缓存**：将变化频率低的层放在前面
+- **多阶段构建**：分离构建环境和运行环境
+- **精简基础镜像**：alpine（5MB）优于ubuntu（50MB）
+- **.dockerignore**：排除node_modules、.git等无关文件
+
+### 2. 容器运行优化
+- **非root用户**：USER指令创建普通用户运行
+- **健康检查**：HEALTHCHECK指令检测应用状态
+- **日志驱动**：--log-driver=json-file，配合日志轮转
+- **资源限制**：--memory、--cpus防止资源耗尽
+- **重启策略**：--restart=unless-stopped保证高可用
+
+### 3. 镜像仓库管理
+- **版本标签**：禁止使用latest，使用语义化版本（v1.2.3）
+- **镜像扫描**：推送前扫描漏洞（Trivy、Docker Scout）
+- **镜像签名**：DCT签名保证镜像完整性
+- **清理策略**：定期清理未使用镜像（docker image prune）
+
+### 4. 网络配置优化
+- **自定义网络**：避免使用默认bridge，创建应用网络
+- **DNS配置**：--dns指定DNS服务器，加速域名解析
+- **端口暴露**：仅暴露必要端口，减少攻击面
+
+### 5. 存储管理优化
+- **使用Volume**：避免Bind Mount，提高移植性
+- **数据备份**：docker run --rm --volumes-from db -v $(pwd):/backup alpine tar cvf /backup/db.tar /var/lib/postgresql/data
+- **存储驱动选择**：生产环境使用overlay2（高性能、稳定）
+
+## 【常见错误】
+
+### 错误1：使用latest标签
+**表现**：docker pull nginx:latest
+**后果**：无法追溯版本，回滚困难，构建不可复现
+**正确做法**：使用具体版本标签（nginx:1.25.3）
+
+### 错误2：在容器内存储数据
+**表现**：数据写入容器可写层
+**后果**：容器删除数据丢失，镜像臃肿
+**正确做法**：使用Volume或Bind Mount持久化数据
+
+### 错误3：构建上下文过大
+**表现**：docker build . 包含大量无关文件
+**后果**：构建缓慢，镜像体积大
+**正确做法**：.dockerignore排除无关文件，仅包含必要文件
+
+### 错误4：一个容器运行多个进程
+**表现**：在容器内运行Nginx + PHP-FPM + MySQL
+**后果**：违反单一职责，日志收集困难，无法独立扩缩容
+**正确做法**：一个容器一个进程，通过容器编排组合
+
+### 错误5：忽视安全加固
+**表现**：以root用户运行，未限制资源，使用特权容器
+**后果**：容器逃逸风险，资源耗尽，权限过大
+**正确做法**：非root用户、资源限制、只读文件系统、禁止特权模式
+
+## 总结
+
+Docker容器化是云原生的基石，掌握其核心概念和实践至关重要。
+
+**关键要点**：
+1. **镜像分层**：UnionFS + Copy-on-Write，理解分层原理优化构建
+2. **容器隔离**：Namespace + Cgroups，轻量级虚拟化
+3. **网络存储**：Bridge网络 + Volume，容器间通信和数据持久化
+4. **安全加固**：非root运行、资源限制、镜像扫描、签名验证
+5. **编排演进**：Docker Compose（开发）→ Kubernetes（生产）
+
+**学习路径**：
+1. 掌握Dockerfile编写和镜像构建
+2. 理解容器网络和存储机制
+3. 实践Docker Compose多容器编排
+4. 学习容器安全加固
+5. 过渡到Kubernetes生产级编排
+
+Docker简化了应用打包和分发，但生产环境需配合Kubernetes实现真正的弹性伸缩和高可用。

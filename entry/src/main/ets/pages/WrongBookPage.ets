@@ -73,6 +73,7 @@ struct WrongBookPage {
         .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       }
       .scrollBar(BarState.Off)
+      .align(Alignment.Top)
       .edgeEffect(EdgeEffect.Spring)
       .layoutWeight(1)
       .width('100%')

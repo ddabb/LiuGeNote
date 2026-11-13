@@ -1,0 +1,690 @@
+---
+title: SQL数据分析实战
+tags: [SQL数据库, 数据分析师, SQL数据分析实战, 数据查询, 数据聚合, 数据分组, 数据分析]
+description: SQL数据分析实战涵盖使用SQL进行数据查询、数据聚合、数据分组、数据筛选等操作，是数据分析师日常工作的核心技能
+---
+
+# SQL数据分析实战
+
+## 定义
+
+**SQL数据分析实战**涵盖使用SQL进行**数据查询、数据聚合、数据分组、数据筛选**等操作。
+
+对于数据分析师而言，掌握**SQL数据分析实战**，是**从数据库中提取有价值信息、支持业务决策**的核心技能。
+
+---
+
+## 核心概念
+
+### 1. 数据查询
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| **SELECT** | 查询数据 | `SELECT column1, column2 FROM table_name` |
+| **WHERE** | 筛选数据 | `SELECT * FROM table_name WHERE condition` |
+| **ORDER BY** | 排序数据 | `SELECT * FROM table_name ORDER BY column1 ASC` |
+| **LIMIT** | 限制返回行数 | `SELECT * FROM table_name LIMIT 10` |
+
+### 2. 数据聚合
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| **COUNT()** | 计数 | `SELECT COUNT(*) FROM table_name` |
+| **SUM()** | 求和 | `SELECT SUM(column1) FROM table_name` |
+| **AVG()** | 平均值 | `SELECT AVG(column1) FROM table_name` |
+| **MAX()** | 最大值 | `SELECT MAX(column1) FROM table_name` |
+| **MIN()** | 最小值 | `SELECT MIN(column1) FROM table_name` |
+
+### 3. 数据分组
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| **GROUP BY** | 分组数据 | `SELECT column1, COUNT(*) FROM table_name GROUP BY column1` |
+| **HAVING** | 筛选分组 | `SELECT column1, COUNT(*) FROM table_name GROUP BY column1 HAVING COUNT(*) > 10` |
+
+### 4. 数据连接
+
+| 概念 | 说明 | 示例 |
+|------|------|------|
+| **INNER JOIN** | 内连接 | `SELECT * FROM table1 INNER JOIN table2 ON table1.id = table2.id` |
+| **LEFT JOIN** | 左连接 | `SELECT * FROM table1 LEFT JOIN table2 ON table1.id = table2.id` |
+| **RIGHT JOIN** | 右连接 | `SELECT * FROM table1 RIGHT JOIN table2 ON table1.id = table2.id` |
+| **CROSS JOIN** | 交叉连接 | `SELECT * FROM table1 CROSS JOIN table2` |
+
+---
+
+## 详细内容
+
+### 一、数据查询实战
+
+#### 1.1 基础查询
+
+**查询所有列**：
+```sql
+SELECT * FROM employees;
+```
+
+**查询指定列**：
+```sql
+SELECT employee_id, employee_name, department FROM employees;
+```
+
+**查询不重复值**：
+```sql
+SELECT DISTINCT department FROM employees;
+```
+
+#### 1.2 条件查询
+
+**比较运算符**：
+```sql
+SELECT * FROM employees WHERE salary > 8000;
+SELECT * FROM employees WHERE department = 'IT';
+SELECT * FROM employees WHERE hire_date > '2020-01-01';
+```
+
+**逻辑运算符**：
+```sql
+SELECT * FROM employees WHERE salary > 8000 AND department = 'IT';
+SELECT * FROM employees WHERE salary > 8000 OR department = 'IT';
+SELECT * FROM employees WHERE NOT department = 'IT';
+```
+
+**IN运算符**：
+```sql
+SELECT * FROM employees WHERE department IN ('IT', 'HR', 'Finance');
+```
+
+**BETWEEN运算符**：
+```sql
+SELECT * FROM employees WHERE salary BETWEEN 5000 AND 10000;
+```
+
+**LIKE运算符**：
+```sql
+SELECT * FROM employees WHERE employee_name LIKE '张%';
+SELECT * FROM employees WHERE employee_name LIKE '%三';
+SELECT * FROM employees WHERE employee_name LIKE '%三%';
+```
+
+**NULL值查询**：
+```sql
+SELECT * FROM employees WHERE manager_id IS NULL;
+SELECT * FROM employees WHERE manager_id IS NOT NULL;
+```
+
+#### 1.3 排序查询
+
+**升序排序**：
+```sql
+SELECT * FROM employees ORDER BY salary ASC;
+```
+
+**降序排序**：
+```sql
+SELECT * FROM employees ORDER BY salary DESC;
+```
+
+**多列排序**：
+```sql
+SELECT * FROM employees ORDER BY department ASC, salary DESC;
+```
+
+#### 1.4 限制查询结果
+
+**限制返回行数**：
+```sql
+SELECT * FROM employees LIMIT 10;
+```
+
+**分页查询**：
+```sql
+SELECT * FROM employees LIMIT 10 OFFSET 0;  -- 第一页
+SELECT * FROM employees LIMIT 10 OFFSET 10; -- 第二页
+```
+
+---
+
+### 二、数据聚合实战
+
+#### 2.1 基础聚合函数
+
+**计数**：
+```sql
+SELECT COUNT(*) AS 员工总数 FROM employees;
+SELECT COUNT(DISTINCT department) AS 部门数量 FROM employees;
+```
+
+**求和**：
+```sql
+SELECT SUM(salary) AS 工资总额 FROM employees;
+```
+
+**平均值**：
+```sql
+SELECT AVG(salary) AS 平均工资 FROM employees;
+```
+
+**最大值和最小值**：
+```sql
+SELECT MAX(salary) AS 最高工资 FROM employees;
+SELECT MIN(salary) AS 最低工资 FROM employees;
+```
+
+#### 2.2 分组聚合
+
+**按部门分组统计员工数**：
+```sql
+SELECT 
+    department AS 部门,
+    COUNT(*) AS 员工数
+FROM 
+    employees
+GROUP BY 
+    department;
+```
+
+**按部门分组统计平均工资**：
+```sql
+SELECT 
+    department AS 部门,
+    AVG(salary) AS 平均工资
+FROM 
+    employees
+GROUP BY 
+    department;
+```
+
+**按部门和职位分组统计员工数**：
+```sql
+SELECT 
+    department AS 部门,
+    job_title AS 职位,
+    COUNT(*) AS 员工数
+FROM 
+    employees
+GROUP BY 
+    department, job_title;
+```
+
+#### 2.3 分组筛选
+
+**查询员工数大于10的部门**：
+```sql
+SELECT 
+    department AS 部门,
+    COUNT(*) AS 员工数
+FROM 
+    employees
+GROUP BY 
+    department
+HAVING 
+    COUNT(*) > 10;
+```
+
+**查询平均工资大于8000的部门**：
+```sql
+SELECT 
+    department AS 部门,
+    AVG(salary) AS 平均工资
+FROM 
+    employees
+GROUP BY 
+    department
+HAVING 
+    AVG(salary) > 8000;
+```
+
+---
+
+### 三、数据连接实战
+
+#### 3.1 INNER JOIN（内连接）
+
+**查询员工及其部门信息**：
+```sql
+SELECT 
+    e.employee_name AS 员工姓名,
+    d.department_name AS 部门名称
+FROM 
+    employees e
+INNER JOIN 
+    departments d ON e.department_id = d.department_id;
+```
+
+**查询销售订单及其客户信息**：
+```sql
+SELECT 
+    o.order_id AS 订单ID,
+    c.customer_name AS 客户姓名,
+    o.order_date AS 订单日期
+FROM 
+    orders o
+INNER JOIN 
+    customers c ON o.customer_id = c.customer_id;
+```
+
+#### 3.2 LEFT JOIN（左连接）
+
+**查询所有员工及其部门信息（包括没有部门的员工）**：
+```sql
+SELECT 
+    e.employee_name AS 员工姓名,
+    d.department_name AS 部门名称
+FROM 
+    employees e
+LEFT JOIN 
+    departments d ON e.department_id = d.department_id;
+```
+
+**查询所有客户及其订单信息（包括没有订单的客户）**：
+```sql
+SELECT 
+    c.customer_name AS 客户姓名,
+    o.order_id AS 订单ID
+FROM 
+    customers c
+LEFT JOIN 
+    orders o ON c.customer_id = o.customer_id;
+```
+
+#### 3.3 多表连接
+
+**查询员工、部门、职位信息**：
+```sql
+SELECT 
+    e.employee_name AS 员工姓名,
+    d.department_name AS 部门名称,
+    j.job_title AS 职位名称
+FROM 
+    employees e
+INNER JOIN 
+    departments d ON e.department_id = d.department_id
+INNER JOIN 
+    jobs j ON e.job_id = j.job_id;
+```
+
+---
+
+### 四、子查询实战
+
+#### 4.1 标量子查询
+
+**查询工资高于平均工资的员工**：
+```sql
+SELECT 
+    employee_name AS 员工姓名,
+    salary AS 工资
+FROM 
+    employees
+WHERE 
+    salary > (SELECT AVG(salary) FROM employees);
+```
+
+#### 4.2 行子查询
+
+**查询与张三同部门同职位的员工**：
+```sql
+SELECT 
+    employee_name AS 员工姓名,
+    department AS 部门,
+    job_title AS 职位
+FROM 
+    employees
+WHERE 
+    (department, job_title) = (
+        SELECT 
+            department, 
+            job_title 
+        FROM 
+            employees 
+        WHERE 
+            employee_name = '张三'
+    );
+```
+
+#### 4.3 表子查询
+
+**查询工资高于部门平均工资的员工**：
+```sql
+SELECT 
+    e1.employee_name AS 员工姓名,
+    e1.department AS 部门,
+    e1.salary AS 工资
+FROM 
+    employees e1
+WHERE 
+    e1.salary > (
+        SELECT 
+            AVG(e2.salary)
+        FROM 
+            employees e2
+        WHERE 
+            e2.department = e1.department
+    );
+```
+
+---
+
+## 示例/应用场景
+
+### 示例1：电商销售数据分析
+
+**业务问题**：分析电商销售数据，查询各品类销售额和销量。
+
+**数据**：电商销售数据表（订单ID、商品ID、品类、销售额、销量、订单日期）
+
+**分析**：
+
+**SQL查询**：
+```sql
+SELECT 
+    category AS 品类,
+    SUM(sales_amount) AS 总销售额,
+    SUM(sales_quantity) AS 总销量,
+    COUNT(DISTINCT order_id) AS 订单数
+FROM 
+    sales_data
+WHERE 
+    order_date BETWEEN '2024-01-01' AND '2024-12-31'
+GROUP BY 
+    category
+ORDER BY 
+    总销售额 DESC;
+```
+
+**洞察与建议**：
+- 如果某品类总销售额高，说明该品类受欢迎
+- 可以针对高销售额品类制定营销策略
+- 可以分析高销售额品类的特征，优化商品推荐
+
+### 示例2：电商用户行为分析
+
+**业务问题**：分析电商用户行为，查询各用户类型访问量和购买转化率。
+
+**数据**：电商用户行为数据表（用户ID、用户类型、访问量、购买次数、注册日期）
+
+**分析**：
+
+**SQL查询**：
+```sql
+SELECT 
+    user_type AS 用户类型,
+    SUM(visit_count) AS 总访问量,
+    SUM(purchase_count) AS 总购买次数,
+    SUM(purchase_count) * 1.0 / SUM(visit_count) AS 购买转化率
+FROM 
+    user_behavior_data
+WHERE 
+    register_date < '2024-01-01'
+GROUP BY 
+    user_type
+ORDER BY 
+    购买转化率 DESC;
+```
+
+**洞察与建议**：
+- 如果某用户类型购买转化率高，说明该用户类型价值高
+- 可以针对高转化率用户类型制定用户运营策略
+- 可以分析低转化率用户类型的原因，优化产品或运营
+
+### 示例3：电商商品价格分析
+
+**业务问题**：分析电商商品价格，查询各品类价格分布和价格区间。
+
+**数据**：电商商品价格数据表（商品ID、品类、价格、上架日期）
+
+**分析**：
+
+**SQL查询**：
+```sql
+SELECT 
+    category AS 品类,
+    COUNT(*) AS 商品数,
+    AVG(price) AS 平均价格,
+    MIN(price) AS 最低价格,
+    MAX(price) AS 最高价格,
+    MAX(price) - MIN(price) AS 价格区间
+FROM 
+    product_price_data
+WHERE 
+    listing_date > '2023-01-01'
+GROUP BY 
+    category
+HAVING 
+    价格区间 > 1000
+ORDER BY 
+    价格区间 DESC;
+```
+
+**洞察与建议**：
+- 如果某品类价格区间大，说明该品类价格差异大
+- 可以针对价格差异大的品类制定统一的价格策略
+- 可以分析价格差异的原因，优化产品定位
+
+---
+
+## 数据分析师考点
+
+### SQL数据分析实战常见考点
+
+1. **数据查询**：SELECT、WHERE、ORDER BY、LIMIT
+2. **数据聚合**：COUNT()、SUM()、AVG()、MAX()、MIN()
+3. **数据分组**：GROUP BY、HAVING
+4. **数据连接**：INNER JOIN、LEFT JOIN、RIGHT JOIN、CROSS JOIN
+5. **子查询**：标量子查询、行子查询、表子查询
+6. **SQL数据分析实战应用**：电商销售数据分析、电商用户行为分析、电商商品价格分析
+
+### 实战考点
+
+1. **电商销售分析**：
+   - 如何使用SQL进行销售数据分析
+   - 如何查询各品类销售额和销量
+   - 如何根据分析结果制定营销策略
+2. **电商用户分析**：
+   - 如何使用SQL进行用户行为分析
+   - 如何查询各用户类型访问量和购买转化率
+   - 如何根据用户行为分析制定用户运营策略
+3. **电商商品分析**：
+   - 如何使用SQL进行商品价格分析
+   - 如何查询各品类价格分布和价格区间
+   - 如何根据价格分析制定价格策略
+
+---
+
+## 最佳实践
+
+### 1. 根据分析需求，选择合适的查询方式
+
+**不推荐**（盲目使用SELECT *）：
+```sql
+SELECT * FROM sales_data;
+```
+
+**推荐**（根据分析需求，选择合适的查询方式）：
+```sql
+-- 只需要查询各品类销售额和销量
+SELECT 
+    category AS 品类,
+    SUM(sales_amount) AS 总销售额,
+    SUM(sales_quantity) AS 总销量
+FROM 
+    sales_data
+GROUP BY 
+    category;
+```
+
+### 2. 使用索引提高查询效率
+
+**不推荐**（没有索引，全表扫描）：
+```sql
+SELECT * FROM employees WHERE department = 'IT';
+```
+
+**推荐**（创建索引，提高查询效率）：
+```sql
+-- 创建索引
+CREATE INDEX idx_department ON employees(department);
+
+-- 使用索引，提高查询效率
+SELECT * FROM employees WHERE department = 'IT';
+```
+
+### 3. 使用LIMIT限制返回行数
+
+**不推荐**（查询所有数据）：
+```sql
+SELECT * FROM sales_data;
+```
+
+**推荐**（使用LIMIT限制返回行数）：
+```sql
+SELECT * FROM sales_data LIMIT 100;
+```
+
+### 4. 结合业务场景解释查询结果
+
+**不推荐**（只报告查询结果）：
+```sql
+-- 查询结果为：IT部门平均工资为9000
+```
+
+**推荐**（结合业务场景解释查询结果）：
+```sql
+-- IT部门平均工资为9000，说明IT部门工资水平较高。
+-- 可以根据此结果，调整其他部门工资水平，或分析IT部门工资较高的原因。
+```
+
+---
+
+## 常见错误
+
+### 1. 盲目使用SELECT *
+
+**错误示例**：
+```sql
+SELECT * FROM sales_data;
+```
+
+**正确做法**：
+```sql
+-- 根据分析需求，选择合适的列
+SELECT 
+    category AS 品类,
+    SUM(sales_amount) AS 总销售额
+FROM 
+    sales_data
+GROUP BY 
+    category;
+```
+
+### 2. 不使用索引提高查询效率
+
+**错误示例**：
+```sql
+-- 没有索引，全表扫描
+SELECT * FROM employees WHERE department = 'IT';
+```
+
+**正确做法**：
+```sql
+-- 创建索引，提高查询效率
+CREATE INDEX idx_department ON employees(department);
+SELECT * FROM employees WHERE department = 'IT';
+```
+
+### 3. 不使用LIMIT限制返回行数
+
+**错误示例**：
+```sql
+-- 查询所有数据，可能返回大量数据
+SELECT * FROM sales_data;
+```
+
+**正确做法**：
+```sql
+-- 使用LIMIT限制返回行数
+SELECT * FROM sales_data LIMIT 100;
+```
+
+### 4. 不结合业务场景解释查询结果
+
+**错误示例**：
+```sql
+-- 查询结果为：IT部门平均工资为9000
+```
+
+**正确做法**：
+```sql
+-- IT部门平均工资为9000，说明IT部门工资水平较高。
+-- 可以根据此结果，调整其他部门工资水平，或分析IT部门工资较高的原因。
+```
+
+### 5. 不正确使用GROUP BY和HAVING
+
+**错误示例**：
+```sql
+-- 在WHERE子句中使用聚合函数
+SELECT 
+    department,
+    AVG(salary)
+FROM 
+    employees
+WHERE 
+    AVG(salary) > 8000
+GROUP BY 
+    department;
+```
+
+**正确做法**：
+```sql
+-- 在HAVING子句中使用聚合函数
+SELECT 
+    department,
+    AVG(salary)
+FROM 
+    employees
+GROUP BY 
+    department
+HAVING 
+    AVG(salary) > 8000;
+```
+
+---
+
+## 总结
+
+SQL数据分析实战是数据分析师从数据库中提取有价值信息、支持业务决策的核心技能，关键要点包括：
+
+1. **掌握数据查询**：SELECT、WHERE、ORDER BY、LIMIT
+2. **掌握数据聚合**：COUNT()、SUM()、AVG()、MAX()、MIN()
+3. **掌握数据分组**：GROUP BY、HAVING
+4. **掌握数据连接**：INNER JOIN、LEFT JOIN、RIGHT JOIN、CROSS JOIN
+5. **掌握子查询**：标量子查询、行子查询、表子查询
+6. **熟练应用SQL数据分析实战**：电商销售数据分析、电商用户行为分析、电商商品价格分析
+7. **注意最佳实践**：根据分析需求选择合适的查询方式、使用索引提高查询效率、使用LIMIT限制返回行数、结合业务场景解释查询结果
+8. **避免常见错误**：盲目使用SELECT *、不使用索引提高查询效率、不使用LIMIT限制返回行数、不结合业务场景解释查询结果、不正确使用GROUP BY和HAVING
+
+SQL数据分析实战是数据分析师日常工作的核心技能，需要在实践中不断积累经验。
+
+---
+
+## 扩展阅读
+
+### 高级主题
+
+1. **高级查询技术**：窗口函数、CTE（公用表表达式）、递归查询
+2. **高级聚合技术**：ROLLUP、CUBE、GROUPING SETS
+3. **高级连接技术**：自连接、自然连接、半连接、反连接
+4. **查询性能优化**：索引优化、查询重写、执行计划分析
+
+### 实战案例
+
+1. **电商销售分析**：销售趋势分析、品类对比分析、地区销售分析、客户价值分析
+2. **电商用户分析**：用户行为分析、用户画像分析、用户流失分析、用户转化分析
+3. **电商商品分析**：商品价格分析、商品销量预测、商品推荐分析、商品库存分析
+4. **金融数据分析**：股票价格分析、风险分析、投资组合分析、客户信用分析
+
+---
+
+**注**：本文件内容适用于所有需要使用SQL进行数据分析的场景，是数据分析师的核心技能。

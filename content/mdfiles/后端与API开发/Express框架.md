@@ -1,0 +1,227 @@
+---
+title: Express框架
+tags: [Node.js, Express, 后端开发, Web框架, 中间件, 路由]
+description: Express框架 定义 Express是一个基于Node.js平台的极简Web应用框架，提供了一系列强大的特性来创建各种Web和移动设备应用。它是目前最流行的Node.js Web框架，也是许多其他
+---
+
+# Express框架
+
+## 定义
+
+Express是一个基于Node.js平台的极简Web应用框架，提供了一系列强大的特性来创建各种Web和移动设备应用。它是目前最流行的Node.js Web框架，也是许多其他框架的基础。
+
+## 核心概念
+
+### 1. 中间件（Middleware）
+- **定义**：处理请求的函数，可以访问请求对象、响应对象和next函数
+- **类型**：应用级中间件、路由级中间件、错误处理中间件、内置中间件、第三方中间件
+- **执行顺序**：按添加顺序执行
+
+### 2. 路由（Routing）
+- **定义**：确定应用程序如何响应客户端对特定端点的请求
+- **HTTP方法**：GET、POST、PUT、DELETE等
+- **路由参数**：动态URL参数
+
+### 3. 请求对象（Request）
+- **req.body**：请求体数据
+- **req.params**：路由参数
+- **req.query**：查询参数
+- **req.headers**：请求头
+
+### 4. 响应对象（Response）
+- **res.send()**：发送响应
+- **res.json()**：发送JSON响应
+- **res.status()**：设置状态码
+- **res.render()**：渲染视图
+
+## 详细内容
+
+### Express核心特性
+
+1. **极简设计**
+   - 最小化的接口
+   - 灵活的中间件系统
+   - 无约束的项目结构
+
+2. **中间件系统**
+   - 可扩展的请求处理流程
+   - 模块化功能
+   - 错误处理支持
+
+3. **路由系统**
+   - 支持RESTful路由
+   - 路由参数和查询参数
+   - 路由中间件
+
+4. **模板引擎支持**
+   - 支持多种模板引擎（Pug、EJS、Handlebars等）
+   - 灵活的视图渲染
+
+### Express应用结构
+
+```
+my-express-app/
+├── app.js              # 应用入口文件
+├── package.json        # 项目配置
+├── config/             # 配置文件
+├── controllers/        # 控制器
+├── models/             # 数据模型
+├── routes/             # 路由定义
+├── middlewares/        # 中间件
+├── utils/              # 工具函数
+└── views/              # 视图文件
+```
+
+### 常用中间件
+
+1. **express.json()**：解析JSON格式的请求体
+2. **express.urlencoded()**：解析URL-encoded格式的请求体
+3. **express.static()**：提供静态文件服务
+4. **morgan**：HTTP请求日志
+5. **cors**：跨域资源共享
+6. **helmet**：安全相关的HTTP头设置
+
+## 示例/应用场景
+
+### 示例1：基础Express应用
+
+```javascript
+const express = require('express');
+const app = express();
+
+// 中间件
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// 路由
+app.get('/', (req, res) => {
+  res.send('Hello Express!');
+});
+
+// 启动服务器
+app.listen(3000, () => {
+  console.log('Server running on port 3000');
+});
+```
+
+### 示例2：RESTful API路由
+
+```javascript
+const express = require('express');
+const router = express.Router();
+
+// 获取用户列表
+router.get('/', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 获取单个用户
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 创建用户
+router.post('/', async (req, res) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// 更新用户
+router.put('/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// 删除用户
+router.delete('/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ message: 'User deleted' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+module.exports = router;
+```
+
+## 【Node.js后端开发】最佳实践
+
+### 1. 项目结构组织
+- **模块化路由**：将路由按资源拆分到不同文件
+- **控制器分离**：将业务逻辑放到控制器中
+- **中间件复用**：通用功能封装为中间件
+
+### 2. 错误处理
+- **统一错误处理中间件**：集中处理所有错误
+- **异步错误捕获**：使用async-await的try-catch
+- **错误日志记录**：记录错误信息便于调试
+
+### 3. 安全性
+- **输入验证**：使用Joi、express-validator等库
+- **身份认证**：使用JWT、OAuth2等
+- **HTTPS**：生产环境必须使用
+
+### 4. 性能优化
+- **连接池**：数据库连接复用
+- **缓存策略**：使用Redis缓存
+- **压缩响应**：使用compression中间件
+
+### 5. 代码质量
+- **使用ESLint**：统一代码风格
+- **单元测试**：使用Jest、Mocha等
+- **代码审查**：确保代码质量
+
+## 【常见错误】
+
+### 1. 阻塞事件循环
+- **错误**：在请求处理中执行同步、耗时的操作
+- **正确**：使用异步操作或Worker Threads
+
+### 2. 未处理错误
+- **错误**：忽略Promise拒绝或异步错误
+- **正确**：使用try-catch或错误处理中间件
+
+### 3. 内存泄漏
+- **错误**：未释放资源（数据库连接、事件监听器）
+- **正确**：使用连接池，及时移除监听器
+
+### 4. 路由顺序错误
+- **错误**：将通用路由放在特定路由之前
+- **正确**：先定义特定路由，再定义通用路由
+
+## 总结
+
+Express框架是Node.js生态中最流行的Web应用框架，以其极简设计、灵活的中间件系统和强大的路由功能著称。掌握Express的核心概念、中间件使用、路由设计和最佳实践，是构建高质量Node.js Web应用的基础。

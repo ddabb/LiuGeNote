@@ -1,0 +1,74 @@
+---
+title: 跨层级状态共享：@Provide/@Consume 与 @Provider/@Consumer 实践
+tags: [ArkTS, 状态管理, Provide, Provider, 跨组件通信]
+description: 对比两代跨层级状态共享方案：V1 的 @Provide/@Consume 与 V2 的 @Provider/@Consumer 的用法差异、key 冲突问题与 allowOverride，以及子组件取不到值的排查清单。
+---
+
+# 跨层级状态共享：@Provide/@Consume 与 @Provider/@Consumer 实践
+
+组件层级一深，「父状态层层透传」就变成灾难：中间组件被迫声明一堆自己根本不用的 `@Prop`。两代状态管理都给出了解法——跨层级注入。
+
+## V1：@Provide / @Consume
+
+```typescript
+@Component
+struct ThemeHost {
+  @Provide('theme') themeColor: string = '#8A2BE2';
+  build() { /* 子树 */ }
+}
+
+@Component
+struct DeepChild {
+  @Consume('theme') themeColor: string;  // 按字符串 key 匹配
+  build() {
+    Text('深色文本').fontColor(this.themeColor)
+  }
+}
+```
+
+特点：
+
+- **字符串 key 匹配**，中间层完全无感知；
+- 自动双向：子组件改 `themeColor`，父组件同步看到；
+- key 冲突会直接抛异常——两个祖先 `@Provide` 同名 key 时运行期崩溃。确需覆盖时用 `@Provide({ allowOverride: true })`。
+
+## V2：@Provider / @Consumer
+
+```typescript
+@ComponentV2
+struct SettingsHost {
+  @Provider() fontSize: number = 17;
+  build() { /* 子树 */ }
+}
+
+@ComponentV2
+struct DeepReader {
+  @Consumer() fontSize: number = 17;  // 按属性名匹配
+  build() {
+    Text('正文').fontSize(this.fontSize)
+  }
+}
+```
+
+差异点：
+
+- 默认**按属性名**匹配（也可显式传别名），拼写错误能更早暴露；
+- V2 的 `@Provider` 与 `@ObservedV2`+`@Trace` 组合可以做属性级精准刷新；
+- 与 `@Local` 一样，只能在 `@ComponentV2` 中使用。
+
+## 取不到值的排查清单
+
+1. **key 不一致**：V1 的字符串 key 大小写敏感；V2 默认的属性名匹配要求两边同名；
+2. **不在同一棵子树**：`@Consume` 沿组件树向上找，兄弟分支的 `@Provide` 不可见；
+3. **代际不匹配**：`@Consume` 接不到 `@Provider` 的值，反之亦然——两套注入体系互不相通；
+4. **路由边界**：Navigation 压栈的目标页不在发起页的子树里，跨页面共享应走 AppStorage / AppStorageV2，而不是 Provide。
+
+## 实践建议
+
+- **主题、字号、语言**这类全局偏好：优先 AppStorageV2（V2 项目）或 AppStorage（V1 项目），Provide 适合「页内子树」而非「全局」；
+- key 一律抽成常量，避免魔法字符串散落各处；
+- 同名覆盖场景先问自己是不是组件复用边界没切干净，`allowOverride` 是逃生门而非常规操作。
+
+## 一句话总结
+
+Provide/Consumer 解决的是**子树内穿透传参**；跨页面、跨路由的全局状态交给 AppStorage 系容器，两条路不要混着走。

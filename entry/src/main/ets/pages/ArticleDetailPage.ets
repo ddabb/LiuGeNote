@@ -454,6 +454,7 @@ struct ArticleDetailPage {
             })
           }
           .scrollBar(BarState.Off)
+          .align(Alignment.Top)
           .edgeEffect(EdgeEffect.Spring)
           .onScroll((xOffset: number, yOffset: number) => {
             this.onScrollChange();

@@ -1,6 +1,6 @@
 /**
  * 知识问答状态管理：题库访问 / 每日一题 / 随机练习 / 错题本（纯本地 preferences，无网络）。
- * - 题库来自 rawfile/quiz.json（publish.js 生成，经 DataRepository 读取缓存）
+ * - 题库来自 rawfile/quiz.json（手工维护的题库，经 DataRepository 读取缓存）
  * - 答题记录：累计答题数 / 答对数 / 每日一题完成日期与历史标记 / 错题 id 列表
  * - 每日一题：按日期哈希稳定选题，答完即打卡（对错都算完成，防止重复刷计数）
  */

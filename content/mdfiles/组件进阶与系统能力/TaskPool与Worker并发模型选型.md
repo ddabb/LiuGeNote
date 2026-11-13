@@ -1,0 +1,85 @@
+---
+title: TaskPool 与 Worker：ArkTS 并发模型怎么选
+tags: [ArkTS, 并发, TaskPool, Worker, @Concurrent]
+description: 对比 ArkTS 的两种并发方案 TaskPool 与 Worker：任务粒度、生命周期管理、@Concurrent 函数约束与 @Sendable 对象，给出按场景选型的判断标准。
+---
+
+# TaskPool 与 Worker：ArkTS 并发模型怎么选
+
+ArkTS 没有裸线程 API，多线程只有两条路：`TaskPool`（任务池）和 `Worker`（常驻线程）。选错场景，要么线程爆炸，要么干不好活。
+
+## 两个模型的核心差异
+
+| 维度 | TaskPool | Worker |
+|---|---|---|
+| 生命周期 | 任务级，干完即走 | 线程级，常驻直到主动关闭 |
+| 管理成本 | 系统调度，无需管理 | 手动创建/销毁，数量自控 |
+| 通信方式 | `execute()` 返回 Promise | `postMessage` + `onmessage` |
+| 适合粒度 | 一次性独立计算 | 长期会话、流式处理 |
+
+## TaskPool：一次性重活的首选
+
+```typescript
+import { taskpool } from '@kit.ArkTS';
+
+@Concurrent
+function heavyParse(raw: string): number {
+  // 大文本解析、编码等纯计算
+  return raw.length;
+}
+
+async function parseAsync(): Promise<void> {
+  const task: taskpool.Task = new taskpool.Task(heavyParse, bigRawText);
+  const result: number = await taskpool.execute(task) as number;
+  console.info(`解析完成: ${result}`);
+}
+```
+
+约束：
+
+- 并发函数必须标 `@Concurrent`，且是**文件顶层函数**（不能是闭包、方法）；
+- 参数与返回值走序列化，必须是可发送类型；
+- 函数体内不能用 `this`。
+
+典型场景：Markdown 解析、图片编码、搜索语料构建——「一批数据进去，一个结果出来」。
+
+## Worker：需要对话的长期线程
+
+```typescript
+// worker 文件（workers/parse_worker.ets）
+import { ErrorEvent, MessageEvents, worker } from '@kit.ArkTS';
+
+const w: worker.ThreadWorker = new worker.ThreadWorker('workers/parse_worker.ets');
+w.onmessage = (e: MessageEvents): void => {
+  console.info(`收到: ${e.data}`);
+};
+w.onerror = (e: ErrorEvent): void => {
+  console.error(`worker 异常: ${e.message}`);
+};
+w.postMessage({ action: 'init', payload: 42 });
+// 用完必须销毁，否则线程泄漏
+w.terminate();
+```
+
+典型场景：增量解析协议、后台心跳、需要多次往返的会话。
+
+## 选型判断
+
+```
+任务是「一次调用出结果」吗？
+├─ 是 → 数据量大吗？
+│        ├─ 大（MB 级）→ TaskPool + @Sendable 共享内存优化
+│        └─ 小 → TaskPool 直接传
+└─ 否（需要多轮通信/常驻）→ Worker
+```
+
+## 踩坑记录
+
+1. **忘记 terminate**：Worker 是真实线程，页面销毁它不销毁——`aboutToDisappear` 里收尾；
+2. **传输大对象**：默认序列化拷贝，10MB 文本两边各一份还卡传输；用 `@Sendable` 类或 `ArrayBuffer` 传输减少拷贝；
+3. **@Concurrent 函数里 import**：函数所在文件的依赖会被打进 worker 环境，谨慎引入重依赖；
+4. **主线程 await 不释放**：`taskpool.execute` 本身异步，但 UI 逻辑别依赖「await 完成前用户不能操作」，该加 loading 就加。
+
+## 一句话总结
+
+**TaskPool 是钟点工，Worker 是常驻管家**。一次性计算用钟点工，长期会话才雇管家，且辞退要干脆。

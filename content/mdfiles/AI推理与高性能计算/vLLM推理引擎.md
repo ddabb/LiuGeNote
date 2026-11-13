@@ -1,0 +1,641 @@
+---
+title: vLLM推理引擎
+tags: [vLLM, 推理引擎, PagedAttention, Continuous Batching, LLM推理, 高吞吐量, 易用性]
+description: vLLM推理引擎的核心技术、架构设计、使用方法和性能优化，涵盖PagedAttention、Continuous Batching等创新技术
+---
+
+# vLLM推理引擎
+
+## 定义
+
+**vLLM**是一个高吞吐量、易用性好的大语言模型推理引擎，由UC Berkeley开发。其核心创新是**PagedAttention**和**Continuous Batching**，显著提升LLM推理的吞吐量和GPU利用率。
+
+**核心优势**：
+- **高吞吐**：比HuggingFace Transformers快24倍
+- **易用性好**：与HuggingFace模型无缝集成
+- **内存高效**：PagedAttention减少内存碎片和浪费
+- **动态批处理**：Continuous Batching提升GPU利用率
+
+---
+
+## 核心概念
+
+### 1. vLLM核心技术
+
+| 技术 | 原理 | 优势 |
+|------|------|----------|
+| **PagedAttention** | 将KV Cache分页管理，类似操作系统虚拟内存 | 减少内存碎片、支持KV Cache共享 |
+| **Continuous Batching** | token级别动态批处理，每次迭代动态调整batch | 提升GPU利用率、减少等待 |
+| **KV Cache复用** | 相同前缀的请求共享KV Cache | 减少重复计算、降低延迟 |
+| **张量并行** | 将模型层切分到多个GPU | 支持超大模型推理 |
+| **流式输出** | 逐token返回生成结果 | 提升用户体验 |
+
+### 2. vLLM架构组件
+
+| 组件 | 功能 | 说明 |
+|------|------|----------|
+| **Scheduler（调度器）** | 管理请求队列、决定每次迭代的batch | 实现Continuous Batching |
+| **Model Executor（模型执行器） | 执行模型前向计算 | 支持张量并行、流水线并行 |
+| **Block Manager（块管理器）** | 管理KV Cache内存块 | 实现PagedAttention |
+| **Request（请求）** | 封装推理请求 | 包含prompt、参数、状态 |
+| **Sequence（序列）** | 封装一个生成序列 | 支持beam search、多序列生成 |
+
+### 3. vLLM性能对比
+
+| 指标 | HuggingFace Transformers | TGI | vLLM |
+|------|--------------------------|-----|-------|
+| 吞吐量（QPS） | 1x | 2x | 10-24x |
+| 延迟（P50） | 基准 | 略低 | 最低 |
+| GPU利用率 | 低 | 中 | 高 |
+| 易用性 | 高 | 中 | 高 |
+| 最大batch size | 小 | 中 | 大 |
+
+---
+
+## 详细内容
+
+### 一、PagedAttention详解
+
+#### 1.1 传统KV Cache内存管理的问题
+
+**问题1：内存碎片**
+- 每个请求预分配固定大小的KV Cache（如最大长度2048）
+- 实际生成长度可能远小于预分配大小 → 内存碎片
+
+**问题2：内存浪费**
+- 相同前缀的请求（如system prompt）各自存储一份KV Cache
+- 无法共享 → 内存浪费
+
+**问题3：批处理受限**
+- 静态批处理要求所有请求长度相同（padding）
+- batch size受限于剩余显存 → 吞吐量低
+
+#### 1.2 PagedAttention原理
+
+**核心思想**：受操作系统虚拟内存启发，将KV Cache划分为固定大小的"页"（block）。
+
+**关键概念**：
+- **Block（块）**：固定大小的KV Cache单元（如存储16个token的KV）
+- **逻辑块**：请求看到的连续KV Cache空间
+- **物理块**：实际存储KV Cache的物理内存
+- **块表（Block Table）**：记录逻辑块到物理块的映射
+
+**工作流程**：
+1. 请求开始时，不预分配所有KV Cache
+2. 每次生成新token，按需分配一个新block
+3. 如果物理内存不足，可以换出（swap out）不常用的block
+4. 不同请求可以共享相同的物理block（如共享system prompt）
+
+**优势**：
+- **减少碎片**：按需分配，无预分配浪费
+- **内存共享**：相同前缀共享物理block
+- **更大batch**：内存利用率高，支持更大batch size
+
+#### 1.3 PagedAttention实现细节
+
+**Block大小选择**：
+- 通常16-32个token per block
+- 太小：块表 overhead 大
+- 太大：内存对齐和共享不灵活
+
+**块表管理**：
+- 每个请求有一个块表（逻辑块→物理块映射）
+- 共享前缀的请求可以共享部分物理块
+- 写时复制（Copy-on-Write）：共享块被修改时，分配新物理块
+
+**内存换出（Swap）**：
+- 当GPU显存不足时，可以将不常用的block换出到CPU内存
+- 需要时再换入（swap in）
+- 支持超大batch size（超过GPU显存）
+
+### 二、Continuous Batching详解
+
+#### 2.1 传统批处理的问题
+
+**静态批处理（Static Batching）**：
+- 等待batch填满或超时
+- 所有请求必须相同长度（padding）
+- 所有请求同时完成才能处理下一个batch
+
+**问题**：
+- **padding浪费**：短请求被填充到相同长度
+- **同步等待**：GPU等待最长请求完成
+- **资源利用率低**：短请求浪费GPU周期
+
+#### 2.2 Continuous Batching原理
+
+**核心思想**：在token级别进行批处理，每次迭代（生成一个token）动态决定batch中的请求。
+
+**工作流程**：
+1. 每次迭代前，调度器检查：
+   - 哪些请求已生成结束token（EOS）→ 移除
+   - 哪些请求已达到最大长度 → 移除
+   - 哪些新请求在等待队列 → 加入
+2. 动态组成新的batch
+3. 执行一次模型前向计算（生成所有请求的一个token）
+4. 重复1-3
+
+**优势**：
+- **无需等待**：请求独立，完成一个移除一个
+- **减少padding**：不同请求可以不同长度
+- **高GPU利用率**：始终满batch运行
+
+#### 2.3 Continuous Batching实现
+
+**调度策略**：
+- **FCFS（先来先服务）**：按请求到达顺序处理
+- **优先级调度**：高优先级请求优先
+- **长度感知调度**：优先处理短请求（减少平均延迟）
+
+**批大小限制**：
+- 受限于GPU显存（KV Cache占用）
+- 受限于计算能力（batch太大，单次迭代耗时过长）
+- vLLM动态调整batch size，最大化吞吐量
+
+### 三、vLLM使用指南
+
+#### 3.1 安装vLLM
+
+**环境要求**：
+- Linux操作系统（推荐）
+- Python 3.8+
+- CUDA 7.0+（GPU支持）
+- PyTorch 2.0+
+
+**安装方法**：
+```bash
+# 从PyPI安装（稳定版）
+pip install vllm
+
+# 从源码安装（最新功能）
+git clone https://github.com/vllm-project/vllm.git
+cd vllm
+pip install -e .
+```
+
+#### 3.2 离线推理（Offline Inference）
+
+**示例1：使用LLM类进行离线推理**
+```python
+from vllm import LLM, SamplingParams
+
+# 初始化模型
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+
+# 设置采样参数
+sampling_params = SamplingParams(temperature=0.8, top_p=0.95, max_tokens=128)
+
+#  prompts
+prompts = [
+    "Hello, my name is",
+    "The capital of France is",
+    "The largest ocean in the world is",
+]
+
+# 生成
+outputs = llm.generate(prompts, sampling_params)
+
+# 打印结果
+for output in outputs:
+    prompt = output.prompt
+    generated_text = output.outputs[0].text
+    print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")
+```
+
+#### 3.3 在线服务（Online Serving）
+
+**启动API服务器**：
+```bash
+python -m vllm.entrypoints.api_server \
+    --model meta-llama/Llama-2-7b-hf \
+    --port 8000
+```
+
+**发送请求（使用curl）**：
+```bash
+curl http://localhost:8000/generate \
+    -H "Content-Type: application/json" \
+    -d '{
+        "prompt": "Hello, my name is",
+        "max_tokens": 128,
+        "temperature": 0.8
+    }'
+```
+
+**使用OpenAI兼容API**：
+```bash
+# 启动兼容OpenAI API的服务器
+python -m vllm.entrypoints.openai.api_server \
+    --model meta-llama/Llama-2-7b-hf
+
+# 使用curl请求
+curl http://localhost:8000/v1/completions \
+    -H "Content-Type: application/json" \
+    -d '{
+        "model": "meta-llama/Llama-2-7b-hf",
+        "prompt": "Hello, my name is",
+        "max_tokens": 128,
+        "temperature": 0.8
+    }'
+```
+
+#### 3.4 高级功能
+
+**1. 张量并行（Tensor Parallelism）**
+```bash
+# 使用4张GPU进行张量并行
+python -m vllm.entrypoints.api_server \
+    --model meta-llama/Llama-2-7b-hf \
+    --tensor-parallel-size 4
+```
+
+**2. 量化（Quantization）**
+```bash
+# 使用INT8量化（GPTQ）
+python -m vllm.entrypoints.api_server \
+    --model TheBloke/Llama-2-7B-Chat-GPTQ \
+    --quantization gptq
+```
+
+**3. KV Cache复用**
+```python
+# 共享system prompt的KV Cache
+from vllm import LLM, SamplingParams
+
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+
+# 多个请求共享相同的system prompt
+prompts = [
+    "<s>[INST] <<SYS>>You are a helpful assistant.<</SYS>>\n\nWhat is AI? [/INST]",
+    "<s>[INST] <<SYS>>You are a helpful assistant.<</SYS>>\n\nWhat is ML? [/INST]",
+]
+
+# vLLM自动复用system prompt的KV Cache
+outputs = llm.generate(prompts, sampling_params)
+```
+
+**4. 流式输出（Streaming）**
+```python
+from vllm import LLM, SamplingParams
+
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+
+# 启用流式输出
+sampling_params = SamplingParams(
+    temperature=0.8,
+    max_tokens=128,
+    stream=True  # 启用流式输出
+)
+
+# 生成并流式输出
+for output in llm.generate(["Hello"], sampling_params):
+    print(output.outputs[0].text, end="", flush=True)
+```
+
+### 四、vLLM性能优化
+
+#### 4.1 关键配置参数
+
+| 参数 | 说明 | 推荐值 |
+|------|------|----------|
+| `--max-num-seqs` | 最大并发序列数 | 根据GPU显存调整（如256） |
+| `--max-num-batched-tokens` | 最大批处理token数 | 根据GPU显存调整（如8192） |
+| `--gpu-memory-utilization` | GPU显存利用率目标 | 0.9（默认） |
+| `--block-size` | KV Cache块大小 | 16（默认） |
+| `--swap-space` | CPU-GPU swap空间大小（GB） | 4（默认） |
+
+#### 4.2 性能调优建议
+
+**1. 最大化吞吐量**：
+- 增大 `--max-num-seqs`
+- 增大 `--max-num-batched-tokens`
+- 使用量化（减少模型显存占用）
+
+**2. 最小化延迟**：
+- 减小 `--max-num-seqs`（减少调度开销）
+- 使用流式输出
+- 使用更小模型或量化
+
+**3. 平衡吞吐量和延迟**：
+- 监控P50/P90/P99延迟
+- 调整batch size和并发数
+- A/B测试不同配置
+
+#### 4.3 监控和调试
+
+**监控指标**：
+- **吞吐量**（QPS）：每秒查询数
+- **延迟**（Latency）：P50/P90/P99延迟
+- **GPU利用率**：GPU计算利用率
+- **显存占用**：模型 + KV Cache占用
+
+**调试工具**：
+- vLLM日志（--log-level DEBUG）
+- PyTorch Profiler（性能分析）
+- NVIDIA Nsight Systems（GPU性能分析）
+
+---
+
+## 示例/应用场景
+
+### 示例1：部署Llama-2-7B模型提供API服务
+
+**场景**：使用vLLM部署Llama-2-7B模型，提供OpenAI兼容的API服务。
+
+**步骤**：
+1. **安装vLLM**：
+   ```bash
+   pip install vllm
+   ```
+
+2. **启动API服务器**：
+   ```bash
+   python -m vllm.entrypoints.openai.api_server \
+       --model meta-llama/Llama-2-7b-hf \
+       --port 8000 \
+       --max-num-seqs 256 \
+       --gpu-memory-utilization 0.95
+   ```
+
+3. **发送请求**：
+   ```bash
+   curl http://localhost:8000/v1/completions \
+       -H "Content-Type: application/json" \
+       -d '{
+           "model": "meta-llama/Llama-2-7b-hf",
+           "prompt": "Once upon a time",
+           "max_tokens": 128,
+           "temperature": 0.8
+       }'
+   ```
+
+**效果**：
+- 吞吐量：45 QPS（比HuggingFace Transformers快约6倍）
+- P50延迟：35ms
+- GPU利用率：85%
+
+### 示例2：使用张量并行部署Llama-2-70B模型
+
+**场景**：Llama-2-70B模型太大，单GPU显存放不下，使用4张A100 GPU张量并行部署。
+
+**步骤**：
+1. **启动API服务器（张量并行）**：
+   ```bash
+   python -m vllm.entrypoints.openai.api_server \
+       --model meta-llama/Llama-2-70b-hf \
+       --tensor-parallel-size 4 \
+       --port 8000
+   ```
+
+2. **验证部署**：
+   ```bash
+   curl http://localhost:8000/v1/completions \
+       -H "Content-Type: application/json" \
+       -d '{
+           "model": "meta-llama/Llama-2-70b-hf",
+           "prompt": "The capital of France is",
+           "max_tokens": 128
+       }'
+   ```
+
+**效果**：
+- 支持70B大模型推理
+- 吞吐量：8 QPS
+- 延迟：120ms
+
+---
+
+## 【对应领域考点】
+
+### vLLM推理引擎常见考点
+
+1. **vLLM基本介绍**：定义、核心优势、性能对比
+2. **PagedAttention**：原理、优势、实现细节
+3. **Continuous Batching**：原理、优势、实现
+4. **vLLM架构**：调度器、模型执行器、块管理器
+5. **vLLM使用**：安装、离线推理、在线服务、高级功能
+6. **vLLM性能优化**：关键配置参数、调优建议、监控调试
+
+### 实战考点
+
+1. **PagedAttention考点**：
+   - 传统KV Cache内存管理的问题
+   - PagedAttention原理和优势
+   - Block大小选择、块表管理、内存换出
+
+2. **Continuous Batching考点**：
+   - 传统批处理的问题
+   - Continuous Batching原理和优势
+   - 调度策略、批大小限制
+
+3. **vLLM使用考点**：
+   - 安装vLLM（环境要求、安装方法）
+   - 离线推理（LLM类使用）
+   - 在线服务（启动API服务器、发送请求）
+   - 高级功能（张量并行、量化、KV Cache复用、流式输出）
+
+4. **vLLM性能优化考点**：
+   - 关键配置参数（--max-num-seqs、--max-num-batched-tokens等）
+   - 性能调优建议（最大化吞吐量、最小化延迟、平衡）
+   - 监控指标和调试工具
+
+5. **vLLM架构考点**：
+   - 调度器（Scheduler）功能和实现
+   - 模型执行器（Model Executor）功能和实现
+   - 块管理器（Block Manager）功能和实现
+
+---
+
+## 最佳实践
+
+### 1. 系统化vLLM部署流程
+
+**不推荐**（零散部署）：
+```text
+不进行系统化部署，随意启动服务，导致性能不佳或维护困难
+```
+
+**推荐**（系统化流程）：
+```text
+1. 环境准备：
+   - 安装vLLM（pip install vllm）
+   - 准备模型（HuggingFace模型或量化模型）
+   - 准备GPU资源（单GPU或多GPU）
+2. 配置调优：
+   - 设置--max-num-seqs（根据GPU显存）
+   - 设置--gpu-memory-utilization（显存利用率目标）
+   - 可选：启用量化（--quantization gptq/awq）
+3. 启动服务：
+   - 离线推理：使用LLM类
+   - 在线服务：启动API服务器（openai.api_server）
+4. 性能测试：
+   - 测试吞吐量（QPS）
+   - 测试延迟（P50/P90/P99）
+   - 测试GPU利用率
+5. 监控调优：
+   - 监控关键指标（吞吐量、延迟、GPU利用率、显存占用）
+   - 调整配置参数
+   - A/B测试不同配置
+```
+
+### 2. 选择合适硬件和并行策略
+
+**不推荐**（忽略硬件限制）：
+```text
+不使用并行策略，导致模型太大无法部署
+```
+
+**推荐**（根据硬件选择策略）：
+```text
+- 单GPU可放下模型：直接使用vLLM部署
+- 单GPU放不下模型：使用张量并行（--tensor-parallel-size）
+- 长序列场景：使用序列并行（需要额外配置）
+- 超大模型：张量并行 + 流水线并行
+```
+
+### 3. 最大化吞吐量和GPU利用率
+
+**不推荐**（默认配置）：
+```text
+使用默认配置，不调优，导致性能不佳
+```
+
+**推荐**（调优配置）：
+```text
+- 增大--max-num-seqs：提升并发数，提升吞吐量
+- 增大--max-num-batched-tokens：提升批处理token数，提升吞吐量
+- 启用量化：减少模型显存占用，支持更大batch size
+- 监控GPU利用率：目标>80%
+```
+
+### 4. 确保服务稳定性和可靠性
+
+**不推荐**（忽略错误处理）：
+```text
+忽略错误处理和监控，导致服务不稳定
+```
+
+**推荐**（确保稳定性）：
+```text
+- 添加错误处理：捕获异常，返回友好错误信息
+- 添加监控：监控吞吐量、延迟、GPU利用率、显存占用
+- 添加日志：记录关键事件和错误
+- 使用健康检查：定期检查服务健康状态
+- 使用负载均衡：多实例部署，提升可用性
+```
+
+---
+
+## 【常见错误】
+
+### 1. 忽略PagedAttention优势
+
+**错误示例**：
+```text
+使用传统KV Cache内存管理，导致内存碎片和浪费
+```
+
+**正确做法**：
+```text
+- 使用vLLM的PagedAttention：自动管理KV Cache内存
+- 复用KV Cache：共享system prompt的KV Cache
+- 调整--block-size：根据场景优化（默认16）
+```
+
+### 2. 不进行性能调优
+
+**错误示例**：
+```text
+使用默认配置部署，不调优，导致性能不佳
+```
+
+**正确做法**：
+```text
+- 调优--max-num-seqs：根据GPU显存和负载调整
+- 调优--max-num-batched-tokens：根据GPU显存和计算能力调整
+- 启用量化：减少模型显存占用
+- 监控性能：吞吐量、延迟、GPU利用率
+- A/B测试：测试不同配置，找到最优配置
+```
+
+### 3. 错误选择并行策略
+
+**错误示例**：
+```text
+模型太大，单GPU显存放不下，但不知道使用张量并行
+```
+
+**正确做法**：
+```text
+- 单GPU可放下：直接部署
+- 单GPU放不下：使用张量并行（--tensor-parallel-size）
+- 长序列：使用序列并行
+- 超大模型：张量并行 + 流水线并行
+```
+
+### 4. 忽略监控和调试
+
+**错误示例**：
+```text
+不监控服务性能，导致问题发现晚，影响用户体验
+```
+
+**正确做法**：
+```text
+- 监控关键指标：吞吐量、延迟、GPU利用率、显存占用
+- 添加日志：记录关键事件和错误
+- 使用调试工具：PyTorch Profiler、Nsight Systems
+- 定期检查：定期检查服务健康和性能
+```
+
+---
+
+## 总结
+
+vLLM是一个高吞吐量、易用性好的大语言模型推理引擎，其核心创新PagedAttention和Continuous Batching显著提升了LLM推理的吞吐量和GPU利用率。要做好vLLM部署和调优，需要：
+
+1. **理解vLLM核心技术**：PagedAttention、Continuous Batching
+2. **掌握vLLM使用方法**：安装、离线推理、在线服务、高级功能
+3. **系统化部署流程**：环境准备、配置调优、启动服务、性能测试、监控调优
+4. **根据硬件选择策略**：单GPU、多GPU、张量并行、流水线并行
+5. **性能调优**：最大化吞吐量、最小化延迟、平衡二者
+
+vLLM已成为LLM推理引擎的重要选择，特别适合高并发在线服务场景。随着LLM模型越来越大、应用场景越来越复杂，vLLM将持续演进，包括更高效的KV Cache管理、更智能的调度策略、更完善的生态支持。
+
+---
+
+## 扩展阅读
+
+### 高级主题
+
+1. **vLLM源码分析**：调度器、模型执行器、块管理器源码解析
+2. **vLLM性能分析**：深入剖析vLLM性能瓶颈和优化方法
+3. **vLLM与其他推理引擎对比**：vLLM vs TensorRT-LLM vs SGLang
+4. **vLLM在生产环境部署**：负载均衡、容错、自动扩缩容
+
+### 实战案例
+
+1. **vLLM部署Llama-2-7B**：详细部署步骤、性能调优、监控调试
+2. **vLLM部署Llama-2-70B（张量并行）**：多GPU部署、性能测试
+3. **vLLM量化模型部署**：GPTQ/AWQ量化模型部署、性能对比
+4. **vLLM高并发场景调优**：调优--max-num-seqs、--max-num-batched-tokens，提升吞吐量
+
+### 工具和资源
+
+1. **vLLM官方资源**：
+   - GitHub：https://github.com/vllm-project/vllm
+   - 文档：https://docs.vllm.ai/
+   - Discord：https://discord.gg/vllm
+
+2. **性能分析工具**：
+   - PyTorch Profiler：https://pytorch.org/docs/stable/profiler.html
+   - NVIDIA Nsight Systems：https://developer.nvidia.com/nsight-systems
+
+3. **学习资源**：
+   - vLLM论文：PagedAttention（SOSP 2023）
+   - vLLM博客：https://blog.vllm.ai/
+   - vLLM教程：https://docs.vllm.ai/en/latest/getting_started/quickstart.html
+
+---
+
+**注**：本文件为vLLM推理引擎核心内容，适合AI系统工程师、推理引擎开发者和LLM服务部署工程师学习。建议结合具体硬件平台和业务场景，实践vLLM部署和调优，积累实战经验。

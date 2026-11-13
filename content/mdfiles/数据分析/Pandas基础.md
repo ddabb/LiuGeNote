@@ -1,0 +1,727 @@
+---
+title: Pandas基础
+tags: [Python数据分析, 数据分析师, Pandas, DataFrame, Series]
+description: Pandas是Python数据分析的核心库，提供DataFrame和Series数据结构，用于数据清洗、转换、分析
+---
+
+# Pandas基础
+
+## 定义
+
+Pandas是Python中用于数据分析的核心库，提供了两种主要数据结构：
+
+1. **Series**：一维带标签数组（类似Excel的一列）
+2. **DataFrame**：二维表格（类似Excel的工作表）
+
+Pandas能够高效处理结构化数据（CSV、Excel、SQL等），是数据分析师使用Python进行数据清洗、转换、分析的必备工具。
+
+---
+
+## 核心概念
+
+### 1. Series（一维序列）
+
+| 属性/方法 | 说明 | 示例 |
+|------------|------|------|
+| `Series(data)` | 创建Series | `s = pd.Series([1, 2, 3])` |
+| `index` | 索引（行标签） | `s.index` |
+| `values` | 值（NumPy数组） | `s.values` |
+| `dtype` | 数据类型 | `s.dtype` |
+
+**示例**：
+
+```python
+import pandas as pd
+
+# 创建Series
+s = pd.Series([10, 20, 30, 40], index=['a', 'b', 'c', 'd'])
+print(s)
+# a    10
+# b    20
+# c    30
+# d    40
+```
+
+### 2. DataFrame（二维表格）
+
+| 属性/方法 | 说明 | 示例 |
+|------------|------|------|
+| `DataFrame(data)` | 创建DataFrame | `df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})` |
+| `shape` | 形状（行数, 列数） | `df.shape` |
+| `columns` | 列名 | `df.columns` |
+| `index` | 行索引 | `df.index` |
+| `dtypes` | 每列的数据类型 | `df.dtypes` |
+| `head(n)` | 查看前n行 | `df.head(5)` |
+| `tail(n)` | 查看后n行 | `df.tail(5)` |
+| `info()` | 查看数据概况（行数、列数、数据类型、非空值） | `df.info()` |
+| `describe()` | 查看数值列的统计摘要 | `df.describe()` |
+
+### 3. 数据读取与写入
+
+| 函数 | 说明 | 示例 |
+|------|------|------|
+| `pd.read_csv()` | 读取CSV文件 | `df = pd.read_csv('data.csv')` |
+| `pd.read_excel()` | 读取Excel文件 | `df = pd.read_excel('data.xlsx')` |
+| `pd.read_sql()` | 从SQL数据库读取 | `df = pd.read_sql(query, conn)` |
+| `df.to_csv()` | 写入CSV文件 | `df.to_csv('output.csv', index=False)` |
+| `df.to_excel()` | 写入Excel文件 | `df.to_excel('output.xlsx', index=False)` |
+| `df.to_sql()` | 写入SQL数据库 | `df.to_sql('table_name', conn)` |
+
+---
+
+## 详细内容
+
+### 一、创建DataFrame
+
+#### 1.1 从字典创建
+
+```python
+import pandas as pd
+
+# 从字典创建（键为列名，值为列数据）
+data = {
+    'name': ['Alice', 'Bob', 'Charlie'],
+    'age': [25, 30, 35],
+    'city': ['Beijing', 'Shanghai', 'Guangzhou']
+}
+df = pd.DataFrame(data)
+print(df)
+#       name  age       city
+# 0    Alice   25   Beijing
+# 1      Bob   30  Shanghai
+# 2  Charlie   35  Guangzhou
+```
+
+#### 1.2 从列表创建
+
+```python
+# 从列表创建（指定列名）
+data = [['Alice', 25], ['Bob', 30], ['Charlie', 35]]
+df = pd.DataFrame(data, columns=['name', 'age'])
+print(df)
+```
+
+#### 1.3 从CSV文件读取
+
+```python
+# 读取CSV文件
+df = pd.read_csv('data.csv')
+
+# 常用参数
+df = pd.read_csv(
+    'data.csv',
+    sep=',',                  # 分隔符，默认逗号
+    header=0,                 # 列名所在行，默认0（第一行）
+    index_col=0,              # 指定某一列为行索引
+    usecols=['name', 'age'],  # 只读取指定列
+    nrows=100,               # 只读取前100行
+    encoding='utf-8'          # 编码
+)
+```
+
+---
+
+### 二、数据查看与筛选
+
+#### 2.1 查看数据
+
+```python
+# 查看前5行
+df.head()
+
+# 查看后5行
+df.tail()
+
+# 查看数据概况（行数、列数、数据类型、非空值）
+df.info()
+
+# 查看数值列的统计摘要（计数、均值、标准差、最小值、25%、50%、75%、最大值）
+df.describe()
+
+# 查看列名
+df.columns
+
+# 查看形状（行数, 列数）
+df.shape
+
+# 查看索引
+df.index
+```
+
+#### 2.2 列筛选
+
+```python
+# 选择单列（返回Series）
+df['name']
+
+# 选择多列（返回DataFrame）
+df[['name', 'age']]
+
+# 添加新列
+df['age_plus_10'] = df['age'] + 10
+
+# 删除列
+df.drop('age_plus_10', axis=1, inplace=True)
+```
+
+#### 2.3 行筛选（条件过滤）
+
+```python
+# 条件过滤（年龄大于30）
+df[df['age'] > 30]
+
+# 多条件过滤（年龄大于30且城市为'Beijing'）
+df[(df['age'] > 30) & (df['city'] == 'Beijing')]
+
+# 多条件过滤（年龄大于30或城市为'Beijing'）
+df[(df['age'] > 30) | (df['city'] == 'Beijing')]
+
+# 使用query方法（字符串表达式）
+df.query('age > 30 and city == "Beijing"')
+```
+
+#### 2.4 位置筛选（iloc和loc）
+
+| 方法 | 说明 | 示例 |
+|------|------|------|
+| `df.iloc[行位置, 列位置]` | 按位置筛选（从0开始） | `df.iloc[0, 1]`（第1行第2列） |
+| `df.loc[行标签, 列标签]` | 按标签筛选 | `df.loc[0, 'name']`（行索引0，列名'name'） |
+
+**示例**：
+
+```python
+# 使用iloc（按位置）
+df.iloc[0]           # 第1行（所有列）
+df.iloc[:, 0]        # 第1列（所有行）
+df.iloc[0:3, 0:2]  # 前3行，前2列
+
+# 使用loc（按标签）
+df.loc[0]            # 行索引为0的行（所有列）
+df.loc[:, 'name']    # 列名为'name'的列（所有行）
+df.loc[0:2, 'name':'age']  # 行索引0-2，列名'name'到'age'
+```
+
+---
+
+### 三、数据清洗
+
+#### 3.1 处理缺失值
+
+| 方法 | 说明 | 示例 |
+|------|------|------|
+| `df.isnull()` | 判断是否为缺失值（返回布尔值DataFrame） | `df.isnull()` |
+| `df.notnull()` | 判断是否非缺失值 | `df.notnull()` |
+| `df.dropna()` | 删除缺失值所在的行或列 | `df.dropna()` |
+| `df.fillna()` | 填充缺失值 | `df.fillna(0)` |
+
+**示例**：
+
+```python
+# 判断缺失值
+df.isnull().sum()  # 每列缺失值数量
+
+# 删除缺失值所在的行（只要该行有缺失值就删除）
+df.dropna()
+
+# 删除缺失值所在的列（只要该列有缺失值就删除）
+df.dropna(axis=1)
+
+# 只删除全部为缺失值的行
+df.dropna(how='all')
+
+# 至少保留3个非缺失值，否则删除该行
+df.dropna(thresh=3)
+
+# 填充缺失值为0
+df.fillna(0)
+
+# 前向填充（用上一个非缺失值填充）
+df.fillna(method='ffill')
+
+# 后向填充（用下一个非缺失值填充）
+df.fillna(method='bfill')
+
+# 用均值填充
+df['age'].fillna(df['age'].mean(), inplace=True)
+```
+
+#### 3.2 处理重复值
+
+```python
+# 判断是否有重复行
+df.duplicated()
+
+# 删除重复行（保留第一条）
+df.drop_duplicates()
+
+# 根据指定列删除重复行
+df.drop_duplicates(subset=['name'])
+
+# 删除重复行（保留最后一条）
+df.drop_duplicates(keep='last')
+```
+
+#### 3.3 数据类型转换
+
+```python
+# 查看数据类型
+df.dtypes
+
+# 转换数据类型
+df['age'] = df['age'].astype('float')
+
+# 将字符串转换为日期
+df['date'] = pd.to_datetime(df['date'])
+
+# 将分类变量转换为类别类型（节省内存）
+df['city'] = df['city'].astype('category')
+```
+
+#### 3.4 字符串处理
+
+```python
+# 字符串方法（通过.str访问器）
+df['name'].str.lower()     # 转为小写
+df['name'].str.upper()     # 转为大写
+df['name'].str.len()       # 字符串长度
+df['name'].str.contains('Ali')  # 是否包含子串
+df['name'].str.replace('Ali', 'Al')  # 替换子串
+df['name'].str.split(' ').str[0]    # 分割字符串并取第一部分
+```
+
+---
+
+### 四、数据分组与聚合
+
+#### 4.1 groupby 分组
+
+```python
+# 按城市分组，计算年龄的平均值
+df.groupby('city')['age'].mean()
+
+# 按城市分组，对多个列进行聚合
+df.groupby('city').agg({
+    'age': 'mean',
+    'salary': 'sum'
+})
+
+# 按城市和多列分组
+df.groupby(['city', 'gender'])['age'].mean()
+```
+
+#### 4.2 聚合函数
+
+| 函数 | 说明 |
+|------|------|
+| `sum()` | 求和 |
+| `mean()` | 平均值 |
+| `count()` | 计数 |
+| `max()` | 最大值 |
+| `min()` | 最小值 |
+| `std()` | 标准差 |
+| `var()` | 方差 |
+| `median()` | 中位数 |
+| `first()` | 第一个值 |
+| `last()` | 最后一个值 |
+
+**示例**：
+
+```python
+# 对分组后的数据进行多种聚合
+df.groupby('city').agg({
+    'age': ['mean', 'max', 'min'],
+    'salary': 'sum'
+})
+```
+
+---
+
+### 五、数据合并与连接
+
+#### 5.1 concat 合并（按行或按列拼接）
+
+```python
+# 按行拼接（纵向合并）
+df_concat = pd.concat([df1, df2], axis=0, ignore_index=True)
+
+# 按列拼接（横向合并）
+df_concat = pd.concat([df1, df2], axis=1)
+```
+
+#### 5.2 merge 连接（类似SQL的JOIN）
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `how` | 连接类型（'inner', 'left', 'right', 'outer'） | `pd.merge(df1, df2, on='key', how='inner')` |
+| `on` | 连接键（左右DataFrame共有的列） | `pd.merge(df1, df2, on='user_id')` |
+| `left_on` | 左DataFrame的连接键 | `pd.merge(df1, df2, left_on='id1', right_on='id2')` |
+| `right_on` | 右DataFrame的连接键 | 同上 |
+| `suffixes` | 列名重复时的后缀 | `pd.merge(df1, df2, on='key', suffixes=('_left', '_right'))` |
+
+**示例**：
+
+```python
+# 内连接（只保留匹配的 rows）
+df_merged = pd.merge(df1, df2, on='user_id', how='inner')
+
+# 左连接（保留左DataFrame所有 rows）
+df_merged = pd.merge(df1, df2, on='user_id', how='left')
+
+# 右连接（保留右DataFrame所有 rows）
+df_merged = pd.merge(df1, df2, on='user_id', how='right')
+
+# 全连接（保留所有 rows）
+df_merged = pd.merge(df1, df2, on='user_id', how='outer')
+```
+
+#### 5.3 join 连接（按索引连接）
+
+```python
+# 按索引连接（类似merge，但使用索引作为连接键）
+df1.join(df2, how='inner')
+```
+
+---
+
+## 示例/应用场景
+
+### 示例1：电商订单分析
+
+**需求**：读取订单CSV文件，分析各城市的订单总金额、平均订单金额、订单数
+
+**代码**：
+
+```python
+import pandas as pd
+
+# 读取订单数据
+df = pd.read_csv('orders.csv')
+
+# 按城市分组，计算订单总金额、平均订单金额、订单数
+result = df.groupby('city').agg({
+    'order_amount': ['sum', 'mean', 'count']
+}).reset_index()
+
+# 重命名列
+result.columns = ['city', 'total_amount', 'avg_amount', 'order_count']
+
+# 按订单总金额降序排序
+result = result.sort_values('total_amount', ascending=False)
+
+# 保存结果
+result.to_csv('city_analysis.csv', index=False)
+```
+
+### 示例2：员工薪资分析
+
+**需求**：读取员工Excel文件，清洗数据（处理缺失值、去重），分析各部门的平均工资
+
+**代码**：
+
+```python
+import pandas as pd
+
+# 读取员工数据
+df = pd.read_excel('employees.xlsx')
+
+# 数据清洗
+# 1. 删除缺失工资的行
+df = df.dropna(subset=['salary'])
+
+# 2. 删除重复员工（根据员工ID）
+df = df.drop_duplicates(subset=['employee_id'])
+
+# 3. 将入职日期转换为日期类型
+df['hire_date'] = pd.to_datetime(df['hire_date'])
+
+# 按部门分组，计算平均工资
+result = df.groupby('department').agg({
+    'salary': 'mean',
+    'employee_id': 'count'
+}).reset_index()
+
+# 重命名列
+result.columns = ['department', 'avg_salary', 'employee_count']
+
+# 保存结果
+result.to_excel('department_analysis.xlsx', index=False)
+```
+
+### 示例3：用户留存分析
+
+**需求**：读取用户登录日志，分析每月新增用户数和留存率
+
+**代码**：
+
+```python
+import pandas as pd
+
+# 读取登录日志
+df = pd.read_csv('login_logs.csv')
+
+# 将登录日期转换为日期类型
+df['login_date'] = pd.to_datetime(df['login_date'])
+
+# 提取年月
+df['year_month'] = df['login_date'].dt.to_period('M')
+
+# 计算每个用户的最早登录月份（新增月份）
+user_first_login = df.groupby('user_id')['year_month'].min().reset_index()
+user_first_login.columns = ['user_id', 'first_month']
+
+# 统计每月新增用户数
+new_users = user_first_login.groupby('first_month').size().reset_index()
+new_users.columns = ['month', 'new_users']
+
+# 保存结果
+new_users.to_csv('monthly_new_users.csv', index=False)
+```
+
+---
+
+## 数据分析师考点
+
+### Pandas常见考点
+
+1. **Series与DataFrame的区别**：Series是一维，DataFrame是二维
+2. **数据读取**：`pd.read_csv()`、`pd.read_excel()`的常用参数
+3. **数据筛选**：列筛选、行筛选（条件过滤）、`iloc`和`loc`的区别
+4. **数据清洗**：处理缺失值（`dropna()`、`fillna()`）、处理重复值（`drop_duplicates()`）
+5. **分组聚合**：`groupby()` + 聚合函数（`sum()`、`mean()`、`count()`等）
+6. **数据合并**：`concat()`（拼接）、`merge()`（连接，类似SQL的JOIN）
+7. **数据类型转换**：`astype()`、`pd.to_datetime()`
+8. **字符串处理**：通过`.str`访问器使用字符串方法
+
+### 实战考点
+
+1. **性能优化**：
+   - 避免使用`apply()`（性能差），尽量使用向量化操作
+   - 使用`category`类型节省内存（针对重复值多的列）
+   - 使用`query()`或`eval()`提升性能（针对大数据量）
+2. **缺失值处理策略**：
+   - 删除缺失值（`dropna()`）：适用于缺失值比例很小的情况
+   - 填充缺失值（`fillna()`）：适用于缺失值比例较大或有业务逻辑可以推断的情况
+3. **分组聚合的多种写法**：
+   - `groupby()` + 聚合函数
+   - `groupby()` + `agg()`（多种聚合）
+   - `pivot_table()`（数据透视表）
+4. **merge vs join**：`merge()`按指定列连接，`join()`按索引连接
+
+---
+
+## 最佳实践
+
+### 1. 数据读取时指定数据类型
+
+**不推荐**（让Pandas自动推断数据类型，可能出错且慢）：
+
+```python
+df = pd.read_csv('data.csv')  # 自动推断数据类型
+```
+
+**推荐**（显式指定数据类型，提升性能且避免错误）：
+
+```python
+df = pd.read_csv('data.csv', dtype={'user_id': str, 'age': int})
+```
+
+### 2. 使用向量化操作，避免apply()
+
+**不推荐**（使用`apply()`，性能差）：
+
+```python
+# 使用apply计算年龄分段
+df['age_group'] = df['age'].apply(lambda x: '青年' if x < 30 else '中年' if x < 50 else '老年')
+```
+
+**推荐**（使用向量化操作，性能好）：
+
+```python
+# 使用cut或向量化条件判断
+df['age_group'] = pd.cut(
+    df['age'],
+    bins=[0, 30, 50, 100],
+    labels=['青年', '中年', '老年']
+)
+```
+
+### 3. 链式操作提升可读性
+
+**不推荐**（中间变量多，代码冗长）：
+
+```python
+df1 = df[df['age'] > 30]
+df2 = df1.groupby('city')['salary'].mean()
+df3 = df2.reset_index()
+```
+
+**推荐**（链式操作，可读性好）：
+
+```python
+result = (
+    df[df['age'] > 30]
+    .groupby('city')['salary']
+    .mean()
+    .reset_index()
+)
+```
+
+### 4. 使用category类型节省内存
+
+**场景**：某列重复值很多（如"城市"列只有几十个不同值，但有百万行）
+
+**不推荐**（使用object类型，占用内存大）：
+
+```python
+df['city'] = df['city'].astype('object')
+```
+
+**推荐**（使用category类型，节省内存）：
+
+```python
+df['city'] = df['city'].astype('category')
+```
+
+### 5. 避免SettingWithCopyWarning
+
+**错误示例**（可能触发`SettingWithCopyWarning`）：
+
+```python
+df[df['age'] > 30]['salary'] = 10000  # 错误！可能不生效
+```
+
+**正确做法**（使用`.loc`）：
+
+```python
+df.loc[df['age'] > 30, 'salary'] = 10000
+```
+
+---
+
+## 常见错误
+
+### 1. 混淆iloc和loc
+
+**错误示例**：
+
+```python
+# 想选择第1行第2列，但使用了loc（loc按标签，不是位置）
+df.loc[0, 1]  # 错误！列名是'age'，不是1
+```
+
+**正确做法**：
+
+```python
+# 使用iloc（按位置）
+df.iloc[0, 1]
+
+# 使用loc（按标签）
+df.loc[0, 'age']
+```
+
+### 2. 链式赋值导致SettingWithCopyWarning
+
+**错误示例**：
+
+```python
+# 链式赋值，可能不生效且触发警告
+df[df['age'] > 30]['salary'] = 10000
+```
+
+**正确做法**：
+
+```python
+# 使用.loc进行赋值
+df.loc[df['age'] > 30, 'salary'] = 10000
+```
+
+### 3. 忘记重置索引
+
+**问题**：`groupby()`后，分组列会成为索引，可能导致后续操作不便
+
+**错误示例**：
+
+```python
+result = df.groupby('city')['age'].mean()
+result.columns  # 错误！result是Series，没有columns属性
+```
+
+**正确做法**：
+
+```python
+result = df.groupby('city')['age'].mean().reset_index()
+result.columns  # 正确：['city', 'age']
+```
+
+### 4. 读取CSV时编码错误
+
+**错误示例**：
+
+```python
+df = pd.read_csv('data.csv')  # 可能报编码错误（如UTF-8 vs GBK）
+```
+
+**正确做法**：
+
+```python
+# 指定编码
+df = pd.read_csv('data.csv', encoding='utf-8')
+# 或者
+df = pd.read_csv('data.csv', encoding='gbk')
+```
+
+### 5. 使用apply()导致性能差
+
+**错误示例**：
+
+```python
+# 使用apply，性能差
+df['age_plus_10'] = df['age'].apply(lambda x: x + 10)
+```
+
+**正确做法**：
+
+```python
+# 向量化操作，性能好
+df['age_plus_10'] = df['age'] + 10
+```
+
+---
+
+## 总结
+
+Pandas是Python数据分析的核心库，核心要点包括：
+
+1. **掌握两种数据结构**：Series（一维）、DataFrame（二维）
+2. **熟练数据读取与写入**：`pd.read_csv()`、`pd.read_excel()`、`to_csv()`、`to_excel()`
+3. **掌握数据筛选**：列筛选、行筛选（条件过滤）、`iloc`和`loc`
+4. **熟练数据清洗**：处理缺失值、重复值、数据类型转换、字符串处理
+5. **掌握分组聚合**：`groupby()` + 聚合函数
+6. **熟练数据合并**：`concat()`、`merge()`
+7. **注意性能优化**：使用向量化操作，避免`apply()`
+
+Pandas是数据分析师的必备技能，需要在实践中不断积累经验。
+
+---
+
+## 扩展阅读
+
+### 高级主题
+
+1. **多索引（MultiIndex）**：多层索引的创建、操作、切片
+2. **透视表（pivot_table）**：类似Excel的数据透视表功能
+3. **时间序列分析**：日期范围生成、重采样（resample）、移动窗口（rolling）
+4. **性能优化**：使用`eval()`和`query()`、使用`category`类型、避免`apply()`
+
+### 实战案例
+
+1. **电商数据分析**：订单分析、用户行为分析、商品分析
+2. **金融数据分析**：股票数据分析、风险分析、投资组合分析
+3. **用户行为分析**：留存分析、漏斗分析、路径分析
+4. **日志分析**：Web日志分析、应用日志分析、异常检测
+
+---
+
+**注**：本文件内容适用于Pandas 1.0+版本，部分函数在新版本中可能有变化（如`append()`已废弃，改用`concat()`）。
+
+---

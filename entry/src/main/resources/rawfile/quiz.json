@@ -1,832 +1,1686 @@
 {
-  "generatedAt": "2026-11-04T02:16:47.401Z",
-  "total": 59,
+  "generatedAt": "2026-11-11",
+  "total": 120,
   "questions": [
     {
       "id": "q1",
-      "slug": "三端上架截图与模拟器密度之谜",
-      "category": "发布链路",
-      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「一、需求与总体方案」一节，以下说法正确的是？",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "在 ArkTS 严格模式下触发 arkts-no-any 报错后，规范的改写方式是什么？",
       "options": [
-        "首版 2in1 截图被否：应用呈现的元素太少了。",
-        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。",
-        "无 description 的文章值得被单独点名。",
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…"
+        "把 any 换成 unknown，两者在 ArkTS 中可以互相替代",
+        "为返回值声明明确的 interface，反序列化后按声明类型使用",
+        "保留 any，在运行期用 try-catch 兜底所有类型错误",
+        "先用 object 接收 JSON.parse 结果，使用时再逐字段断言"
       ],
-      "answer": 3,
-      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「一、需求与总体方案」小节。"
+      "answer": 1,
+      "explanation": "arkts-no-any 同时禁用 any 与 unknown，二者不能互相替代。合规做法是为返回值声明明确的接口类型，让数据形状在编译期固定下来。"
     },
     {
       "id": "q2",
-      "slug": "三端上架截图与模拟器密度之谜",
-      "category": "发布链路",
-      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「二、Bug 一：2in1\"元素太少\"——密度被 userdata 持久化」一节，以下说法正确的是？",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "关于 ArkTS 中 as 类型断言的使用边界，以下说法正确的是？",
       "options": [
-        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
-        "首版 2in1 截图被否：应用呈现的元素太少了。",
-        "无 description 的文章值得被单独点名。",
-        "解析失败不中断发布，只 console.warn 提示。"
+        "ArkTS 完全禁止 as，任何场景都不允许出现",
+        "as any 是处理不确定类型最便捷的写法",
+        "as 基本只合法用于 JSON.parse 接收端的一次声明，禁止用 as 规避类型检查",
+        "结构性收窄必须用 as 强制转换完成"
       ],
-      "answer": 1,
-      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「二、Bug 一：2in1\"元素太少\"——密度被 userdata 持久化」小节。"
+      "answer": 2,
+      "explanation": "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。合法场景基本只有 JSON.parse 接收端的一次声明；结构性收窄应改用类型守卫。"
     },
     {
       "id": "q3",
-      "slug": "三端上架截图与模拟器密度之谜",
-      "category": "发布链路",
-      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「三、Bug 二：render_service 卡死，截出故障帧」一节，以下说法正确的是？",
+      "slug": "ArkTS严格模式高频报错与合规改写",
+      "category": "ArkTS语言与规范",
+      "question": "遇到 arkts-no-obj-literals-as-types 报错时，let point: { x: number, y: number } 这类写法应该怎么改？",
       "options": [
-        "统计口径定为：即剥离所有空白后按字符计数。",
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
-        "无 description 的文章值得被单独点名。",
-        "重截进行到第 2 张（分类列表）后，应用突然从布局树里消失，进程也没了。"
+        "抽成 interface Point，让变量与参数有明确的类型注解",
+        "把字面量序列化成字符串，使用时再解析还原",
+        "ArkTS 中对象字面量本身违规，任何字面量赋值都不允许",
+        "改用 any 接收字面量，回避形状声明"
       ],
-      "answer": 3,
-      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「三、Bug 二：render_service 卡死，截出故障帧」小节。"
+      "answer": 0,
+      "explanation": "对象字面量本身不违规，违规的是把字面量形状直接当类型用。把形状抽成 interface 或 class，字面量在明确类型的上下文中赋值就是合法的。"
     },
     {
       "id": "q4",
-      "slug": "三端上架截图与模拟器密度之谜",
-      "category": "发布链路",
-      "question": "《三端上架截图实录：密度持久化、渲染卡死与像素级验收》中「四、坐标不能跨页面复用」一节，以下说法正确的是？",
+      "slug": "结构类型到显式接口的数据模型改造",
+      "category": "ArkTS语言与规范",
+      "question": "把页面间传参从无类型字面量改造为显式接口模型后，最大的收益是什么？",
       "options": [
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
-        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。",
-        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。",
-        "统计口径定为：即剥离所有空白后按字符计数。"
+        "路由参数不再需要校验，缺字段也不会白屏",
+        "打包体积明显减小，应用启动速度翻倍",
+        "页面之间可以直接共享全局变量，传参更灵活",
+        "构建脚本里改字段名时，应用侧所有消费点都会编译报错，重命名从「全局搜索碰运气」变成「跟随编译器」"
       ],
-      "answer": 1,
-      "explanation": "出自《三端上架截图实录：密度持久化、渲染卡死与像素级验收》的「四、坐标不能跨页面复用」小节。"
+      "answer": 3,
+      "explanation": "显式接口把事后校验升级为事前约束：index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错。参数缺失仍需 aboutToAppear 字段校验兜底，与体积和启动速度无关。"
     },
     {
       "id": "q5",
-      "slug": "ArkTS严格模式高频报错与合规改写",
-      "category": "ArkTS语言与规范",
-      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑一：arkts-no-any —— 禁用 any/unknown」一节，以下说法正确的是？",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "文章详情页的 Markdown 渲染，最终为什么放弃 Web 组件方案、选择原生解析 + ArkUI 渲染？",
       "options": [
-        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
-        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
-        "一律抽成 interface 或 class：",
-        "为返回值声明明确的接口，反序列化后逐字段校验："
+        "鸿蒙不支持 Web 组件，只剩原生方案可选",
+        "内容是自己的、语法子集可控，自写解析器换来体积、一致性、交互三重收益",
+        "Web 组件方案应用侧代码量太大，成本远超自写解析器",
+        "marked 等成熟库在构建期无法把 md 转成 HTML"
       ],
-      "answer": 3,
-      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑一：arkts-no-any —— 禁用 any/unknown」小节。"
+      "answer": 1,
+      "explanation": "选型结论：离线内容应用选原生解析 + ArkUI 渲染。内容不涉及任意第三方 md，语法子集可控，自写解析器复杂度可接受；换来体积最小、视觉统一、交互原生。Web 方案反而是应用侧几乎零代码。"
     },
     {
       "id": "q6",
-      "slug": "ArkTS严格模式高频报错与合规改写",
-      "category": "ArkTS语言与规范",
-      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑二：arkts-no-obj-literals-as-types —— 禁用对象字面量类型」一节，以下说法正确的是？",
+      "slug": "Markdown离线渲染选型与轻量解析器实现",
+      "category": "数据与渲染",
+      "question": "轻量解析器遇到暂不支持的语法（如图片、脚注）时，规定的处理原则是什么？",
       "options": [
-        "动态性留在 Node 构建脚本里（Node 侧是普通 JS，不受 ArkTS 约束），应用侧只消费静态形状的数据 —— 这也是…",
-        "一律抽成 interface 或 class：",
-        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
-        "为返回值声明明确的接口，反序列化后逐字段校验："
+        "直接抛异常中断渲染，提醒作者修改文档",
+        "按普通段落兜底展示原文，绝不抛异常、绝不吞内容",
+        "静默丢弃不支持的块，界面上不留任何痕迹",
+        "自动把不支持的语法降级为代码块展示"
       ],
       "answer": 1,
-      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑二：arkts-no-obj-literals-as-types —— 禁用对象字面量类型」小节。"
+      "explanation": "未支持语法的处理原则：按普通段落兜底展示原文——读者至少能看到原始文本，作者能发现哪篇用了未支持语法。"
     },
     {
       "id": "q7",
-      "slug": "ArkTS严格模式高频报错与合规改写",
-      "category": "ArkTS语言与规范",
-      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑三：as 类型断言的边界」一节，以下说法正确的是？",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "为什么 getRawFileContent 的返回值不能直接传给 JSON.parse？",
       "options": [
-        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
-        "为返回值声明明确的接口，反序列化后逐字段校验：",
-        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
-        "一律抽成 interface 或 class："
+        "它返回的是 Uint8Array 而不是字符串，必须先用 TextDecoder 显式解码",
+        "rawfile 内容在 HAP 内是加密存储的，需要先解密",
+        "JSON.parse 只接受异步返回的字符串",
+        "返回值带有文件系统元数据，需要先剥离头部"
       ],
-      "answer": 2,
-      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑三：as 类型断言的边界」小节。"
+      "answer": 0,
+      "explanation": "坑一：getRawFileContent 返回 Uint8Array，必须显式解码。配套做法是用 util.TextDecoder 按 UTF-8 解码，ignoreBOM: false 顺带剥离 BOM。"
     },
     {
       "id": "q8",
-      "slug": "ArkTS严格模式高频报错与合规改写",
-      "category": "ArkTS语言与规范",
-      "question": "《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》中「踩坑四：arkts-no-property-props —— 禁用动态属性访问」一节，以下说法正确的是？",
+      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "category": "数据与渲染",
+      "question": "针对 Windows 下写出的 JSON 带 UTF-8 BOM、导致 JSON.parse 抛 SyntaxError 的问题，文中给出的「两道保险」是什么？",
       "options": [
-        "为返回值声明明确的接口，反序列化后逐字段校验：",
-        "动态性留在 Node 构建脚本里（Node 侧是普通 JS，不受 ArkTS 约束），应用侧只消费静态形状的数据 —— 这也是…",
-        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
-        "一律抽成 interface 或 class："
+        "发布前人工逐个检查文件头，上线后再兜底过滤异常字符",
+        "把所有 JSON 换成二进制格式，从根上绕开文本解析",
+        "读取端逐字节扫描，遇到 FEFF 就手工删除",
+        "读取端 TextDecoder 设 ignoreBOM: false 自动剥离；写入端统一用 utf8 编码、绝不手拼 BOM"
       ],
-      "answer": 1,
-      "explanation": "出自《ArkTS 严格模式踩坑：禁用 any、对象字面量与类型断言》的「踩坑四：arkts-no-property-props —— 禁用动态属性访问」小节。"
+      "answer": 3,
+      "explanation": "两道保险：读取端 TextDecoder 的 ignoreBOM: false 会自动剥离 BOM；写入端 publish.js 统一用 fs.writeFile 以 utf8 编码写入，绝不手拼 BOM。"
     },
     {
       "id": "q9",
       "slug": "rawfile读取与Uint8Array解码缓存实践",
       "category": "数据与渲染",
-      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑一：getRawFileContent 返回的不是字符串」一节，以下说法正确的是？",
+      "question": "DataRepository 引入进程级缓存（index.json 首读缓存、正文 Map 按需缓存），主要解决了什么问题？",
       "options": [
-        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。",
-        "getRawFileContent 返回 Uint8Array，必须显式解码。",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
-        "结论：离线内容应用选 B。"
+        "rawfile 读取需要动态权限，缓存可以绕过权限申请",
+        "首页、标签页、分类页各自重复读 index.json，页面切换时出现可感知卡顿",
+        "设备存储空间不足，必须把数据全部搬进内存",
+        "preferences 写入次数有上限，必须减少落盘"
       ],
       "answer": 1,
-      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑一：getRawFileContent 返回的不是字符串」小节。"
+      "explanation": "坑三：多个页面在 aboutToAppear 各读一次 index.json，页面切换出现可感知的卡顿。收拢到 DataRepository 后首读缓存、之后零 IO；正文按需加载配合 Map 缓存与容量上限。"
     },
     {
       "id": "q10",
-      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "slug": "Windows文件名非法字符与slug清洗方案",
       "category": "数据与渲染",
-      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑二：UTF-8 BOM 导致 JSON.parse 失败」一节，以下说法正确的是？",
+      "question": "生成文章文件名前为什么必须做 sanitizeFileName 清洗？",
       "options": [
-        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
-        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
-        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…"
+        "为了让 slug 全部变成 ASCII，方便检索",
+        "因为 HarmonyOS 不支持中文文件名",
+        "因为 Windows 文件名禁止 \\ / : * ? \" < > | 等字符，标题里的英文冒号、问号不清洗会导致写文件报错",
+        "为了压缩文件名长度，控制包体积"
       ],
-      "answer": 0,
-      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑二：UTF-8 BOM 导致 JSON.parse 失败」小节。"
+      "answer": 2,
+      "explanation": "Windows 文件名禁止九个字符，其中英文冒号和问号在技术文档标题里出现频率极高，不清洗 fs.writeFile 直接报错。清洗因此被提前到 slug 生成阶段。"
     },
     {
       "id": "q11",
-      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "slug": "Windows文件名非法字符与slug清洗方案",
       "category": "数据与渲染",
-      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「坑三：重复读取带来的性能抖动」一节，以下说法正确的是？",
+      "question": "关于 slug 的跨版本稳定性，以下说法与原文一致的是？",
       "options": [
-        "首页、标签页、分类页都会读 index.json。",
-        "结论：离线内容应用选 B。",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
-        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+        "修改文章内容或 front-matter 标签都不影响 slug；重命名 md 文件则等价于删旧文发新文，历史引用失效",
+        "每次运行 publish.js 都会按内容哈希重新生成 slug",
+        "重命名 md 文件后 slug 自动跟随变化，历史引用照常有效",
+        "修改文章内容会让 slug 变化，因此发布后不要改正文"
       ],
       "answer": 0,
-      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「坑三：重复读取带来的性能抖动」小节。"
+      "explanation": "slug 由 md 文件名派生：改内容、改元数据 slug 不变；重命名文件则 slug 变化，等价于删旧文发新文。因此写作规约要求：发布过的文章不要改文件名。"
     },
     {
       "id": "q12",
-      "slug": "rawfile读取与Uint8Array解码缓存实践",
+      "slug": "Windows文件名非法字符与slug清洗方案",
       "category": "数据与渲染",
-      "question": "《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》中「读取路径速查」一节，以下说法正确的是？",
+      "question": "标题「问题: A」与「问题? A」曾引发一个隐蔽 bug，它是怎么发生的？",
       "options": [
-        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
-        "构建脚本让 slug 稳定 ⇒ fileId 稳定，路由继续传中文 slug，存储层只见 ASCII，两头都安全。",
-        "结论：离线内容应用选 B。",
-        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；"
+        "英文冒号会被替换成中文冒号，导致路由参数解析失败",
+        "两者清洗后都变成「问题- A」，slug 撞车后一篇会覆盖另一篇；publish.js 写文件前查重，撞车直接报错退出",
+        "清洗后两个标题都变成「问题」，描述重复无法区分",
+        "问号被保留在文件名里，仅在 Linux 上报错"
       ],
       "answer": 1,
-      "explanation": "出自《rawfile 资源读取：Uint8Array 解码与资源管理器缓存实践》的「读取路径速查」小节。"
+      "explanation": "两个标题清洗后都变成「问题- A」，slug 撞车后一篇会覆盖另一篇。publish.js 在写 articles/ 前做 slug 查重，撞车直接报错退出并打印两处来源，把冲突消灭在发布期。"
     },
     {
       "id": "q13",
-      "slug": "结构类型到显式接口的数据模型改造",
-      "category": "ArkTS语言与规范",
-      "question": "《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》中「第一轮：字面量满天飞」一节，以下说法正确的是？",
+      "slug": "平板宽屏适配与仪表盘冻结修复",
+      "category": "页面与导航",
+      "question": "宽屏断点判定为什么用 onAreaChange 持续监听，而不是启动时一次性判定？",
       "options": [
-        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
-        "一律抽成 interface 或 class：",
-        "ArkTS 并非一刀切禁止 as，但禁止用 as 规避类型检查（如 as any）。",
-        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。"
+        "启动阶段拿不到窗口宽度，只能靠事件回调补充",
+        "一次性判定需要申请系统权限",
+        "onAreaChange 的实现代码更短",
+        "为了实时响应横竖屏旋转与自由窗口拉伸——断点切换靠监听而不是快照"
       ],
       "answer": 3,
-      "explanation": "出自《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》的「第一轮：字面量满天飞」小节。"
+      "explanation": "窗口实际宽度达到 840vp 即切换宽屏布局。选 onAreaChange 是为了实时响应横竖屏旋转与自由窗口拉伸，启动时的一次性快照做不到。"
     },
     {
       "id": "q14",
-      "slug": "结构类型到显式接口的数据模型改造",
-      "category": "ArkTS语言与规范",
-      "question": "《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》中「收益」一节，以下说法正确的是？",
+      "slug": "平板宽屏适配与仪表盘冻结修复",
+      "category": "页面与导航",
+      "question": "统计仪表盘冻结（阅读分钟、连续天数永远停在首次渲染的值），排查出的根因是什么？",
       "options": [
-        "早期图快，页面间传参直接用字面量：接收端用 router.getParams() 拿到 Object 后逐字段 as 断言取值。",
-        "改造后，index.json 的字段一旦在构建脚本里改名，应用侧所有消费点全部编译报错，重命名从\"全局搜索碰运气\"变成\"跟随编…",
-        "一律抽成 interface 或 class：",
-        "为返回值声明明确的接口，反序列化后逐字段校验："
+        "@Builder 按值传参捕获了参数值，调用处的状态变化不会触发 Builder 内部刷新",
+        "preferences 的 flush 没有调用，数据从未写入",
+        "设备时间不同步，跨天统计失败",
+        "页面缺少 onPageShow 回调，计时器没有启动"
       ],
-      "answer": 1,
-      "explanation": "出自《从 TypeScript 结构类型到 ArkTS 显式继承的改造实录》的「收益」小节。"
+      "answer": 0,
+      "explanation": "根因是 @Builder 按值传参：参数按值捕获，状态更新无法穿透 Builder。修复是把需要响应状态的 UI 单元改成内联直绑 @Prop 字段；@Builder 只承担纯静态的结构复用。"
     },
     {
       "id": "q15",
-      "slug": "离线应用权限最小化与包体积控制",
-      "category": "环境与工程配置",
-      "question": "《离线应用的权限最小化与包体积控制》中「权限最小化」一节，以下说法正确的是？",
+      "slug": "平板宽屏适配与仪表盘冻结修复",
+      "category": "页面与导航",
+      "question": "宽屏内容限宽 720vp 后，部分页面「整页悬浮在视口中间」，成因与修法是什么？",
       "options": [
-        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。",
-        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…",
-        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
-        "用户安装时无敏感权限弹窗，转化率友好；"
+        "成因是 constraintSize 与 Scroll 不兼容；修法是去掉限宽改用固定宽度",
+        "成因是 Scroll 默认把不足一屏的内容垂直居中；修法是显式 .align(Alignment.Top) 贴顶，或 Column 配合水平居中",
+        "成因是内容超过一屏触发懒加载；修法是关闭懒加载",
+        "成因是模拟器渲染异常；修法是换真机验证"
       ],
-      "answer": 3,
-      "explanation": "出自《离线应用的权限最小化与包体积控制》的「权限最小化」小节。"
+      "answer": 1,
+      "explanation": "Scroll 默认把不足一屏的内容在视口里垂直居中，限宽后的矮页面看起来像 bug。修法按根容器二选一：Scroll 显式 .align(Alignment.Top)；Column 用 alignItems 配合水平居中。对齐方式必须显式声明，默认值不可依赖。"
     },
     {
       "id": "q16",
-      "slug": "离线应用权限最小化与包体积控制",
-      "category": "环境与工程配置",
-      "question": "《离线应用的权限最小化与包体积控制》中「包体积控制」一节，以下说法正确的是？",
+      "slug": "列表页通用化与文章卡片组件复用",
+      "category": "页面与导航",
+      "question": "ArticleCard 组件的边界设计，以下哪条与原文经验一致？",
       "options": [
-        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
-        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
-        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…"
+        "组件内部直接调用 router.pushUrl，跳转目标写死为文章详情页",
+        "组件数据入口只有 article: ArticleMeta——只认模型、不认页面，点击行为用回调注入",
+        "每个列表页复制一份卡片代码，按页面各自微调圆角与字号",
+        "组件 import 页面模块以获取列表数据，保证数据同源"
       ],
-      "answer": 0,
-      "explanation": "出自《离线应用的权限最小化与包体积控制》的「包体积控制」小节。"
+      "answer": 1,
+      "explanation": "组件边界经验：一个组件只依赖 model 层类型，不 import 页面、不依赖路由；展示组件不写死 router.pushUrl，跳转一律用回调注入——保证可搬运。"
     },
     {
       "id": "q17",
-      "slug": "离线应用权限最小化与包体积控制",
-      "category": "环境与工程配置",
-      "question": "《离线应用的权限最小化与包体积控制》中「离线的边界：什么情况不该用本方案」一节，以下说法正确的是？",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "标签「DevEco Studio」作为路由参数跳转后变成「DevEco」，问题出在哪里？",
       "options": [
-        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
-        "诚实记录适用边界：- 内容超大（数百 MB 音视频）→ 应改用分布式文件或按需下载，不适合全量 rawfile；",
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…"
+        "路由参数有长度限制，超过 10 个字符被截断",
+        "中文不能作为路由参数，必须先转成拼音",
+        "接收端 getParams 返回的是数组，取值下标不对",
+        "router 传参对象序列化时，含空格、#、&、+ 的名称在部分设备上会被截断或转义出错，需统一 encodeURIComponent"
       ],
-      "answer": 1,
-      "explanation": "出自《离线应用的权限最小化与包体积控制》的「离线的边界：什么情况不该用本方案」小节。"
+      "answer": 3,
+      "explanation": "坑一：router.pushUrl 的 params 是对象序列化传递，含空格、#、&、+ 的名称在部分设备上被截断或转义出错。约定：任何字符串路由参数必须 encodeURIComponent，跳转侧编码、接收侧解码。"
     },
     {
       "id": "q18",
-      "slug": "Markdown离线渲染选型与轻量解析器实现",
-      "category": "数据与渲染",
-      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「方案对比」一节，以下说法正确的是？",
+      "slug": "中文参数路由跳转与回退链设计",
+      "category": "页面与导航",
+      "question": "新增 TagDetailPage 后 router.pushUrl 报 1004（页面不存在），由此沉淀的规范是什么？",
       "options": [
-        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
-        "结论：离线内容应用选 B。",
-        "两个标题 问题: A 与 问题? A 清洗后都变成 问题- A，slug 撞车后一篇会覆盖另一篇。",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+        "每加一个页面，同步三处：页面文件、main_pages.json、跳转封装函数",
+        "新页面必须用 replaceUrl 跳转，不能 pushUrl",
+        "页面文件名必须全小写，否则注册失败",
+        "新增页面后要重启模拟器才能生效"
       ],
-      "answer": 1,
-      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「方案对比」小节。"
+      "answer": 0,
+      "explanation": "坑四：页面未在 resources/base/profile/main_pages.json 注册，导致 router.pushUrl 静默失败。规范：每加一个页面，同步三处——页面文件、main_pages.json、跳转封装函数。"
     },
     {
       "id": "q19",
-      "slug": "Markdown离线渲染选型与轻量解析器实现",
-      "category": "数据与渲染",
-      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「轻量解析器设计（MarkdownParser）」一节，以下说法正确的是？",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "阅读进度的存储规则「只进不退」（新值低于旧值时忽略写入），为什么这样设计？",
       "options": [
-        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
-        "结论：离线内容应用选 B。",
-        "首页、标签页、分类页都会读 index.json。",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+        "preferences 不支持写入比当前值更小的整数",
+        "读长文时回头翻资料是常态，若进度实时回退，「继续阅读」卡片会在两个百分比之间反复横跳",
+        "为了节省本地存储空间，减少写入次数",
+        "为了兼容旧版本数据格式，历史遗留无法修改"
       ],
-      "answer": 0,
-      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「轻量解析器设计（MarkdownParser）」小节。"
+      "answer": 1,
+      "explanation": "只进不退的原因：读长文时回头翻资料是常态，进度跟着滚动条实时回退会让「继续阅读」卡片反复横跳。Kindle 的断点永远是你走过的最深处，这是被验证过多年的语义。"
     },
     {
       "id": "q20",
-      "slug": "Markdown离线渲染选型与轻量解析器实现",
-      "category": "数据与渲染",
-      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「渲染层（MarkdownRenderer）」一节，以下说法正确的是？",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "第一版把滚动恢复写在 aboutToAppear 里直接 scroller.scrollTo，结果纹丝不动，正确做法是什么？",
       "options": [
-        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
-        "结论：离线内容应用选 B。",
-        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。",
-        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+        "把 scrollTo 换成 scrollBy，分多次滚动到位",
+        "等两个信号——布局高度就绪与渲染完成——再按进度恢复，并用一次性闸门保证幂等",
+        "在 aboutToDisappear 里恢复，页面销毁前完成滚动",
+        "每秒定时重试 scrollTo，直到滚动成功为止"
       ],
-      "answer": 0,
-      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「渲染层（MarkdownRenderer）」小节。"
+      "answer": 1,
+      "explanation": "页面创建时 Markdown 异步渲染未完成、内容高度还是 0，自然滚不动。正确做法：onAreaChange 记录视口高与内容总高，渲染 complete 回调后延迟 300ms 恢复；恢复动作做成幂等的一次性闸门。"
     },
     {
       "id": "q21",
-      "slug": "Markdown离线渲染选型与轻量解析器实现",
-      "category": "数据与渲染",
-      "question": "《Markdown 离线渲染选型：Web 组件还是原生解析》中「性能实测结论」一节，以下说法正确的是？",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "读完判定阈值为什么定在进度 96%，而不是 100%？",
       "options": [
-        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
-        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
-        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。"
+        "滚动到底部常伴随弹簧回弹，采样很难稳定踩在 100 上，96 足以覆盖「扫过最后一行」的语义",
+        "96% 是业界通用的阅读完成率基准",
+        "剩余 4% 预留给文末的推荐区，不算正文",
+        "preferences 整型键最大只能存 96"
       ],
       "answer": 0,
-      "explanation": "出自《Markdown 离线渲染选型：Web 组件还是原生解析》的「性能实测结论」小节。"
+      "explanation": "滚动到底部常伴随 EdgeEffect.Spring 弹簧回弹，采样很难稳定踩在 100 上；96 足以覆盖「眼睛扫过最后一行」的语义。另外已读不单独存储，由进度 ≥ 96 派生，避免两份数据打架。"
     },
     {
       "id": "q22",
-      "slug": "ohpm依赖失败与构建脚本零依赖改造",
-      "category": "环境与工程配置",
-      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「问题一：内网环境 ohpm/npm 安装超时」一节，以下说法正确的是？",
+      "slug": "Kindle式阅读闭环与进度记忆设计",
+      "category": "页面与导航",
+      "question": "「下一篇」跳转为什么用 router.replaceUrl 替换当前页，而不是 pushUrl 压栈？",
       "options": [
-        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
-        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
-        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；",
-        "构建链路的稳定性是脚手架的地基。"
+        "replaceUrl 支持 UTF-8 参数而 pushUrl 不支持",
+        "连续读五篇时路由栈永远是 [首页, 文章]，返回键一步回家，不会陷入层层返回",
+        "replaceUrl 渲染新页面的速度比 pushUrl 快",
+        "页面栈最多容纳两个页面，压栈会溢出"
       ],
-      "answer": 0,
-      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「问题一：内网环境 ohpm/npm 安装超时」小节。"
+      "answer": 1,
+      "explanation": "replaceUrl 替换当前页不压栈：连续读五篇，路由栈永远是 [首页, 文章]，返回键一步回家，避免「返回-返回-返回-返回-首页」的地狱。"
     },
     {
       "id": "q23",
-      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "slug": "离线应用权限最小化与包体积控制",
       "category": "环境与工程配置",
-      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「零依赖 front-matter 解析器设计」一节，以下说法正确的是？",
+      "question": "离线应用坚持零权限声明（module.json5 的 requestPermissions 为空数组），以下哪项是文中列出的实际收益？",
       "options": [
-        "\"先把依赖装上再说\"是惯性思维。",
-        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…",
-        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
-        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…"
+        "HAP 包体积因此减少约一半",
+        "应用沙箱内的读写不再受系统配额限制",
+        "上架审核无需填写权限用途说明，用户安装时也没有敏感权限弹窗",
+        "应用市场审核可走加急通道"
       ],
-      "answer": 3,
-      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「零依赖 front-matter 解析器设计」小节。"
+      "answer": 2,
+      "explanation": "零权限的收益：上架审核无需填写权限用途说明；用户安装时无敏感权限弹窗，转化率友好；从架构上杜绝「离线应用偷偷联网」的信任问题。"
     },
     {
       "id": "q24",
-      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "slug": "离线应用权限最小化与包体积控制",
       "category": "环境与工程配置",
-      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「零依赖带来的收益」一节，以下说法正确的是？",
+      "question": "按文中「离线的边界」，以下哪种情况不适合用全量 rawfile 打包的方案？",
       "options": [
-        "\"先把依赖装上再说\"是惯性思维。",
-        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
-        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。",
-        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；"
+        "内容数百 MB 的音视频——应改用分布式文件或按需下载",
+        "中量级、低频更新、强离线的阅读型内容",
+        "十几 MB 以内的纯文本文档库",
+        "不需要频繁热更的脚手架演示内容"
       ],
-      "answer": 3,
-      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「零依赖带来的收益」小节。"
+      "answer": 0,
+      "explanation": "离线的边界：内容超大（数百 MB 音视频）应改用分布式文件或按需下载，不适合全量 rawfile；内容需频繁热更、强交互内容也不适用。本脚手架定位是中量级、低频更新、强离线的阅读型内容。"
     },
     {
       "id": "q25",
-      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "slug": "工程版本对齐与首次构建报错实录",
       "category": "环境与工程配置",
-      "question": "《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》中「反思」一节，以下说法正确的是？",
+      "question": "报错「The modelVersion in hvigor-config.json5 is 6.1.1, and the modelVersion in oh-package.json5 is 26.0.0」揭示了什么问题？",
       "options": [
-        "构建链路的稳定性是脚手架的地基。",
-        "\"先把依赖装上再说\"是惯性思维。",
-        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…",
-        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。"
+        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必须一致，只改一处会被一致性校验拦下",
+        "网络不通导致依赖版本解析失败",
+        "两个文件冲突，需要删除其中一个",
+        "本机 SDK 必须升级到 26.0.0 才能继续构建"
       ],
-      "answer": 1,
-      "explanation": "出自《ohpm 依赖安装失败与离线内容脚手架的零依赖设计》的「反思」小节。"
+      "answer": 0,
+      "explanation": "modelVersion 两处声明、必须一致：hvigor-config.json5 与根目录 oh-package.json5，只改一处会被一致性校验拦下。工具链版本差是脚手架最常见的一类首次构建失败。"
     },
     {
       "id": "q26",
-      "slug": "Windows文件名非法字符与slug清洗方案",
-      "category": "数据与渲染",
-      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「解决：sanitizeFileName 清洗」一节，以下说法正确的是？",
+      "slug": "工程版本对齐与首次构建报错实录",
+      "category": "环境与工程配置",
+      "question": "关于 ArkTS 编译期 API 纠错的教训，以下说法与原文一致的是？",
       "options": [
-        "结论：离线内容应用选 B。",
-        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；",
-        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。"
+        "API 参数对象的形状凭记忆写即可，编译器会自动纠正",
+        "arkts_check 应留到全量构建前统一跑一次，节省时间",
+        "getRawFileContent 与 getRawFileContentSync 返回类型完全不同，坚持给变量写类型注解能在编译期立刻暴露误用",
+        "BorderOptions 分边样式的正确写法是 border({ left: { width: 3, color: c } })"
       ],
       "answer": 2,
-      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「解决：sanitizeFileName 清洗」小节。"
+      "explanation": "三条教训：静态检查先行（arkts_check 写完立刻跑）；不凭记忆写 API 形状；异步/同步双签名返回类型完全不同，类型注解能在编译期立刻暴露误用。选项里的 border 写法恰是反面教材——正确形状是 width 与 color 各自成分边对象。"
     },
     {
       "id": "q27",
-      "slug": "Windows文件名非法字符与slug清洗方案",
-      "category": "数据与渲染",
-      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「跨平台差异提醒」一节，以下说法正确的是？",
+      "slug": "ohpm依赖失败与构建脚本零依赖改造",
+      "category": "环境与工程配置",
+      "question": "publish.js 完成零依赖改造后，以下哪项是文中列出的收益？",
       "options": [
-        "两遍扫描，产出 MdNode[] 抽象节点：1. 块级扫描：逐行识别标题（#######）、无序/有序列表、代码块（ 围栏）、…",
-        "首页、标签页、分类页都会读 index.json。",
-        "清洗规则取三者交集最安全，% 也一并清洗——它在 URL 编码场景有歧义，顺手消除。",
-        "slug 同时用于 index.json 的 slug 字段与 articles/slug.md 的文件名；"
+        "公司私服的镜像缺失问题从此自动修复",
+        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用",
+        "构建脚本不再需要 fs 与 path 模块",
+        "可以放心引入更多第三方库而不受网络限制"
       ],
-      "answer": 2,
-      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「跨平台差异提醒」小节。"
+      "answer": 1,
+      "explanation": "零依赖的收益：任何有 Node 的机器都能发布内容，无需 npm install、克隆即用；不引入第三方代码，构建脚本可整体审计；省去依赖解析，publish.js 毫秒级完成；CI 无需缓存 node_modules。"
     },
     {
       "id": "q28",
-      "slug": "Windows文件名非法字符与slug清洗方案",
-      "category": "数据与渲染",
-      "question": "《Windows 文件名非法字符与文章 slug 清洗方案》中「一个隐蔽 bug：同名清洗冲突」一节，以下说法正确的是？",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "行数护栏为什么要把 pre-commit 放进仓库内的 .githooks/，并用 git config core.hooksPath 指向它？",
       "options": [
-        "两个标题 问题: A 与 问题? A 清洗后都变成 问题- A，slug 撞车后一篇会覆盖另一篇。",
-        "3000 字文章解析耗时在毫秒级，aboutToAppear 中同步解析无感知；",
-        "@Builder 函数按 MdNode.type 分发到对应 ArkUI 组件：Text/Column/List；",
-        "Windows 下用 Node 写文件时，若内容以 \\uFEFF 开头，JSON.parse 会直接抛 SyntaxError。"
+        "因为 .git/hooks/ 不在版本库内，每个克隆都要手工安装，等于没有约束力；入库的 hooks 随仓库分发才对所有提交生效",
+        "因为 core.hooksPath 指向的钩子执行速度更快",
+        "因为 .git/hooks/ 目录被系统保留，无法写入",
+        "为了覆盖公司统一下发的 Git 钩子配置"
       ],
       "answer": 0,
-      "explanation": "出自《Windows 文件名非法字符与文章 slug 清洗方案》的「一个隐蔽 bug：同名清洗冲突」小节。"
+      "explanation": "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。解法：pre-commit 放进 .githooks/ 入库随仓库分发，本机执行一次 core.hooksPath 配置，此后对所有提交生效。"
     },
     {
       "id": "q29",
-      "slug": "front-matter解析与发布期数据校验",
-      "category": "发布链路",
-      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节一：front-matter 解析的容错边界」一节，以下说法正确的是？",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "行数护栏的口径为什么选「900 物理行」，而不是「900 有效代码行」？",
       "options": [
-        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
-        "解析失败不中断发布，只 console.warn 提示。",
-        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
-        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；"
+        "物理行数值统计更宽松，方便存量代码过审",
+        "物理行可以直接套用 cloc 的统计结果",
+        "有效代码行的统计脚本在 Windows 上跑不起来",
+        "「有效」有歧义——注释算不算、空行算不算，有歧义就会有争论、就会有人绕过；物理行与 IDE 行号一致，Ctrl+G 即可对质，零争议"
       ],
-      "answer": 1,
-      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节一：front-matter 解析的容错边界」小节。"
+      "answer": 3,
+      "explanation": "「有效」有歧义：注释算不算？空行算不算？有歧义就会有争论，有争论就会有人绕过。物理行（含空行与注释）与 IDE 行号完全一致，Ctrl+G 跳过去即可对质，零争议。"
     },
     {
       "id": "q30",
-      "slug": "front-matter解析与发布期数据校验",
-      "category": "发布链路",
-      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节二：字数统计口径」一节，以下说法正确的是？",
+      "slug": "git钩子行数护栏与提交前门禁",
+      "category": "环境与工程配置",
+      "question": "白名单「只减不增」被称作护栏的灵魂，它的机制是什么？",
       "options": [
-        "统计口径定为：即剥离所有空白后按字符计数。",
-        "首版 2in1 截图被否：应用呈现的元素太少了。",
-        "无 description 的文章值得被单独点名。",
-        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。"
+        "白名单条目可以随时增删，由提交人自行判断",
+        "存量超标文件被冻结在当前水位，增量被 900 硬顶——白名单变成单向棘轮，只能维持或往下拆",
+        "白名单文件每季度自动全部清空",
+        "登记白名单需要两人会签，用流程控制风险"
       ],
-      "answer": 0,
-      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节二：字数统计口径」小节。"
+      "answer": 1,
+      "explanation": "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章。只减不增把白名单变成单向棘轮：存量被冻结在当前水位，增量被 900 硬顶；拆到 900 行以内后条目移除。"
     },
     {
       "id": "q31",
-      "slug": "front-matter解析与发布期数据校验",
-      "category": "发布链路",
-      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「细节三：无描述文章清单」一节，以下说法正确的是？",
+      "slug": "DevEco工程初始化与hvigor构建缓存问题",
+      "category": "环境与工程配置",
+      "question": "修改一处 .ets 文件后增量构建，却报出早已删除的 OldPage.ets 找不到，正确的处置是什么？",
       "options": [
-        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
-        "统计口径定为：即剥离所有空白后按字符计数。",
-        "无 description 的文章值得被单独点名。"
+        "把 OldPage.ets 重建回来，让构建先通过",
+        "卸载并重装 DevEco Studio 修复工具链",
+        "这是构建缓存污染（页面注册表未随文件删除失效），此时执行一次 clean 全量构建；日常仍坚持增量",
+        "每次构建前都先 clean，彻底杜绝此类报错"
       ],
-      "answer": 3,
-      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「细节三：无描述文章清单」小节。"
+      "answer": 2,
+      "explanation": "根因：hvigor 增量构建依赖 .hvigor 与 entry/build 下的缓存索引，文件删除或重命名后缓存中的页面注册表未同步失效。日常坚持增量构建，仅当增量报出与改动无关的错误时执行一次 clean 全量构建——不要每次都 clean。"
     },
     {
       "id": "q32",
-      "slug": "front-matter解析与发布期数据校验",
+      "slug": "应用更名行知与闲章图标设计",
       "category": "发布链路",
-      "question": "《front-matter 解析、字数统计与无描述文章的发布期校验》中「发布期校验的意义」一节，以下说法正确的是？",
+      "question": "应用从「LgNote 离线笔记」更名为「行知」时，唯一的硬约束是什么？",
       "options": [
-        "重截进行到第 2 张（分类列表）后，应用突然从布局树里消失，进程也没了。",
-        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
-        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。",
-        "复盘还发现一个小坑：搜索/设置/分类页的返回键在内容列内（x≈465），而文章详情页用全宽头部，返回键在最左（x≈49）。"
+        "bundleName 不动（com.ddabb.lgnote），保证签名与升级的连续性",
+        "应用图标必须与新名字同一天更换",
+        "版本号必须直接升到 2.0.0",
+        "市场在架的应用名不能包含中文"
       ],
-      "answer": 1,
-      "explanation": "出自《front-matter 解析、字数统计与无描述文章的发布期校验》的「发布期校验的意义」小节。"
+      "answer": 0,
+      "explanation": "更名的硬约束只有一条：bundleName 不动（com.ddabb.lgnote），保证签名与升级的连续性；桌面标签、应用内标题、文档口径全部可换。"
     },
     {
       "id": "q33",
       "slug": "应用更名行知与闲章图标设计",
       "category": "发布链路",
-      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「一、为什么要换名字」一节，以下说法正确的是？",
+      "question": "备选名单里最终选定「行知」而不是「知行」，决定性的理由是什么？",
       "options": [
-        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…",
-        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
-        "首版 2in1 截图被否：应用呈现的元素太少了。"
+        "「知行」笔画太多，图标绘制容易出错",
+        "「行知」是「做了来记」的生产侧语义、贴合本库内容；且「知行」撞名密度高，「行知」在笔记/阅读类应用中没有撞名",
+        "「行知」拼音更短，利于应用市场搜索",
+        "「知行」已被其他公司注册为操作系统商标"
       ],
-      "answer": 2,
-      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「一、为什么要换名字」小节。"
+      "answer": 1,
+      "explanation": "两条决定性理由：语义贴合——本库每篇都是跑通了才写的，行在知前正是内容的生产方式；撞名密度——知行因「知行合一」遍地都是，行知的商用主体集中在金融、院校与留学机构，没有笔记/阅读类应用撞名。"
     },
     {
       "id": "q34",
-      "slug": "应用更名行知与闲章图标设计",
+      "slug": "上架截图尺寸返工与安全替换",
       "category": "发布链路",
-      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「二、备选名单」一节，以下说法正确的是？",
+      "question": "缩放脚本一次事故把五张原片全部变成 0 字节，复盘出的核心教训是什么？",
       "options": [
-        "首版 2in1 截图被否：应用呈现的元素太少了。",
-        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
-        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
-        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。"
+        "PowerShell 不能用于图像处理，应改用批处理脚本",
+        "截图前必须关闭其他应用窗口，避免干扰",
+        "原图至少保留三份备份，分别存不同目录",
+        "绝不在未校验前覆盖不可再生的源文件——缩放输出先写独立文件，校验通过后才允许替换"
       ],
       "answer": 3,
-      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「二、备选名单」小节。"
+      "explanation": "事故链：GDI+ 保存抛「参数无效」后流程未中止，Move-Item 照常把空文件盖到原图上。核心教训：绝不在未校验前覆盖不可再生的源文件；重建后的流程是缩放结果先写独立文件，校验大小、尺寸、质量档后替换。"
     },
     {
       "id": "q35",
-      "slug": "应用更名行知与闲章图标设计",
+      "slug": "上架截图尺寸返工与安全替换",
       "category": "发布链路",
-      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「三、为什么是行知」一节，以下说法正确的是？",
+      "question": "重截「每日一题」时当日题已答过、答题页只显示完成态，最终采用的绕过手段是什么？",
       "options": [
-        "第一版定的是\"阅微堂\"：借纪晓岚《阅微草堂笔记》的笔记血统，阅是阅读、微是微言细识、堂是书房，三个字，气度是好的。",
-        "解析失败不中断发布，只 console.warn 提示。",
-        "陶行知本名文濬，因倾慕王阳明改名\"知行\"；",
-        "上架规格：手机 9:16 且 ≥1080×1920、平板 3:2 且 ≥1920×1280、2in1 16:9 且 ≥1920…"
+        "修改模拟器系统时间，把日期拨回未答那天",
+        "卸载重装应用，清空打卡记录后重答",
+        "临时构建绕过：把 isDailyDone 临时改为恒返回 false，打包重答截图，完成后立即还原代码重建",
+        "改设备时区，让应用误以为进入了新的一天"
       ],
       "answer": 2,
-      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「三、为什么是行知」小节。"
+      "explanation": "改系统时间报 Operation not permitted（shell 无 su），改时区也报权限拒绝。最终用临时构建绕过：isDailyDone 恒返回 false，重答并截取判分态，截完立即还原。相比改系统时间，这条路不污染设备状态。"
     },
     {
       "id": "q36",
-      "slug": "应用更名行知与闲章图标设计",
+      "slug": "三端上架截图与模拟器密度之谜",
       "category": "发布链路",
-      "question": "《应用更名\"行知\"：命名取舍、闲章图标与商标合规》中「四、闲章图标」一节，以下说法正确的是？",
+      "question": "2in1 首版截图「元素太少」（34vp 图标渲染成 111px）的根因是什么？",
       "options": [
-        "原名\"LgNote 离线笔记\"是工程视角的产物：字母缩写加品类描述，在桌面图标底下一长串，没有记忆点，也没有气质。",
-        "解析失败不中断发布，只 console.warn 提示。",
-        "发布校验直接决定运行期数据质量：能在 node scripts/publish.js 的一秒钟里发现的问题，就不要留到真机上白…",
-        "设计语言定为\"印章\"：名字取自教育家，图标取文人闲章，气质一体。"
+        "应用布局代码在 2in1 上漏渲染了组件",
+        "密度在实例首次启动时被写进 userdata 持久化（叠加约 1.7 倍缩放），此后改 config.ini 不再参与推导，必须擦数据冷启动",
+        "snapshot_display 截图工具自带缩放 bug",
+        "2in1 模拟器的内容区上限就是 590×229vp"
       ],
-      "answer": 3,
-      "explanation": "出自《应用更名\"行知\"：命名取舍、闲章图标与商标合规》的「四、闲章图标」小节。"
+      "answer": 1,
+      "explanation": "实例创建配置是 3120×2080 @ density 304，密度在首次启动时被持久化进 userdata（522 ≈ 304×1.72），此后每次启动读持久化值；分辨率、物理尺寸是实时读的，所以「同一份 config 一半生效一半不生效」。解法：devecocli --boot-mode reset 擦数据冷启动，密度精确生效 240。"
     },
     {
       "id": "q37",
-      "slug": "git钩子行数护栏与提交前门禁",
-      "category": "环境与工程配置",
-      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「一、痛点：文件是怎么胖起来的」一节，以下说法正确的是？",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "render_service SERVICE_BLOCK 卡死曾截出一张故障帧，重截流程为此加了哪三道保险？",
       "options": [
-        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
-        "没有恶意，全是合理需求的叠加：详情页今天加个导出，明天补个分享，后天塞个进度追踪。"
+        "截前 dump 布局确认目标页面元素齐全；截后立刻再 dump 确认应用存活、页面未变；按包围盒逐行做像素校验排除黑屏残影",
+        "同一页面连截三张，人工挑一张最好的",
+        "截图前重启模拟器，截图后重启应用",
+        "提高 snapshot_display 的分辨率，后期再放大裁剪"
       ],
-      "answer": 3,
-      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「一、痛点：文件是怎么胖起来的」小节。"
+      "answer": 0,
+      "explanation": "三道保险：截前 dump 布局确认页面状态；截后再 dump 确认应用存活（卡死会在这一步暴露）；像素校验——按分类行包围盒统计深色占比、用亮度均值方差排除黑屏、与首页基准图 diff 排除残影。"
     },
     {
       "id": "q38",
-      "slug": "git钩子行数护栏与提交前门禁",
-      "category": "环境与工程配置",
-      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「二、hooks 随仓库走：core.hooksPath」一节，以下说法正确的是？",
+      "slug": "三端上架截图与模拟器密度之谜",
+      "category": "发布链路",
+      "question": "截图导航时「坐标不能跨页面复用」指的是什么现象？",
       "options": [
-        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。",
-        "\"先把依赖装上再说\"是惯性思维。",
-        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …"
+        "模拟器的点击坐标每次重启后都会随机偏移",
+        "uitest 只支持在当前页面内点击",
+        "分辨率变化后所有坐标都要按比例换算",
+        "同一个返回键，搜索/设置/分类页在内容列内（x≈465），文章详情页却用全宽头部、返回键在最左（x≈49），沿用旧坐标会点中标题文本"
       ],
-      "answer": 0,
-      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「二、hooks 随仓库走：core.hooksPath」小节。"
+      "answer": 3,
+      "explanation": "复盘发现的小坑：两类页面的返回键坐标相差 400+px，从文章页返回时沿用旧坐标点中的是标题文本。导航坐标永远以当次 dumpLayout 为准，不做跨页面假设。"
     },
     {
       "id": "q39",
-      "slug": "git钩子行数护栏与提交前门禁",
-      "category": "环境与工程配置",
-      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「三、护栏规则：三条」一节，以下说法正确的是？",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "publish.js 的字数统计口径是什么？",
       "options": [
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
-        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…",
-        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。",
-        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；"
+        "按英文单词数统计，中文按标点切分",
+        "剥离所有空白后按字符计数，统计基线是 front-matter 剥离后的正文",
+        "连 front-matter 一起计入，元数据也算进字数",
+        "只统计汉字数量，英文与数字忽略不计"
       ],
-      "answer": 3,
-      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「三、护栏规则：三条」小节。"
+      "answer": 1,
+      "explanation": "口径：剥离所有空白后按字符计数。这个口径对中文友好（一字一数），对英文偏高（单词被拆成字母）；统计基线是正文（front-matter 剥离后），否则每篇会被自己的元数据污染几十字。"
     },
     {
       "id": "q40",
-      "slug": "git钩子行数护栏与提交前门禁",
-      "category": "环境与工程配置",
-      "question": "《git hooks 行数护栏：把\"别写太长\"变成提交门禁》中「四、为什么\"只减不增\"是灵魂」一节，以下说法正确的是？",
+      "slug": "front-matter解析与发布期数据校验",
+      "category": "发布链路",
+      "question": "front-matter 解析失败时，publish.js 的处理哲学是什么？",
       "options": [
-        "如果攒到最后全量构建再排，定位成本翻倍。",
-        "诚实记录适用边界：- 内容超大（数百 MB 音视频）→ 应改用分布式文件或按需下载，不适合全量 rawfile；",
-        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
-        "内网无法直连公网 registry，配置公司私服后又遇到部分包镜像同步缺失（xlsx 的可选依赖二进制包未同步）。"
+        "解析失败不中断发布，只 console.warn 提示",
+        "解析失败立即删除该文件，避免污染产物",
+        "解析失败时静默跳过，不输出任何提示",
+        "解析失败即中止整个发布流程，人工修复后重跑"
       ],
-      "answer": 2,
-      "explanation": "出自《git hooks 行数护栏：把\"别写太长\"变成提交门禁》的「四、为什么\"只减不增\"是灵魂」小节。"
+      "answer": 0,
+      "explanation": "细节一：解析失败不中断发布，只 console.warn 提示。容错边界明确：行尾空白、换行符混用、value 引号可选、tags 数组或逗号字符串都接受；--- 围栏未闭合按「无 front-matter」处理并警告。slug 撞车才是必须失败的场景。"
     },
     {
       "id": "q41",
-      "slug": "Kindle式阅读闭环与进度记忆设计",
-      "category": "页面与导航",
-      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「一、进度模型：只进不退」一节，以下说法正确的是？",
+      "slug": "V1与V2状态管理装饰器选型",
+      "category": "状态管理与数据持久化",
+      "question": "在 @Component（V1）的 struct 中使用 @Local 修饰状态，会发生什么？",
       "options": [
-        "每篇文章一个整型键 pslug（0-100），存本地 preferences。",
-        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
-        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…",
-        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+        "正常工作，@Local 与 @State 完全等价",
+        "编译报错：@Local 只能用于 @ComponentV2 修饰的 struct",
+        "运行时警告，状态仍可正常驱动刷新",
+        "自动把该 struct 升级为 V2 组件"
       ],
-      "answer": 0,
-      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「一、进度模型：只进不退」小节。"
+      "answer": 1,
+      "explanation": "V1 与 V2 是两套不兼容的观察模型。@Local 是 V2 装饰器，用在 @Component 里会触发「decorator can only be used in a 'struct' decorated with @ComponentV2」的编译报错。一个 struct 只能属于一代。"
     },
     {
       "id": "q42",
-      "slug": "Kindle式阅读闭环与进度记忆设计",
-      "category": "页面与导航",
-      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「二、恢复时机的坑：布局未成，滚动无效」一节，以下说法正确的是？",
+      "slug": "V1与V2状态管理装饰器选型",
+      "category": "状态管理与数据持久化",
+      "question": "用 @State 持有一个 @ObservedV2 类的实例，最可能出现的症状是？",
       "options": [
-        "第一版把恢复写在 aboutToAppear 里直接 scroller.scrollTo(...)，纹丝不动。",
-        "每篇文章一个整型键 pslug（0-100），存本地 preferences。",
-        "每新增一种\"列表\"，就要重新对齐一遍样式；",
-        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；"
+        "编译直接报错，无法通过构建",
+        "深度嵌套属性变化时 UI 静默不刷新，且没有任何警告",
+        "应用启动即崩溃",
+        "属性变化触发双倍刷新，出现闪烁"
       ],
-      "answer": 0,
-      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「二、恢复时机的坑：布局未成，滚动无效」小节。"
+      "answer": 1,
+      "explanation": "@State 属于 V1 观察体系，不会为 @ObservedV2 实例建立属性级观察。@Trace 属性变化时 V1 感知不到，UI 永远不刷新，也没有警告——这是典型的静默失效。要么整体升级 V2 用 @Local，要么模型改回 @Observed + @ObjectLink。"
     },
     {
       "id": "q43",
-      "slug": "Kindle式阅读闭环与进度记忆设计",
-      "category": "页面与导航",
-      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「三、会话统计：跨天、防虚计」一节，以下说法正确的是？",
+      "slug": "V1与V2状态管理装饰器选型",
+      "category": "状态管理与数据持久化",
+      "question": "@ObservedV2 对象需要跨页面全局共享时，应该存放在哪里？",
       "options": [
-        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
-        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
-        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
-        "每篇文章一个整型键 pslug（0-100），存本地 preferences。"
+        "AppStorage.setOrCreate，与普通对象一样",
+        "LocalStorage，V1 与 V2 通用",
+        "AppStorageV2 或 PersistenceV2，保持 V2 观察体系",
+        "preferences 键值存储，读出后重新观察"
       ],
-      "answer": 0,
-      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「三、会话统计：跨天、防虚计」小节。"
+      "answer": 2,
+      "explanation": "AppStorage、LocalStorage 都是 V1 的全局观察容器，往里放 @ObservedV2 实例同样观察不到。V2 对象的全局共享要用 AppStorageV2 / PersistenceV2，保持两代对象永不互存的原则。"
     },
     {
       "id": "q44",
-      "slug": "Kindle式阅读闭环与进度记忆设计",
-      "category": "页面与导航",
-      "question": "《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》中「四、剩余分钟：一个诚实的估算」一节，以下说法正确的是？",
+      "slug": "跨层级状态共享Provide与Provider实践",
+      "category": "状态管理与数据持久化",
+      "question": "V1 中两个祖先组件 @Provide 了同名 key，会导致什么结果？",
       "options": [
-        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；",
-        "每新增一种\"列表\"，就要重新对齐一遍样式；",
-        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
-        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+        "后注册的自动覆盖先注册的",
+        "子组件 @Consume 时按就近原则取值，无异常",
+        "运行期抛出异常，需要用 allowOverride 显式声明覆盖意图",
+        "编译期报错，构建失败"
       ],
-      "answer": 3,
-      "explanation": "出自《Kindle 式阅读闭环：进度记忆、会话统计与读后引导》的「四、剩余分钟：一个诚实的估算」小节。"
+      "answer": 2,
+      "explanation": "@Provide 的同名 key 冲突会在运行期抛异常。确需覆盖时要显式写 @Provide({ allowOverride: true })。但覆盖是逃生门而非常规操作——出现这种需求通常说明组件复用边界没切干净。"
     },
     {
       "id": "q45",
-      "slug": "工程版本对齐与首次构建报错实录",
-      "category": "环境与工程配置",
-      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错一：Unsupported modelVersion of Hvigor 26.0.0」一节，以下说法正确的是？",
+      "slug": "跨层级状态共享Provide与Provider实践",
+      "category": "状态管理与数据持久化",
+      "question": "Navigation 压栈进入的目标页面，能通过 @Consume 取到发起页 @Provide 的值吗？",
       "options": [
-        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；",
-        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…"
+        "能，Provide 是全局注入的",
+        "不能，目标页不在发起页的组件子树内，跨页面共享应走 AppStorage 系容器",
+        "能，但需要在路由参数里再传一次 key",
+        "不能，@Consume 只能用于 @ComponentV2"
       ],
-      "answer": 2,
-      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错一：Unsupported modelVersion of Hvigor 26.0.0」小节。"
+      "answer": 1,
+      "explanation": "@Consume 沿组件树向上查找，路由压栈的目标页不在发起页子树里，取不到值。主题、字号这类跨页面全局偏好应使用 AppStorage / AppStorageV2，Provide 适合「页内子树」而非「全局」。"
     },
     {
       "id": "q46",
-      "slug": "工程版本对齐与首次构建报错实录",
-      "category": "环境与工程配置",
-      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错二：两处 modelVersion 不一致」一节，以下说法正确的是？",
+      "slug": "preferences轻量持久化与进度记忆",
+      "category": "状态管理与数据持久化",
+      "question": "调用 preferences 的 putSync 之后忘记 flush，会发生什么？",
       "options": [
-        "如果攒到最后全量构建再排，定位成本翻倍。",
-        "\"先把依赖装上再说\"是惯性思维。",
-        "新增/修改文件 ≤ 900 行（物理行，含空行与注释）；",
-        "modelVersion 在 hvigor-config.json5 与根目录 oh-package.json5 两处声明、必…"
+        "没有任何影响，putSync 已经落盘",
+        "数据只在内存中生效，进程被杀后丢失",
+        "下次 putSync 时自动补一次落盘",
+        "应用切后台时自动落盘"
       ],
-      "answer": 3,
-      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错二：两处 modelVersion 不一致」小节。"
+      "answer": 1,
+      "explanation": "putSync 只修改内存中的数据，flush 才真正写回磁盘。推荐「写后即 flush」：轻量数据量小、开销可忽略，换来的是最坏情况只丢最后一次操作的可靠性。"
     },
     {
       "id": "q47",
-      "slug": "工程版本对齐与首次构建报错实录",
-      "category": "环境与工程配置",
-      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错三：targetSdkVersion 格式要求」一节，以下说法正确的是？",
+      "slug": "preferences轻量持久化与进度记忆",
+      "category": "状态管理与数据持久化",
+      "question": "下列哪种数据不能直接存入 preferences，需要先序列化？",
       "options": [
-        "如果攒到最后全量构建再排，定位成本翻倍。",
-        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…",
-        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
-        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…"
+        "number、string、boolean",
+        "元素为 number 的一维数组",
+        "嵌套的自定义对象",
+        "空字符串"
       ],
-      "answer": 1,
-      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错三：targetSdkVersion 格式要求」小节。"
+      "answer": 2,
+      "explanation": "preferences 仅支持 number | string | boolean 及元素为这些类型的一维 Array。自定义对象要 JSON.stringify 存字符串，读出后 JSON.parse 到显式接口类型再使用。"
     },
     {
       "id": "q48",
-      "slug": "工程版本对齐与首次构建报错实录",
-      "category": "环境与工程配置",
-      "question": "《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》中「报错四：ArkTS 编译期 API 纠错清单」一节，以下说法正确的是？",
+      "slug": "preferences轻量持久化与进度记忆",
+      "category": "状态管理与数据持久化",
+      "question": "文章正文、题库这类大块只读内容，应该放在哪里？",
       "options": [
-        "git 默认的 .git/hooks/ 目录不在版本库内，每个克隆都要手工安装，等于没有约束力。",
-        "\"先把依赖装上再说\"是惯性思维。",
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "如果攒到最后全量构建再排，定位成本翻倍。"
+        "preferences，读写方便",
+        "rawfile 随包内置，或关系型数据库",
+        "AppStorage 全局容器",
+        "代码里写成常量"
       ],
-      "answer": 3,
-      "explanation": "出自《工程版本对齐：hvigor modelVersion 迁移与首个构建报错清单》的「报错四：ArkTS 编译期 API 纠错清单」小节。"
+      "answer": 1,
+      "explanation": "preferences 面向轻量数据（偏好、进度、小标记）。文章正文与题库属于内置只读内容，放 rawfile 随包分发；需要查询的结构化数据用 relationalStore。"
     },
     {
       "id": "q49",
-      "slug": "列表页通用化与文章卡片组件复用",
-      "category": "页面与导航",
-      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「问题：复制粘贴的隐性成本」一节，以下说法正确的是？",
+      "slug": "Watch与Monitor副作用监听对比",
+      "category": "状态管理与数据持久化",
+      "question": "相比 V1 的 @Watch，V2 的 @Monitor 最实用的改进是什么？",
       "options": [
-        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
-        "每新增一种\"列表\"，就要重新对齐一遍样式；",
-        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
-        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。"
+        "监听回调运行在独立线程，不阻塞 UI",
+        "通过 monitor 提供新旧值与变更集，还能用一个回调监听多个属性",
+        "完全不需要声明被监听的属性名",
+        "支持监听任意全局变量的变化"
       ],
       "answer": 1,
-      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「问题：复制粘贴的隐性成本」小节。"
+      "explanation": "@Watch 回调只给属性名字符串，新值要从 this 上读且旧值已丢失。@Monitor 的 monitor.value() 提供每个属性的 name / value / oldValue，monitor.dirty() 精确判断本次是谁变了，且一个回调可监听多个属性。"
     },
     {
       "id": "q50",
-      "slug": "列表页通用化与文章卡片组件复用",
-      "category": "页面与导航",
-      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「方案：卡片组件化 + 页面骨架收敛」一节，以下说法正确的是？",
+      "slug": "Watch与Monitor副作用监听对比",
+      "category": "状态管理与数据持久化",
+      "question": "以下哪种副作用不适合放进 @Watch / @Monitor 的监听回调？",
       "options": [
-        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；",
-        "第一版把恢复写在 aboutToAppear 里直接 scroller.scrollTo(...)，纹丝不动。",
-        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
-        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…"
+        "进度变化时同步持久化到 preferences",
+        "状态迁移时打一条 hilog 日志",
+        "两个状态 A、B 互相监听并互相改写对方",
+        "字号变化时联动刷新卡片尺寸"
       ],
-      "answer": 0,
-      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「方案：卡片组件化 + 页面骨架收敛」小节。"
+      "answer": 2,
+      "explanation": "A 监听改 B、B 监听改 A 的双向互写：两代装饰器都不做环检测，会直接陷入无限循环。此外能在 build 中表达的计算应优先用 @Computed，而不是监听回写状态。"
     },
     {
       "id": "q51",
-      "slug": "列表页通用化与文章卡片组件复用",
-      "category": "页面与导航",
-      "question": "《列表页通用化：文章卡片组件复用与页面结构收敛》中「组件边界经验」一节，以下说法正确的是？",
+      "slug": "LazyForEach懒加载与IDataSource数据源",
+      "category": "性能与调试",
+      "question": "与 ForEach 相比，LazyForEach 优化长列表的核心机制是什么？",
       "options": [
-        "每新增一种\"列表\"，就要重新对齐一遍样式；",
-        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
-        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；",
-        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；"
+        "自动压缩列表项的图片资源",
+        "只为屏幕内可见（含预加载区）的条目创建组件节点，滑出即销毁复用",
+        "把列表渲染整体搬到子线程执行",
+        "对数据源自动去重，减少条目数量"
       ],
-      "answer": 2,
-      "explanation": "出自《列表页通用化：文章卡片组件复用与页面结构收敛》的「组件边界经验」小节。"
+      "answer": 1,
+      "explanation": "ForEach 会一次性创建全部子组件；LazyForEach 配合 IDataSource 只为可见区域创建真实节点，滑出屏幕即销毁，节点数量与列表总长解耦。"
     },
     {
       "id": "q52",
-      "slug": "中文参数路由跳转与回退链设计",
-      "category": "页面与导航",
-      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑一：中文参数的防御性编码」一节，以下说法正确的是？",
+      "slug": "LazyForEach懒加载与IDataSource数据源",
+      "category": "性能与调试",
+      "question": "LazyForEach 列表改了数据源内容后 UI 没有刷新，第一嫌疑人是什么？",
       "options": [
-        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
-        "router.pushUrl 的 params 是对象序列化传递，正常中文名多数情况下没问题，但含空格、#、&、+ 的名称在部…",
-        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。",
-        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；"
+        "List 组件缺少滚动条配置",
+        "数据源变更后没有回调 onDataReloaded / onDataAdd 通知 LazyForEach",
+        "键生成器返回了 undefined",
+        "ListItem 忘记设置高度"
       ],
       "answer": 1,
-      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑一：中文参数的防御性编码」小节。"
+      "explanation": "LazyForEach 不观察数据源内部变化。修改了 IDataSource 内部数组后，必须回调 listener.onDataReloaded() 或对应的 onDataAdd/onDataDelete，否则 UI 纹丝不动——这是「改了数据没反应」的第一嫌疑人。"
     },
     {
       "id": "q53",
-      "slug": "中文参数路由跳转与回退链设计",
-      "category": "页面与导航",
-      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑二：getParams 的空值兜底」一节，以下说法正确的是？",
+      "slug": "LazyForEach懒加载与IDataSource数据源",
+      "category": "性能与调试",
+      "question": "LazyForEach 的键生成器直接返回数组下标 index，会带来什么问题？",
       "options": [
-        "每新增一种\"列表\"，就要重新对齐一遍样式；",
-        "用户可以从文章详情页直接跳到另一个标签详情页，也可能从深链直接进入。",
-        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
-        "要点：- 数据入口只有 article: ArticleMeta —— 组件只认模型，不认页面；"
+        "没有任何问题，index 是天然唯一键",
+        "插入或删除条目时键整体错位，导致节点被错误复用、整片重建或状态错乱",
+        "列表无法滚动",
+        "键过长导致性能下降"
       ],
       "answer": 1,
-      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑二：getParams 的空值兜底」小节。"
+      "explanation": "键用于节点 diff 与复用。用业务唯一键（如 slug、id）才能在数据变化时精确匹配旧节点；用下标则插入/删除后键错位，节点被错误复用，懒加载优势归零甚至出现状态错乱。"
     },
     {
       "id": "q54",
-      "slug": "中文参数路由跳转与回退链设计",
-      "category": "页面与导航",
-      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑三：回退链失控」一节，以下说法正确的是？",
+      "slug": "hilog分级日志与调试信息治理",
+      "category": "性能与调试",
+      "question": "用 hilog 记录用户输入的搜索关键词，正确的隐私姿势是？",
       "options": [
-        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
-        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
-        "一个组件只依赖 model 层类型，不 import 页面、不依赖路由 —— 保证可搬运；",
-        "每新增一种\"列表\"，就要重新对齐一遍样式；"
+        "直接拼接进日志字符串，方便排查",
+        "使用 %{private}s 格式符，默认输出 <private> 脱敏",
+        "对关键词做 MD5 后输出",
+        "这类数据禁止出现在任何日志中"
       ],
       "answer": 1,
-      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑三：回退链失控」小节。"
+      "explanation": "用户输入、设备标识用 %{private}s，默认脱敏为 <private>；排障必需的 slug、耗时、计数用 %{public}s 明文输出。两种格式符配合，既合规又不影响排障。"
     },
     {
       "id": "q55",
-      "slug": "中文参数路由跳转与回退链设计",
-      "category": "页面与导航",
-      "question": "《中文参数路由跳转：router 传参编码与页面回退链设计》中「坑四：页面未注册导致的静默失败」一节，以下说法正确的是？",
+      "slug": "hilog分级日志与调试信息治理",
+      "category": "性能与调试",
+      "question": "按「这条日志将来排查线上问题时会不会看」的标准，下列哪类日志不应保留在正式发布包中？",
       "options": [
-        "早期为了\"方便\"，详情页里放了\"返回首页\"按钮，用户点了之后 router.back() 回到的却不是首页（回退栈不会说谎）。",
-        "时长用最朴素的 onPageShow / onPageHide 计时：页面可见时记 sessionStart，不可见时结算差值…",
-        "预计时长 = max(1, round(字数 / 400))，中文均速 400 字每分钟是保守值；",
-        "规范：每加一个页面，同步三处 —— 页面文件、mainpages.json、跳转封装函数。"
+        "关键业务节点的 info 日志",
+        "可自动恢复异常的 warn 日志",
+        "变量快照、函数内部细节的 debug 日志",
+        "初始化失败的 error 日志"
       ],
-      "answer": 3,
-      "explanation": "出自《中文参数路由跳转：router 传参编码与页面回退链设计》的「坑四：页面未注册导致的静默失败」小节。"
+      "answer": 2,
+      "explanation": "不会看的日志就是 debug，别进正式包。info（关键节点）、warn（降级兜底生效）、error（需人工介入的失败）是上架后要保留的三级；变量快照这类细节属于 debug 级。"
     },
     {
       "id": "q56",
-      "slug": "DevEco工程初始化与hvigor构建缓存问题",
-      "category": "环境与工程配置",
-      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题一：增量构建莫名失败」一节，以下说法正确的是？",
+      "slug": "主线程耗时与高频刷新的性能陷阱",
+      "category": "性能与调试",
+      "question": "aboutToAppear 里同步执行了几百毫秒的搜索语料构建，最优的治理思路是？",
       "options": [
-        "修改一处 .ets 文件后执行增量构建，报出与本次改动完全无关的编译错误，比如某个早已删除的文件仍在报错：1. 反复检查源码目…",
-        "front-matter 只有一层扁平结构，实现一个 YAML 子集解析即可：1. 用正则匹配 --- 围栏区域：/^---\\…",
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
-        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。"
+        "把构建逻辑拆成更多小函数，总耗时不变",
+        "非首屏必需的初始化延迟到首次使用时再做（懒加载），纯计算可移步 TaskPool",
+        "加一个 loading 弹窗，等构建完成后再进入页面",
+        "改用 setInterval 分片执行，每帧跑一点"
       ],
-      "answer": 0,
-      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题一：增量构建莫名失败」小节。"
+      "answer": 1,
+      "explanation": "三条治理路线：挪（纯计算放 TaskPool）、拆（分批渲染首屏）、延后（非首屏必需的初始化推迟到首次使用）。懒加载不只是组件的事，数据也可以懒加载——首次搜索时再建语料，用户已有预期。"
     },
     {
       "id": "q57",
-      "slug": "DevEco工程初始化与hvigor构建缓存问题",
-      "category": "环境与工程配置",
-      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题二：构建产物占用与 .gitignore」一节，以下说法正确的是？",
+      "slug": "主线程耗时与高频刷新的性能陷阱",
+      "category": "性能与调试",
+      "question": "阅读页在 onScroll 回调里每次都 putSync + flush 保存进度，主要问题是什么？",
       "options": [
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…",
-        "脚手架当前内容（10 篇演示文档，约 2.5 万字）：内容数据相对 HAP 壳可忽略不计。",
-        "模板里的 targetSdkVersion: \"26.0.0\" 是新版本号格式，本机工具链要求主版本.次版本.修订(API级别…"
+        "没有任何问题，preferences 写入完全免费",
+        "滚动每秒触发几十次，高频磁盘 IO 叠加高频状态刷新拖垮帧率",
+        "flush 会阻塞滚动事件分发，导致列表无法滑动",
+        "进度保存会越界，超过 preferences 容量上限"
       ],
       "answer": 1,
-      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题二：构建产物占用与 .gitignore」小节。"
+      "explanation": "高频回调（每秒几十次）里做磁盘落盘和页面级状态更新，是掉帧的典型来源。正确做法：节流（每 N 秒/变化超阈值才存）、收窄刷新范围（只让进度条组件订阅）、退出页面时兜底保存一次。"
     },
     {
       "id": "q58",
-      "slug": "DevEco工程初始化与hvigor构建缓存问题",
-      "category": "环境与工程配置",
-      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「问题三：多工程间 SDK 版本不一致」一节，以下说法正确的是？",
+      "slug": "hdc常用命令与应用调试速查",
+      "category": "性能与调试",
+      "question": "覆盖安装新版本 HAP 且保留应用原有数据，应使用哪条命令？",
       "options": [
-        "如果白名单可以随手加条目、加上限，护栏就成了橡皮图章：超标 → 登记白名单 → 继续写 → 再超标……规则可被廉价修改时，就一…",
-        "任何有 Node 的机器都能发布内容：无需 npm install，克隆即用；",
-        "用户安装时无敏感权限弹窗，转化率友好；",
-        "同一台机器上打开多个工程时，若 build-profile.json5 中 compileSdkVersion 与本机 SDK…"
+        "hdc install xxx.hap",
+        "hdc install -r xxx.hap",
+        "hdc shell bm install --replace xxx.hap",
+        "先 uninstall 再 install，数据自动保留"
       ],
-      "answer": 3,
-      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「问题三：多工程间 SDK 版本不一致」小节。"
+      "answer": 1,
+      "explanation": "hdc install -r 是覆盖安装（保留数据）。直接 uninstall 会连数据一起删除。签名不一致时报 ERR_INSTALL_FAILED_SIGNATURE，要先确认签名证书。"
     },
     {
       "id": "q59",
-      "slug": "DevEco工程初始化与hvigor构建缓存问题",
-      "category": "环境与工程配置",
-      "question": "《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》中「总结」一节，以下说法正确的是？",
+      "slug": "hdc常用命令与应用调试速查",
+      "category": "性能与调试",
+      "question": "应用崩溃后想查看崩溃前的历史日志，应该用哪条命令？",
       "options": [
-        "工程模板按更高版本的 DevEco 生成，hvigor/hvigor-config.json5 里modelVersion: …",
-        "\"先把依赖装上再说\"是惯性思维。",
-        "构建链路的稳定性是脚手架的地基。",
-        "脚手架初始化时忘配 .gitignore，导致 build/、.hvigor/、ohmodules/ 全部进入版本库，仓库体积…"
+        "hdc shell hilog",
+        "hdc shell hilog -x",
+        "hdc shell hilog -r",
+        "hdc shell hilog -D 0x0001"
+      ],
+      "answer": 1,
+      "explanation": "hilog -x 输出历史日志（含崩溃前的缓冲区内容）；不带参数的 hilog 是实时日志流；-r 是清空缓冲；-D 按 domain 过滤。崩溃排障常用组合：hilog -x 加 grep 应用包名。"
+    },
+    {
+      "id": "q60",
+      "slug": "hdc常用命令与应用调试速查",
+      "category": "性能与调试",
+      "question": "同时连接了多台设备时，如何指定某台设备执行 hdc 命令？",
+      "options": [
+        "在命令末尾追加设备序列号",
+        "用 -t 参数指定目标设备序列号，如 hdc -t <serial> shell",
+        "先拔掉其他设备",
+        "hdc 会自动轮询所有设备"
+      ],
+      "answer": 1,
+      "explanation": "多设备场景用 -t 指定序列号（可从 hdc list targets 获得），否则 hdc 会因目标不唯一而报错。"
+    },
+    {
+      "id": "q61",
+      "slug": "TaskPool与Worker并发模型选型",
+      "category": "组件进阶与系统能力",
+      "question": "一次性的大文本解析任务（数据进去、一个结果出来），应优先选择哪种并发方案？",
+      "options": [
+        "常驻 Worker 线程",
+        "TaskPool 任务池",
+        "setTimeout 延迟执行",
+        "主线程直接算，加 loading 即可"
+      ],
+      "answer": 1,
+      "explanation": "TaskPool 是任务级的钟点工：干完即走、系统统一调度、无需管理线程生命周期。一次性独立计算（解析、编码、语料构建）首选它；Worker 才是需要多轮通信的常驻方案。"
+    },
+    {
+      "id": "q62",
+      "slug": "TaskPool与Worker并发模型选型",
+      "category": "组件进阶与系统能力",
+      "question": "关于 @Concurrent 修饰的 TaskPool 并发函数，下列说法正确的是？",
+      "options": [
+        "可以是组件的成员方法",
+        "函数体内可以自由使用 this 访问组件状态",
+        "必须是文件顶层函数，参数与返回值走序列化，且不能用 this",
+        "参数可以是任意复杂对象，包括 UI 组件引用"
       ],
       "answer": 2,
-      "explanation": "出自《DevEco Studio 工程创建与 hvigor 构建缓存问题排查》的「总结」小节。"
+      "explanation": "@Concurrent 函数必须是文件顶层函数（不能是闭包或方法），内部不能用 this，参数与返回值走序列化传输，必须是可发送类型。UI 组件引用不可序列化，更不能跨线程。"
+    },
+    {
+      "id": "q63",
+      "slug": "TaskPool与Worker并发模型选型",
+      "category": "组件进阶与系统能力",
+      "question": "Worker 线程使用完毕后的正确收尾操作是什么？",
+      "options": [
+        "无需处理，系统自动回收",
+        "调用 terminate() 销毁，否则线程泄漏",
+        "发送一条空消息通知其退出",
+        "重启应用才能释放 Worker"
+      ],
+      "answer": 1,
+      "explanation": "Worker 是真实线程，页面销毁它不会自动销毁。用完必须 w.terminate()，习惯在 aboutToDisappear 里收尾，否则线程泄漏。"
+    },
+    {
+      "id": "q64",
+      "slug": "promptAction弹窗与UIContext正确姿势",
+      "category": "组件进阶与系统能力",
+      "question": "getContext(this) 与 this.getUIContext() 分别用于什么场景？",
+      "options": [
+        "两者等价，可以互换使用",
+        "前者用于资源、preferences 等能力上下文；后者用于弹窗、router 等 UI 上下文",
+        "前者用于 UI 操作；后者用于文件读写",
+        "后者只能在 EntryAbility 中调用"
+      ],
+      "answer": 1,
+      "explanation": "common.Context（getContext(this)）管资源管理器、preferences、应用目录；UIContext（this.getUIContext()）管 promptAction、router、animateTo 等一切 UI 能力。能力上下文管资源，UI 上下文管弹窗，两者不可混用。"
+    },
+    {
+      "id": "q65",
+      "slug": "promptAction弹窗与UIContext正确姿势",
+      "category": "组件进阶与系统能力",
+      "question": "代码执行了但 toast 没有弹出来，最值得优先尝试的修复是？",
+      "options": [
+        "把 toast 换成 AlertDialog",
+        "改用 this.getUIContext().getPromptAction() 实例方法，并确认调用时机不在 UI 挂载前",
+        "重启设备",
+        "给 toast 增加 duration 参数"
+      ],
+      "answer": 1,
+      "explanation": "静态调用在多实例或 UI 未就绪场景下可能找不到宿主窗口，表现为「代码跑了弹窗没出来」。改走 getUIContext().getPromptAction() 绑定明确的 UI 实例，并避免在 aboutToAppear 等过早时机弹窗。"
+    },
+    {
+      "id": "q66",
+      "slug": "Builder与BuilderParam内容插槽复用",
+      "category": "组件进阶与系统能力",
+      "question": "@BuilderParam 在自定义组件中的作用是什么？",
+      "options": [
+        "声明组件的必填属性校验规则",
+        "作为内容插槽接收外部传入的 @Builder，实现调用方定制组件内部内容",
+        "自动缓存 build 方法的渲染结果",
+        "替代 @Component 实现无状态渲染"
+      ],
+      "answer": 1,
+      "explanation": "@BuilderParam 是「接收 @Builder 的参数」，实现组件的内容插槽：调用方通过尾随闭包把自定义 UI 传进组件预留的位置。必须给默认实现，防调用方不传时白屏。"
+    },
+    {
+      "id": "q67",
+      "slug": "Builder与BuilderParam内容插槽复用",
+      "category": "组件进阶与系统能力",
+      "question": "@Builder 片段需要跟随外部状态变化自动刷新时，参数应该怎么传？",
+      "options": [
+        "按值传递每个字段",
+        "按引用传递对象整体（$$: { meta: ArticleMeta }）",
+        "把状态复制一份再传入",
+        "@Builder 无法实现自动刷新，必须换成 @Component"
+      ],
+      "answer": 1,
+      "explanation": "按值传参是快照，外部状态变了片段不刷新。需要 UI 跟着数据动，就按引用传对象（$$ 语法），属性变化会触发片段刷新。纯静态片段按值传即可。"
+    },
+    {
+      "id": "q68",
+      "slug": "Builder与BuilderParam内容插槽复用",
+      "category": "组件进阶与系统能力",
+      "question": "抽公共 UI 时，「用 @Builder 还是自定义组件」的判断边界是什么？",
+      "options": [
+        "页面里出现超过三次的片段就抽成组件",
+        "无状态纯展示用 @Builder；有状态、有事件回调或生命周期逻辑就升级为 @Component",
+        "一律用 @Component，@Builder 已废弃",
+        "一律用 @Builder，组件性能更差"
+      ],
+      "answer": 1,
+      "explanation": "Builder 是「模板片段」，Component 是「迷你应用」：需要 @State/@Prop、事件回调、生命周期的那一刻，就该从 Builder 升级成自定义组件。给片段加状态却仍用 Builder 是常见反模式。"
+    },
+    {
+      "id": "q69",
+      "slug": "GridRow与GridCol断点响应式布局",
+      "category": "组件进阶与系统能力",
+      "question": "某个 GridCol 配置了 span: { sm: 0, md: 4, lg: 4 }，其含义是？",
+      "options": [
+        "sm 断点时该列占据全部宽度",
+        "sm 断点时该列不显示，md/lg 断点时占 4 列",
+        "该列最少占 0 列，最多占 4 列",
+        "md/lg 断点时该列缩小为原来的 4%"
+      ],
+      "answer": 1,
+      "explanation": "span 按断点声明占用的列数，span: 0 表示该断点下不显示。这正是「手机隐藏侧栏、平板显示侧栏」无需 if 的实现方式——手机上侧栏自动消失，栅格系统自动重排。"
+    },
+    {
+      "id": "q70",
+      "slug": "GridRow与GridCol断点响应式布局",
+      "category": "组件进阶与系统能力",
+      "question": "GridRow 的断点（xs/sm/md/lg）基于什么单位划分？",
+      "options": [
+        "物理像素 px",
+        "虚拟像素 vp，与设备像素密度无关",
+        "屏幕对角线英寸数",
+        "dp，与 Android 完全一致"
+      ],
+      "answer": 1,
+      "explanation": "断点阈值基于 vp（虚拟像素），sm 从 320vp 起、md 从 600vp 起、lg 从 840vp 起。别拿物理像素硬算——同一物理宽度的不同密度屏幕，vp 值差异很大。"
+    },
+    {
+      "id": "q71",
+      "slug": "ArkTS与TypeScript核心差异清单",
+      "category": "ArkTS语言与规范",
+      "question": "ArkTS 相对 TypeScript 的类型系统定位，最准确的描述是什么？",
+      "options": [
+        "ArkTS 是 TypeScript 的超集，完全兼容并扩展了 TS 语法",
+        "ArkTS 是为性能收紧的 TS 子集，砍掉运行时类型不确定性换取编译优化",
+        "ArkTS 与 TypeScript 只是语法相似，类型系统完全无关",
+        "ArkTS 等于 TypeScript 加上 UI 装饰器，其余一致"
+      ],
+      "answer": 1,
+      "explanation": "ArkTS 不是「TS + 装饰器」，而是为性能收紧的 TS 子集：禁用 any、结构化类型、索引签名等带来运行时不确定性的特性，换取更优的编译优化与更小的包体。"
+    },
+    {
+      "id": "q72",
+      "slug": "ArkTS与TypeScript核心差异清单",
+      "category": "ArkTS语言与规范",
+      "question": "TypeScript 中「形状相同即可赋值」的结构化类型，在 ArkTS 中应如何改写？",
+      "options": [
+        "无需改写，ArkTS 完全保留结构化类型",
+        "用 as 断言补一个类型转换即可",
+        "模型间复用必须声明显式继承关系（extends / implements），长得像不算数",
+        "把 interface 全部换成 any 规避检查"
+      ],
+      "answer": 2,
+      "explanation": "ArkTS 类型是名义化的：形状相同不能赋值，必须有显式继承/实现关系。结论是「一个模型一份 interface，跨模型复用走继承」。"
+    },
+    {
+      "id": "q73",
+      "slug": "async与await异步编程规范",
+      "category": "ArkTS语言与规范",
+      "question": "async 函数 return 42 之后，调用方直接把返回值当 number 使用，会发生什么？",
+      "options": [
+        "正常工作，async 只是标注不影响返回类型",
+        "编译错误：async 函数不允许返回数字",
+        "拿到的是 Promise<number> 对象，当 number 用会是 undefined",
+        "运行时自动解包，无需 await"
+      ],
+      "answer": 2,
+      "explanation": "async 函数哪怕 return 42，实际返回的也是 Promise<number>。调用侧必须 await 或 .then，直接当值用是 undefined。每个 await 都要有归属。"
+    },
+    {
+      "id": "q74",
+      "slug": "async与await异步编程规范",
+      "category": "ArkTS语言与规范",
+      "question": "在 forEach 回调里执行 async 函数遍历加载列表，最常见的后果是什么？",
+      "options": [
+        "编译错误，forEach 不支持 async 回调",
+        "forEach 回调不等待 async 完成，循环先跑完，加载任务并发失控且无人等待",
+        "会自动串行等待，等价于 for-of + await",
+        "只有第一个元素会被加载"
+      ],
+      "answer": 1,
+      "explanation": "forEach 回调是普通函数，await 不会让循环等待。需要顺序等待用 for-of + await；无依赖的并发任务用 Promise.all 聚合。"
+    },
+    {
+      "id": "q75",
+      "slug": "枚举与联合类型的使用边界",
+      "category": "ArkTS语言与规范",
+      "question": "需要遍历枚举的全部取值时，ArkTS 中正确的做法是什么？",
+      "options": [
+        "调用枚举的 .values() 方法",
+        "使用 for..in 遍历枚举对象",
+        "自己维护一份枚举值数组常量（.values() 在 ArkTS 上不可用）",
+        "把枚举序列化成 JSON 再解析"
+      ],
+      "answer": 2,
+      "explanation": "枚举的 .values() 在 ArkTS 上不可用，for..in 也被禁止。需要遍历枚举值时，自己维护一份数组常量。另外枚举名与成员名必须与 SDK 完全一致（大小写敏感）。"
+    },
+    {
+      "id": "q76",
+      "slug": "枚举与联合类型的使用边界",
+      "category": "ArkTS语言与规范",
+      "question": "某个字段的取值来自服务端 JSON（如分类名），ArkTS 中最稳妥的约束方式是什么？",
+      "options": [
+        "定义 enum 并把 JSON 值强转为枚举",
+        "字符串字面量联合类型 + switch",
+        "字符串常量对齐拼写，运行时用 === 匹配并做白名单校验",
+        "不约束，直接 as any 使用"
+      ],
+      "answer": 2,
+      "explanation": "运行时数据与编译期枚举是两个世界：外部数据「看起来像枚举」也要先校验。值来自 JSON/DB 的场景用字符串常量对齐拼写 + === 匹配，进枚举前做 typeof 与白名单判断。"
+    },
+    {
+      "id": "q77",
+      "slug": "Record与Map动态键值容器选型",
+      "category": "ArkTS语言与规范",
+      "question": "ArkTS 禁用索引签名后，动态键值对应该用什么承接？",
+      "options": [
+        "只能放弃动态键，全部改成固定属性",
+        "Record<K, V>（类型受限的对象）或 Map<K, V>（真正的字典结构）",
+        "用数组模拟键值对",
+        "用 Object 配合 as any"
+      ],
+      "answer": 1,
+      "explanation": "Record 是「键受限的对象」，适合静态查表；Map 是真正的字典结构，支持任意类型键、有序遍历与 O(1) 删除，适合运行时动态增删。"
+    },
+    {
+      "id": "q78",
+      "slug": "Record与Map动态键值容器选型",
+      "category": "ArkTS语言与规范",
+      "question": "带容量上限的文章正文缓存，选 Map 而不是 Record 的关键理由是什么？",
+      "options": [
+        "Record 不支持字符串键",
+        "Map 提供 size 判断、delete/clear 与插入序遍历，天然适合动态增删的缓存表",
+        "Map 的存取速度在任何场景下都远超 Record",
+        "Record 会自动被 JSON 序列化，不安全"
+      ],
+      "answer": 1,
+      "explanation": "Map 有 size 属性便于容量判断，delete/clear 支持动态清理，且保证插入序遍历。Record 适合编译期已知键集合的静态查表，动态缓存选 Map。"
+    },
+    {
+      "id": "q79",
+      "slug": "AppStorage与AppStorageV2全局容器",
+      "category": "状态管理与数据持久化",
+      "question": "V1 体系下，设置页修改全局字号后阅读页立刻刷新，应该用哪个装饰器连接 AppStorage？",
+      "options": [
+        "@StorageProp（容器到本地单向同步）",
+        "@StorageLink（本地与容器双向同步）",
+        "@Consume（跨层级注入）",
+        "@Watch 监听 AppStorage 变化"
+      ],
+      "answer": 1,
+      "explanation": "@StorageLink 是本地与容器的双向同步：改它即改全局，所有 @StorageLink/@StorageProp 连接处都会刷新。@StorageProp 是单向（容器到本地），展示型页面用。"
+    },
+    {
+      "id": "q80",
+      "slug": "AppStorage与AppStorageV2全局容器",
+      "category": "状态管理与数据持久化",
+      "question": "下列哪类数据不应该放进 AppStorage / AppStorageV2 全局容器？",
+      "options": [
+        "跨页面的用户偏好（主题色、字号）",
+        "会话级全局标志（登录态）",
+        "文章正文等大体积数据",
+        "语言设置"
+      ],
+      "answer": 2,
+      "explanation": "全局容器只放「小而热」的跨页状态。大体积数据（正文、题库）容器在内存且刷新绑定 UI，应该走数据仓库 + 按需加载。"
+    },
+    {
+      "id": "q81",
+      "slug": "Observed与ObjectLink嵌套对象观察",
+      "category": "状态管理与数据持久化",
+      "question": "@State 数组里某一项的嵌套属性直接修改（this.list[0].percent = 50），页面不刷新的原因是什么？",
+      "options": [
+        "@State 不允许修改数组项",
+        "@State 只观察第一层（数组赋值/长度），数组项内部属性变化不在观察范围",
+        "需要先调用 notifyDataSetChanged",
+        "数组必须用 @Link 才能观察"
+      ],
+      "answer": 1,
+      "explanation": "V1 的 @State 只观察第一层赋值。数组项的属性变化必须拆子组件，用 @Observed 标记类、@ObjectLink 接收数组项建立观察——一个标记、一个接线，缺一不通电。"
+    },
+    {
+      "id": "q82",
+      "slug": "Observed与ObjectLink嵌套对象观察",
+      "category": "状态管理与数据持久化",
+      "question": "关于 @ObjectLink 的使用约束，下列说法正确的是？",
+      "options": [
+        "可以本地初始化一个默认对象",
+        "类型必须是 @Observed 类实例，且不能本地初始化，只能从父组件传入",
+        "可以用于 @ComponentV2 组件",
+        "接收时深拷贝一份避免污染父组件数据"
+      ],
+      "answer": 1,
+      "explanation": "@ObjectLink 接收的必须是 @Observed 类实例，不能本地初始化。传递保持同一实例引用——深拷贝会断开观察链路。它属于 V1 体系，不能出现在 @ComponentV2 中。"
+    },
+    {
+      "id": "q83",
+      "slug": "Row与Column与Stack布局三件套",
+      "category": "组件进阶与系统能力",
+      "question": "Row 组件内子项间距为 12，正确的写法是什么？",
+      "options": [
+        "Row().space(12)",
+        "Row().justifyContent(FlexAlign.SpaceBetween) 自动产生间距",
+        "Row({ space: 12 })——space 是构造参数，不是链式属性",
+        "每个子项加 .margin({ right: 12 })，没有其它办法"
+      ],
+      "answer": 2,
+      "explanation": "space 写在 Row/Column 的构造参数里：Row({ space: 12 })。把它当链式属性写会报「属性不存在」。justifyContent 管的是主轴分布，不是固定间距。"
+    },
+    {
+      "id": "q84",
+      "slug": "Row与Column与Stack布局三件套",
+      "category": "组件进阶与系统能力",
+      "question": "给封面图压一个「NEW」角标，应该选哪个容器与对齐方式？",
+      "options": [
+        "Column + justifyContent(SpaceBetween)",
+        "Stack({ alignContent: Alignment.TopEnd })，角标后写在上层",
+        "Row + alignItems(BottomEnd)",
+        "Flex + wrap"
+      ],
+      "answer": 1,
+      "explanation": "层叠（角标压封面）是 Stack 的主场：alignContent 支持九宫格定位，后写的子组件在 z 序上层。Row/Column 是线性排布，不做层叠。"
+    },
+    {
+      "id": "q85",
+      "slug": "List与Scroller滚动控制",
+      "category": "组件进阶与系统能力",
+      "question": "「列表滚动超过一屏后显示回顶按钮，点击平滑滚回顶部」的实现要点是什么？",
+      "options": [
+        "用 onReachEnd 判断并调用 scroller.scrollEdge(Edge.Start)",
+        "List({ scroller }) 绑定控制器，onWillScroll 里按偏移阈值切换按钮显隐，点击 scrollTo 带动画回顶",
+        "给 List 加 .backToTop(true) 属性",
+        "监听 onTouch 手动计算滚动距离"
+      ],
+      "answer": 1,
+      "explanation": "Scroller 是 List 的方向盘：currentOffset 读偏移做阈值判断，scrollTo({ yOffset: 0, animation }) 平滑回顶。scrollEdge(Edge.Top) 是无动画瞬移；List 没有 backToTop 属性。"
+    },
+    {
+      "id": "q86",
+      "slug": "List与Scroller滚动控制",
+      "category": "组件进阶与系统能力",
+      "question": "在 onWillScroll 这类高频滚动回调里更新回顶按钮显隐，推荐的状态写法是什么？",
+      "options": [
+        "每帧无条件写 @State，让框架自己优化",
+        "先计算期望值，与当前状态不同才写——避免每帧触发无效刷新",
+        "用 setTimeout 节流 500ms 写状态",
+        "把状态写到 AppStorage 里全局共享"
+      ],
+      "answer": 1,
+      "explanation": "高频回调每帧触发，写状态前先判断「变化才写」（shouldShow !== this.showBackTop），避免每帧无效刷新。回调里只做轻量判断，重活不进滚动回调。"
+    },
+    {
+      "id": "q87",
+      "slug": "Tabs与TabContent分栏导航",
+      "category": "组件进阶与系统能力",
+      "question": "底部三页签的主界面导航，页签图标与文字的正确配置方式是什么？",
+      "options": [
+        "Tabs 上链式调用 .tabBar(icon, text) 逐个声明",
+        "每个 TabContent 用 .tabBar(new BottomTabBarStyle(icon, text)) 配置",
+        "TabContent 的构造参数里传 icon 和 text",
+        "用 Tabs 的 .bottomBar(items) 属性批量传入"
+      ],
+      "answer": 1,
+      "explanation": "tabBar 是 TabContent 的方法，传 new BottomTabBarStyle($r(...), '学习') 这类样式对象。Tabs 上没有 .barActiveColor()/.tabBar() 这类链式属性，写错直接编译报错。"
+    },
+    {
+      "id": "q88",
+      "slug": "Tabs与TabContent分栏导航",
+      "category": "组件进阶与系统能力",
+      "question": "Tabs 与 Navigation 在应用架构中的分工是什么？",
+      "options": [
+        "Tabs 管层级跳转，Navigation 管平级分栏",
+        "Tabs 管平级分栏（底部页签），Navigation 管层级跳转（主页到详情/设置）",
+        "两者等价，选一个用就行",
+        "Tabs 用于平板，Navigation 用于手机"
+      ],
+      "answer": 1,
+      "explanation": "Tabs 管平级分栏（三个平级主页），Navigation 管层级路由（压栈详情/设置/搜索）。标准架构是 Navigation 包 Tabs：层级导航交给路由栈，页签不模拟返回语义。"
+    },
+    {
+      "id": "q89",
+      "slug": "条件渲染与ForEach渲染控制",
+      "category": "组件进阶与系统能力",
+      "question": "if/else 条件渲染的分支切换，对分支内组件本地状态的影响是什么？",
+      "options": [
+        "状态保留，因为组件树结构没变",
+        "分支切换等于销毁旧组件再创建新组件，分支内的 @State 本地状态归零",
+        "只有超过三个分支时状态才丢失",
+        "状态自动写入 AppStorage 保留"
+      ],
+      "answer": 1,
+      "explanation": "if 分支切换 = 销毁 + 重建：分支内组件的本地状态不保留。因此纯视觉差异（颜色/文字变化）别用 if，改用属性绑定，同一个组件只变属性不重建。"
+    },
+    {
+      "id": "q90",
+      "slug": "条件渲染与ForEach渲染控制",
+      "category": "组件进阶与系统能力",
+      "question": "ForEach 键生成器（第三个参数）的最佳实践是什么？",
+      "options": [
+        "返回数组下标，保证唯一且稳定",
+        "返回 JSON.stringify(item)，内容变化时自动刷新",
+        "返回稳定的业务唯一键（slug/id），同层兄弟之间不重复",
+        "可以省略，框架会自动生成合适的键"
+      ],
+      "answer": 2,
+      "explanation": "键用于 diff：key 相同复用组件并保留内部状态。下标会因插入/删除错位导致错误复用；JSON.stringify 内容变了键就变，状态全丢。业务唯一键（slug/id）是正解。"
+    },
+    {
+      "id": "q91",
+      "slug": "animateTo与曲线动画入门",
+      "category": "动画与交互",
+      "question": "animateTo 驱动动画的正确写法是什么？",
+      "options": [
+        "先改状态，再调用 animateTo 播放",
+        "把状态变化写在 animateTo 的回调里，框架对受影响属性自动补间",
+        "在 build 里调用 animateTo 让每次渲染都带动画",
+        "给组件加 .animateTo(duration) 属性"
+      ],
+      "answer": 1,
+      "explanation": "animateTo = 动画参数 + 状态变化回调：回调里改状态，框架捕获哪些 UI 属性因此变化，在 duration 内从旧值补间到新值。回调外改状态不参与动画，是瞬变。"
+    },
+    {
+      "id": "q92",
+      "slug": "animateTo与曲线动画入门",
+      "category": "动画与交互",
+      "question": "UI 元素进场动画（展开、弹出）最合适的曲线与时长组合是什么？",
+      "options": [
+        "Curve.Linear，500ms 以上，充分展示",
+        "Curve.EaseOut，250~400ms——快入慢出符合视觉预期",
+        "Curve.EaseIn，300ms",
+        "任意曲线，时长不影响体验"
+      ],
+      "answer": 1,
+      "explanation": "进场用 EaseOut（快入慢出）250~400ms；退场用 EaseIn 且更短（200~300ms）——用户对「离开」的耐心更短。超过 500ms 的 UI 动画几乎必然拖沓，Linear 有机械感慎用。"
+    },
+    {
+      "id": "q93",
+      "slug": "Transition转场与共享元素动效",
+      "category": "动画与交互",
+      "question": "组件出现/消失的转场（如底部抽屉滑入滑出），正确的实现位置是哪里？",
+      "options": [
+        "写在父容器的 Transition 属性上",
+        "用 .transition({ appear, disappear }) 写在被切换组件上，配合 if 条件渲染与 .animation() 提供时长",
+        "写在 Navigation 的路由参数里",
+        "用 setTimeout 手动改透明度"
+      ],
+      "answer": 1,
+      "explanation": "Transition 定义在被切换的组件上（配合 if 条件渲染），appear/disappear 分别声明出现与消失的过渡参数，再由 .animation() 或 animateTo 提供时长曲线。"
+    },
+    {
+      "id": "q94",
+      "slug": "Transition转场与共享元素动效",
+      "category": "动画与交互",
+      "question": "页面之间的切换转场（列表页到详情页），应该交给谁处理？",
+      "options": [
+        "自己用 if 条件渲染 + Transition 模拟页面切换",
+        "Navigation 路由系统自带的转场，需要定制时用 customNavContentTransition",
+        "Window 级动画接口手动驱动",
+        "每个按钮都绑 animateTo"
+      ],
+      "answer": 1,
+      "explanation": "组件级 Transition 管「页内元素」，页面之间的转场由 Navigation 系统自带（压栈推入、出栈滑出）。自己拿 if 模拟页面切换会丢掉路由栈、返回键与转场手势。"
+    },
+    {
+      "id": "q95",
+      "slug": "PanGesture与手势系统实践",
+      "category": "动画与交互",
+      "question": "PanGesture 的 onActionUpdate 里实现拖拽跟手，正确的状态更新方式是什么？",
+      "options": [
+        "直接把 event.offsetX 赋给位置",
+        "累加增量（this.posX += event.offsetX），并用 Math.min/max 做边界钳制",
+        "每次重置位置为 event 的绝对坐标",
+        "在 onActionEnd 里一次性更新位置"
+      ],
+      "answer": 1,
+      "explanation": "event.offsetX 是从手势开始的累计偏移，跟手要增量累加（+=）并做边界钳制（Math.min/Math.max）——没有边界的拖拽会把元素拖出屏幕。位置变化用 .translate() 不触发重排。"
+    },
+    {
+      "id": "q96",
+      "slug": "PanGesture与手势系统实践",
+      "category": "动画与交互",
+      "question": "List 里的条目要支持横滑删除，同时不影响列表纵向滚动，手势配置的关键是什么？",
+      "options": [
+        "给 List 禁用滚动手势",
+        "PanGesture 声明 direction: PanDirection.Horizontal 做方向隔离，并设置合理触发阈值",
+        "把删除按钮做大一点方便点击",
+        "用 TapGesture 代替 PanGesture"
+      ],
+      "answer": 1,
+      "explanation": "方向隔离：只声明横滑方向，纵向滚动让给 List；再加触发阈值（distance）防误触。同方向嵌套手势才需要 priorityGesture 仲裁。"
+    },
+    {
+      "id": "q97",
+      "slug": "Navigation与NavPathStack路由系统",
+      "category": "页面与导航",
+      "question": "通过路由表 push 进入的目标页白屏，最可能的结构性原因是什么？",
+      "options": [
+        "路由表 JSON 格式错误",
+        "目标页 build() 的根节点不是 NavDestination",
+        "没有申请路由权限",
+        "Navigation 少了 .hideTitleBar()"
+      ],
+      "answer": 1,
+      "explanation": "压栈目标页的 build() 必须以 NavDestination 为根节点，否则渲染不上（白屏）。参数获取要放 onReady（ctx.pathInfo.param），aboutToAppear 时参数还没就绪。"
+    },
+    {
+      "id": "q98",
+      "slug": "Navigation与NavPathStack路由系统",
+      "category": "页面与导航",
+      "question": "登录成功后跳转主页且禁止返回登录页，应该用 NavPathStack 的哪个操作？",
+      "options": [
+        "pushPathByName('home')",
+        "replacePathByName('home')——替换当前页，旧页出栈销毁",
+        "pop 后再 push",
+        "clear 后 pushPathByName"
+      ],
+      "answer": 1,
+      "explanation": "replacePathByName 替换栈顶：登录页出栈销毁，无法返回。pushPathByName 保留旧页（可返回），适合列表到详情。"
+    },
+    {
+      "id": "q99",
+      "slug": "页面生命周期与数据加载时机",
+      "category": "页面与导航",
+      "question": "「从详情页返回列表页时要刷新列表」，这个刷新逻辑应该写在哪个钩子里？",
+      "options": [
+        "aboutToAppear——组件创建时执行",
+        "onPageShow / onShown——每次页面可见都会触发",
+        "build 里每次渲染前刷新",
+        "onPageHide 里预刷新"
+      ],
+      "answer": 1,
+      "explanation": "aboutToAppear 只跑一次（返回时组件还活着，不会再触发）；onPageShow 每次可见都跑。「每次可见要刷新」进 onPageShow，「一次性的加载」进 aboutToAppear。"
+    },
+    {
+      "id": "q100",
+      "slug": "页面生命周期与数据加载时机",
+      "category": "页面与导航",
+      "question": "页面销毁前需要完成哪些清理工作（aboutToDisappear 的责任清单）？",
+      "options": [
+        "清除计时器、标记异步任务作废（alive=false）、保存未落盘状态、注销全局监听",
+        "清空所有 @State 变量释放内存",
+        "关闭日志系统",
+        "把页面数据写入 AppStorage 备份"
+      ],
+      "answer": 0,
+      "explanation": "aboutToDisappear 是唯一可靠的清理点：停计时器、让未完成异步的写状态失效、兜底保存进度、注销监听。忘记清理的症状很隐蔽：页面关了日志还在刷、异步回来给已销毁组件写状态。"
+    },
+    {
+      "id": "q101",
+      "slug": "Span与Text富文本混排",
+      "category": "数据与渲染",
+      "question": "一段文字里要混排不同字号、颜色且部分可点击（如协议链接），正确的组件方案是什么？",
+      "options": [
+        "多个 Text 用 Row 拼接",
+        "Text() 内嵌多个 Span，每个 Span 独立设置样式与 onClick",
+        "用 RichText 加载 HTML 字符串",
+        "Web 组件渲染富文本"
+      ],
+      "answer": 1,
+      "explanation": "Span 是行内混排方案：每个 Span 独立设置 fontSize/fontColor/decoration 与 onClick，点击粒度可以细到半句话。注意 Text('字符串') 与 Text(){Span()} 两种用法不能混用。"
+    },
+    {
+      "id": "q102",
+      "slug": "Span与Text富文本混排",
+      "category": "数据与渲染",
+      "question": "长文本超出两行显示省略号，正确的属性组合是什么？",
+      "options": [
+        "只加 .textOverflow({ overflow: TextOverflow.Ellipsis })",
+        ".maxLines(2) 与 .textOverflow({ overflow: TextOverflow.Ellipsis }) 配对使用",
+        ".maxLines(2) 与 .fontSize(14) 配对使用",
+        "手动截断字符串加省略号"
+      ],
+      "answer": 1,
+      "explanation": "maxLines 限制行数、textOverflow 决定截断样式，两者配对使用才生效——单行文本不设 maxLines 永远不会溢出，只有 textOverflow 则没有截断时机。"
+    },
+    {
+      "id": "q103",
+      "slug": "Image组件与图片资源加载",
+      "category": "数据与渲染",
+      "question": "封面图在固定尺寸容器中被拉伸变形，最直接的修复是什么？",
+      "options": [
+        "把容器改成自动尺寸",
+        "加 .objectFit(ImageFit.Cover)，填满容器并裁剪溢出部分",
+        "换一张分辨率更高的图",
+        "加 .borderRadius 让变形不明显"
+      ],
+      "answer": 1,
+      "explanation": "变形十有八九是 objectFit 缺失。Cover 填满容器并裁剪溢出（封面、头图首选）；不能裁的图表截图用 Contain；Fill 拉伸几乎别用。"
+    },
+    {
+      "id": "q104",
+      "slug": "Image组件与图片资源加载",
+      "category": "数据与渲染",
+      "question": "列表里网络图片加载完成后布局跳动，正确的预防措施是什么？",
+      "options": [
+        "给 Image 加固定宽高并预置相同尺寸的 alt 占位图",
+        "加载完成后重新刷新列表",
+        "把图片全部换成本地资源",
+        "禁止列表滚动"
+      ],
+      "answer": 0,
+      "explanation": "占位图（alt）尺寸与正式图一致，避免加载完成后布局塌缩再弹开。固定容器尺寸 + Cover + 同尺寸占位，是网络图列表的三件套。"
+    },
+    {
+      "id": "q105",
+      "slug": "Canvas自定义绘制入门",
+      "category": "数据与渲染",
+      "question": "Canvas 绘制的正确起点是什么？",
+      "options": [
+        "aboutToAppear 里立即绘制",
+        "Canvas 的 onReady 回调——画布尺寸就绪后才能拿到真实宽高",
+        "build 执行完后自动开始",
+        "onTouch 触发后才能画"
+      ],
+      "answer": 1,
+      "explanation": "onReady 是画布就绪的信号，之前画了也是 0（拿不到真实宽高）。基本节奏是三拍子：onReady 起笔、beginPath 落笔、clearRect 每帧清屏。"
+    },
+    {
+      "id": "q106",
+      "slug": "Canvas自定义绘制入门",
+      "category": "数据与渲染",
+      "question": "什么情况下应该放弃 Canvas 手绘？",
+      "options": [
+        "需要环形进度条时",
+        "组件能表达的视觉效果（如 Progress 组件、Stack+borderRadius 装饰）就不要手绘",
+        "需要响应触摸时",
+        "需要频繁重绘时"
+      ],
+      "answer": 1,
+      "explanation": "Canvas 是最后手段：组件能表达的就别手绘——可访问性、事件、适配全要自己造。环形进度有现成 Progress 组件，简单几何装饰用 Stack + borderRadius。"
+    },
+    {
+      "id": "q107",
+      "slug": "冷启动优化与启动链路分析",
+      "category": "性能与调试",
+      "question": "冷启动优化中，EntryAbility.onCreate 里应该保留什么？",
+      "options": [
+        "全部仓库初始化，一步到位省得以后麻烦",
+        "只留首屏必需的同步初始化，字体解码、搜索语料等推迟到首次使用（懒加载）",
+        "什么都不做，全部延迟到 onPageShow",
+        "把初始化挪到子线程全量执行"
+      ],
+      "answer": 1,
+      "explanation": "判断标准：首屏第一眼用不到的，都不配在 onCreate 里跑。同步做首屏必需项（context 注入、preferences 打开），字体/语料/PDF 探测全部懒加载。"
+    },
+    {
+      "id": "q108",
+      "slug": "冷启动优化与启动链路分析",
+      "category": "性能与调试",
+      "question": "冷启动性能结论应该以什么为准？",
+      "options": [
+        "模拟器测三遍取平均",
+        "真机复测（优化前后各测三遍取中位数），模拟器数据不可信",
+        "以代码静态分析推断为准",
+        "以 DevEco 控制台日志为准"
+      ],
+      "answer": 1,
+      "explanation": "模拟器的启动帧率与耗时数据不可信，性能结论一律真机复测：优化前后各测三遍取中位数。"
+    },
+    {
+      "id": "q109",
+      "slug": "包体积优化与资源治理",
+      "category": "性能与调试",
+      "question": "内置中文字体（10MB）最有效的瘦身手段是什么？",
+      "options": [
+        "压缩为 zip 随包分发，运行时解压",
+        "子集化：用工具按应用实际字符集裁剪，常能压到 1~3MB",
+        "改用位图字体",
+        "拆成多个小字体文件分别加载"
+      ],
+      "answer": 1,
+      "explanation": "中文字库 3 万+ 字而实际用几千字，pyftsubset 等工具按字符集子集化是最有效手段。注意子集字符集要覆盖全部内容文本，漏字会导致生僻字变豆腐块。"
+    },
+    {
+      "id": "q110",
+      "slug": "包体积优化与资源治理",
+      "category": "性能与调试",
+      "question": "防止包体积悄悄膨胀的工程化手段是什么？",
+      "options": [
+        "每周人工检查一遍包大小",
+        "提交钩子里的体积护栏脚本：超过阈值拒绝提交，显式变更走白名单豁免",
+        "上架前把资源目录全部压缩一遍",
+        "限制开发者不能添加任何新资源"
+      ],
+      "answer": 1,
+      "explanation": "人工看不住包体，脚本才看得住：pre-commit 时对 resources、rawfile、字体分别设阈值，体积膨胀在提交那一刻被拦截（白名单机制允许显式豁免）。"
+    },
+    {
+      "id": "q111",
+      "slug": "ohpm与oh-package依赖管理",
+      "category": "环境与工程配置",
+      "question": "oh-package.json5 中依赖版本写成 latest 或 *，主要风险是什么？",
+      "options": [
+        "安装速度变慢",
+        "构建不可复现——不同时间安装的版本不同，团队成员构建结果不一致",
+        "无法通过编译",
+        "依赖无法被卸载"
+      ],
+      "answer": 1,
+      "explanation": "latest/* 意味着任意版本，构建不可复现。版本号精确/语义化声明 + lock 文件（oh-package-lock.json5）进版本库，是依赖树可复现的双保险。"
+    },
+    {
+      "id": "q112",
+      "slug": "ohpm与oh-package依赖管理",
+      "category": "环境与工程配置",
+      "question": "oh-package-lock.json5（锁定文件）应该怎么处理？",
+      "options": [
+        "加入 .gitignore 不提交，避免冲突",
+        "必须提交进版本库——它是依赖树的快照，保证所有人构建一致",
+        "每次构建前重新生成并覆盖",
+        "只在发布时提交一次"
+      ],
+      "answer": 1,
+      "explanation": "lock 文件锁住整棵依赖树，是「依赖树快照」，必须进版本库。没有 lock 的项目，每个人 install 的结果都可能不同——经典事故来源。"
+    },
+    {
+      "id": "q113",
+      "slug": "compileSdkVersion与多版本兼容策略",
+      "category": "环境与工程配置",
+      "question": "compatibleMinSdkVersion、compileSdkVersion、targetSdkVersion 三者各自决定什么？",
+      "options": [
+        "min 决定能用哪些 API，compile 决定谁能装，target 决定编译速度",
+        "compile 决定能写哪些 API，min 决定谁能装（最低系统版本），target 决定系统按哪个版本的行为约束应用",
+        "三者等价，写一样的值即可",
+        "min 和 target 管签名，compile 管图标"
+      ],
+      "answer": 1,
+      "explanation": "一句话：compile 决定你能写什么，min 决定谁能装，target 决定系统怎么对你。compile 尽量新、min 覆盖目标用户、target 及时跟进。"
+    },
+    {
+      "id": "q114",
+      "slug": "compileSdkVersion与多版本兼容策略",
+      "category": "环境与工程配置",
+      "question": "minSdkVersion 较低的应用调用高版本 API，推荐的兜底方式是什么？",
+      "options": [
+        "用 deviceInfo.sdkApiVersion 判断版本号后再调用",
+        "用 canIUse 做能力探测，失败时提供可用的降级 UI（不是死胡同）",
+        "try-catch 包住调用，崩了就崩了",
+        "最低版本设高一点，彻底规避"
+      ],
+      "answer": 1,
+      "explanation": "能力探测（canIUse）比版本号判断更稳：探测失败的降级路径必须是可用的 UI 或友好提示，不能是死胡同。min 设太高会直接损失老设备覆盖率。"
+    },
+    {
+      "id": "q115",
+      "slug": "应用签名与证书发布体系",
+      "category": "发布链路",
+      "question": "鸿蒙应用签名三件套中，.p7b（Provisioning Profile）的作用是什么？",
+      "options": [
+        "开发者的私钥库，签名时用它盖章",
+        "数字证书，证明开发者身份",
+        "包含包名、设备列表、能力声名的「准许证」，决定谁能装、装什么",
+        "应用的图标与元数据清单"
+      ],
+      "answer": 2,
+      "explanation": "三件套类比：p12 是私章、cer 是公开的身份证明、p7b 是「准许证」（含包名、设备、能力声明）。三者写进 build-profile 的 signingConfigs，缺一不可。"
+    },
+    {
+      "id": "q116",
+      "slug": "应用签名与证书发布体系",
+      "category": "发布链路",
+      "question": "关于 .p12 私钥文件的安全纪律，下列做法正确的是？",
+      "options": [
+        "提交进私有仓库方便团队共用",
+        "绝不进版本库（.gitignore 收好），密码不硬编码在共享配置里，正式证书由发布负责人保管",
+        "密码写在 README 里方便记忆",
+        "发给每个开发者一份，避免单点故障"
+      ],
+      "answer": 1,
+      "explanation": "私钥泄漏等于应用身份被盗。.p12 与密码绝不进版本库；开发统一走 debug 自动签名，正式证书收拢在发布负责人手里。"
+    },
+    {
+      "id": "q117",
+      "slug": "权限声明与隐私合规清单",
+      "category": "发布链路",
+      "question": "user_grant 权限（如定位）在 module.json5 中声明时，必须同时提供什么？",
+      "options": [
+        "只需要 name 字段",
+        "name + reason（引用 string 资源说明用途）+ usedScene（使用时机与所在 Ability）",
+        "name 与一个布尔开关",
+        "运行时动态申请即可，无需静态声明"
+      ],
+      "answer": 1,
+      "explanation": "user_grant 三件套缺一不可：name、reason（$string 引用）、usedScene。漏了 reason 编译期就报错——这是权限合规的工程化兜底。"
+    },
+    {
+      "id": "q118",
+      "slug": "权限声明与隐私合规清单",
+      "category": "发布链路",
+      "question": "零权限应用（无网络、无采集、内容随包内置）在隐私合规上的核心优势是什么？",
+      "options": [
+        "无需提交隐私声明",
+        "隐私声明可简化为「不收集任何数据」，权限列表空白本身即是承诺，审核权限风险点趋近于零",
+        "可以不上架审核直接分发",
+        "不受应用市场任何规范约束"
+      ],
+      "answer": 1,
+      "explanation": "权限是负债：零权限是设计出来的，不是删出来的。声明与实际行为逐条对得上是底线——声明「不上传数据」但代码里有埋点域名，是常见的审核驳回点。"
+    },
+    {
+      "id": "q119",
+      "slug": "animateTo与曲线动画入门",
+      "category": "动画与交互",
+      "question": "需要弹簧物理感（回弹停住）的动画效果，曲线应该怎么获取？",
+      "options": [
+        "使用内置 Curve.Spring 枚举",
+        "从 @ohos.curves 用 curves.springCurve(...) 获取（Curve 里没有 Spring）",
+        "用 Curve.Linear 加大时长模拟",
+        "ArkTS 不支持弹簧动画"
+      ],
+      "answer": 1,
+      "explanation": "Curve 枚举里没有 Spring：弹簧效果要从 curves 模块拿 springCurve(速度/质量/刚度/阻尼)，配合 animateTo 的 curve 参数使用。"
+    },
+    {
+      "id": "q120",
+      "slug": "Navigation与NavPathStack路由系统",
+      "category": "页面与导航",
+      "question": "手写 .navDestination(builder) 时连续链式调用两次会发生什么？",
+      "options": [
+        "两个 builder 都生效，按名称分发",
+        "后一次调用覆盖前一次注册——所有压栈路由都落到错误页面（运行期白屏），且没有编译期诊断",
+        "编译错误：不允许链式两次",
+        "自动合并为一个路由表"
+      ],
+      "answer": 1,
+      "explanation": ".navDestination() 只能挂一个 builder，链两次后者覆盖前者——所有路由落到一个错误页面，且无编译期诊断。多路由一律走系统路由表（router_map.json），手写 builder 只适合单级简单场景。"
     }
   ]
 }

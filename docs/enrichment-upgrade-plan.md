@@ -111,7 +111,7 @@
 ## 实施状态（2026-11-04 完成）
 
 - 全部 A1/B1/B3/C1/D1 项落地；BUG-001 同步修复。
-- `node scripts/publish.js`：生成 quiz.json 共 59 题（16 篇文章 / 5 分类 / 60 标签）。
+- `node scripts/publish.js`：生成 quiz.json 共 67 题（18 篇文章 / 5 分类 / 67 标签）。
 - ArkTS 静态检查（arkts_check）全部通过；`build_project` BUILD SUCCESSFUL（1 min 28 s）。
 - 模拟器（CopybookPad）安装启动正常。
 - 待人工验收：桌面长按添加「每日知识点」2x2 卡片，确认展示当日文章、点击直达详情（验收口径第 4 条）。

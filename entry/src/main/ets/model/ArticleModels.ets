@@ -94,7 +94,7 @@ export function estReadingMinutes(wordCount: number): number {
   return Math.max(1, Math.round(wordCount / 400));
 }
 
-/** quiz.json -> questions[] 单题（publish.js 从正文二级小节自动生成） */
+/** quiz.json -> questions[] 单题（quiz.json 为手工维护题库，不走 publish.js） */
 export interface QuizQuestion {
   id: string;
   /** 来源文章 slug（查看原文入口用） */
@@ -107,7 +107,7 @@ export interface QuizQuestion {
   explanation: string;
 }
 
-/** quiz.json 整体 */
+/** quiz.json 整体（手工维护：generatedAt 为最近编辑日期，total 须与 questions 长度一致） */
 export interface QuizBank {
   generatedAt: string;
   total: number;

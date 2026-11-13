@@ -73,6 +73,8 @@ export class AppTheme {
 
   /** 平板/宽屏下页面内容最大宽度（vp），超出居中收窄保证可读性 */
   static readonly CONTENT_MAX_WIDTH: number = 720;
+  /** 宽屏断点（vp）：窗口宽度达到该值时首页切换为左侧导航栏布局 */
+  static readonly BREAKPOINT_WIDE: number = 840;
   /** 正文字号默认/最小/最大（fp） */
   static readonly TEXT_SIZE_DEFAULT: number = 16;
   static readonly TEXT_SIZE_MIN: number = 14;

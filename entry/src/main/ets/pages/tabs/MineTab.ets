@@ -54,12 +54,16 @@ export struct MineTab {
 
   build() {
     Column() {
-      PageHeader({
-        title: '我的',
-        subtitle: this.achievements.length > 0
-          ? `已点亮 ${this.unlockedCount()} / ${this.achievements.length} 枚成就`
-          : ''
-      })
+      Column() {
+        PageHeader({
+          title: '我的',
+          subtitle: this.achievements.length > 0
+            ? `已点亮 ${this.unlockedCount()} / ${this.achievements.length} 枚成就`
+            : ''
+        })
+      }
+      .width('100%')
+      .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       Scroll() {
         Column({ space: 12 }) {
           StatsDashboard({
@@ -105,6 +109,7 @@ export struct MineTab {
         .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       }
       .scrollBar(BarState.Off)
+      .align(Alignment.Top)
       .edgeEffect(EdgeEffect.Spring)
       .layoutWeight(1)
       .width('100%')

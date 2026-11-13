@@ -120,11 +120,15 @@ export struct StudyTab {
 
   build() {
     Column() {
-      PageHeader({
-        title: '行知',
-        subtitle: this.buildSubtitle(),
-        actions: this.headerActions
-      })
+      Column() {
+        PageHeader({
+          title: '行知',
+          subtitle: this.buildSubtitle(),
+          actions: this.headerActions
+        })
+      }
+      .width('100%')
+      .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
       if (this.loadError !== '') {
         this.errorView()
       } else {
@@ -171,6 +175,7 @@ export struct StudyTab {
           .constraintSize({ maxWidth: AppTheme.CONTENT_MAX_WIDTH })
         }
         .scrollBar(BarState.Off)
+        .align(Alignment.Top)
         .edgeEffect(EdgeEffect.Spring)
         .layoutWeight(1)
         .width('100%')

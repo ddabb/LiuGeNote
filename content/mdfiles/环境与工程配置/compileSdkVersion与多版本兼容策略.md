@@ -1,0 +1,70 @@
+---
+title: compileSdkVersion 与兼容性：多版本设备适配策略
+tags: [compileSdkVersion, 兼容性, build-profile, API版本, 适配]
+description: 讲解 build-profile.json5 中 SDK 版本三要素：compileSdkVersion、compatibleMinSdkVersion 与 targetSdkVersion 的语义差异，运行时 canIUse 探测高版本 API 的兜底写法，以及升版本时的回归清单。
+---
+
+# compileSdkVersion 与兼容性：多版本设备适配策略
+
+「模拟器跑得好好的，老手机装不上」——九成是 SDK 版本三要素没理清。
+
+## 三要素各管什么
+
+`build-profile.json5`：
+
+```json5
+{
+  "app": {
+    "signingConfigs": [],
+    "products": [{
+      "compileSdkVersion": "5.0.5(17)",
+      "compatibleMinSdkVersion": "5.0.0(12)",    // 最低支持
+      "targetSdkVersion": "5.0.5(17)",           // 目标版本
+      "runtimeOS": "HarmonyOS"
+    }]
+  }
+}
+```
+
+| 字段 | 语义 | 影响 |
+|---|---|---|
+| `compileSdkVersion` | 编译用的 SDK | 决定能用哪些新 API |
+| `compatibleMinSdkVersion` | 最低能装的系统版本 | 低于它的设备装不上 |
+| `targetSdkVersion` | 按哪个版本的行为约束自己 | 声明「我按新规范适配了」 |
+
+关系一句话：**compile 决定你能写什么，min 决定谁能装，target 决定系统怎么对你**。
+
+## 常见事故
+
+1. **min 设高了**：覆盖率骤降——商店里大量老设备「不兼容」；
+2. **compile 高、min 低，裸调新 API**：老设备运行到那行直接崩（编译器不拦，因为你「可以」用）；
+3. **target 长期不升**：新系统的行为变更全部绕着你走，商店审核也会催。
+
+## 高版本 API 的兜底：canIUse
+
+min < compile 的区间里，新 API 必须探测后使用：
+
+```typescript
+import { canIUse } from '@kit.ArkTS';   // 全局也可直接用 canIUse
+
+if (canIUse('SystemCapability.PDFService.PdfRenderKit')) {
+  // 高版本路径：使用 PDF 渲染等新能力
+  this.exportPdf();
+} else {
+  // 低版本降级：友好提示替代崩溃
+  promptAction.showToast({ message: '当前系统版本不支持 PDF 导出' });
+}
+```
+
+原则：**能力探测代替版本号判断**（`deviceInfo.sdkApiVersion` 脆弱），探测失败的降级路径必须是可用的 UI，不能是死胡同。
+
+## 升 compileSdkVersion 的回归清单
+
+1. 全量编译：被废弃（deprecated）的 API 会出警告，逐个排期替换；
+2. 真机回归：新旧两台设备各过一遍主流程；
+3. 行为变更对照：target 提升后系统行为收紧（权限、后台限制），对照发行说明逐条检查；
+4. 三方依赖同步：依赖库的兼容版本跟着升。
+
+## 一句话总结
+
+**compile 尽量新、min 覆盖目标用户、target 及时跟进，中间的空隙用 canIUse 补**——四步就是兼容策略的全部。
